@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍼 媽咪能量日誌</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+:root {
+  --blush: #FFD6E0;
+  --rose: #FF8FA3;
+  --rose-deep: #E05C7A;
+  --mint: #C8F0E8;
+  --mint-deep: #3DBFA0;
+  --cream: #FFF8F5;
+  --warm-white: #FFFBF9;
+  --lavender: #E8DAFF;
+  --lav-deep: #9B72D4;
+  --sky: #D6EEFF;
+  --sky-deep: #4EA8DE;
+  --butter: #FFF0C8;
+  --amber: #FFB347;
+  --text-dark: #3A2A35;
+  --text-mid: #7A5C68;
+  --text-light: #B8A0AA;
+  --shadow: 0 4px 20px rgba(224,92,122,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: linear-gradient(135deg, #FFE8EF 0%, #FFF0F8 40%, #F0F8FF 100%);
+  min-height: 100vh;
+  color: var(--text-dark);
+  padding-bottom: 24px;
+}
+
+.hidden { display: none !important; }
+
+/* ── NAV ── */
+.nav-bar {
+  display: flex;
+  background: white;
+  border-bottom: 2px solid var(--blush);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 12px rgba(224,92,122,0.1);
+}
+.nav-btn {
+  flex: 1;
+  padding: 14px 6px;
+  border: none;
+  background: none;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.78rem;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+}
+.nav-btn.active {
+  color: var(--rose-deep);
+  border-bottom-color: var(--rose-deep);
+  background: var(--blush);
+}
+
+.tab-content { padding: 12px; }
+
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  padding: 20px 16px 12px;
+}
+.header-emoji { font-size: 2.4rem; display: block; margin-bottom: 4px; }
+.header h1 {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 1.45rem;
+  color: var(--rose-deep);
+}
+.header-sub { font-size: 0.78rem; color: var(--text-mid); margin-top: 2px; }
+.date-badge {
+  display: inline-block;
+  background: var(--blush);
+  color: var(--rose-deep);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 20px;
+  margin-top: 6px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--warm-white);
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  border: 1.5px solid rgba(255,143,163,0.15);
+}
+.card-title {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--text-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── PROFILE ── */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.input-group label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-mid);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.input-group input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 2px solid var(--blush);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  color: var(--text-dark);
+  background: var(--cream);
+  transition: border-color 0.2s;
+  outline: none;
+}
+.input-group input:focus { border-color: var(--rose); }
+
+.bmr-display {
+  margin-top: 10px;
+  background: linear-gradient(135deg, var(--blush), var(--lavender));
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.bmr-item { text-align: center; }
+.bmr-value { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.2rem; color: var(--rose-deep); }
+.bmr-label { font-size: 0.65rem; color: var(--text-mid); font-weight: 600; }
+
+.goal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--butter);
+  border: 1.5px solid var(--amber);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #8B5E00;
+  margin-top: 8px;
+}
+
+/* ── DASHBOARD GRID ── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.stat-card {
+  border-radius: 18px;
+  padding: 14px;
+}
+.stat-card.calories { background: linear-gradient(135deg, #FFE0EA, #FFB3C6); }
+.stat-card.water    { background: linear-gradient(135deg, #D6EEFF, #A8D8FF); }
+.stat-card.milk     { background: linear-gradient(135deg, var(--lavender), #D4B8FF); }
+.stat-card.fasting  { background: linear-gradient(135deg, var(--mint), #A8EDD8); }
+.stat-emoji { font-size: 1.6rem; }
+.stat-value { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.5rem; line-height: 1.1; margin: 4px 0 2px; }
+.stat-label { font-size: 0.68rem; color: var(--text-mid); font-weight: 600; }
+.stat-sub   { font-size: 0.65rem; color: var(--text-mid); margin-top: 2px; }
+
+/* ── PROGRESS ── */
+.progress-section {}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-mid);
+  margin-bottom: 5px;
+}
+.progress-track {
+  height: 14px;
+  background: rgba(0,0,0,0.07);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+}
+.progress-fill.calories-bar { background: linear-gradient(90deg, #FF8FA3, #FF5C8A); }
+.progress-fill.water-bar    { background: linear-gradient(90deg, #4EA8DE, #1A7FBF); }
+.progress-fill.deficit-bar  { background: linear-gradient(90deg, #3DBFA0, #1A9A7E); }
+
+/* ── FASTING BANNER ── */
+.fasting-banner {
+  background: linear-gradient(135deg, var(--mint), #A8F0DC);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.f-label { font-size: 0.78rem; font-weight: 700; color: #1A6B55; }
+.fasting-timer { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--mint-deep); }
+
+/* ── LOG FORM ── */
+.type-selector {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.type-btn {
+  padding: 8px 4px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-mid);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+.t-emoji { font-size: 1.3rem; }
+.type-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.type-btn.active-eat   { border-color: var(--rose); background: var(--blush); color: var(--rose-deep); }
+.type-btn.active-milk  { border-color: var(--lav-deep); background: var(--lavender); color: var(--lav-deep); }
+.type-btn.active-water { border-color: var(--sky-deep); background: var(--sky); color: var(--sky-deep); }
+.type-btn.active-fast  { border-color: var(--mint-deep); background: var(--mint); color: var(--mint-deep); }
+
+/* ── FIELD ROW — stacked, full width, never crowded ── */
+.field-row {
+  margin-bottom: 10px;
+}
+.form-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-mid);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.form-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid #EEE;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  outline: none;
+  color: var(--text-dark);
+  background: var(--cream);
+  transition: border-color 0.2s;
+}
+.form-input:focus { border-color: var(--rose); }
+
+.add-btn {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(224,92,122,0.35);
+  margin-top: 4px;
+}
+.add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(224,92,122,0.45); }
+.add-btn:active { transform: translateY(0); }
+.add-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ── TIMELINE ── */
+.timeline-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px dashed rgba(0,0,0,0.07);
+}
+.timeline-item:last-child { border-bottom: none; }
+.tl-time {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.75rem;
+  color: var(--text-light);
+  min-width: 38px;
+  padding-top: 4px;
+}
+.tl-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.tl-dot.eat   { background: var(--blush); }
+.tl-dot.milk  { background: var(--lavender); }
+.tl-dot.water { background: var(--sky); }
+.tl-dot.fast  { background: var(--mint); }
+.tl-desc { flex: 1; }
+.tl-title { font-size: 0.82rem; font-weight: 700; color: var(--text-dark); }
+.tl-value { font-size: 0.72rem; color: var(--text-mid); margin-top: 1px; }
+.tl-delete {
+  background: none; border: none; cursor: pointer;
+  font-size: 0.75rem; color: var(--text-light);
+  padding: 4px; border-radius: 6px; transition: all 0.2s;
+}
+.tl-delete:hover { background: #FFE0E0; color: var(--rose-deep); }
+.empty-timeline { text-align: center; padding: 20px; color: var(--text-light); font-size: 0.85rem; }
+.big-emoji { font-size: 2rem; display: block; margin-bottom: 6px; }
+
+/* ── SUMMARY ── */
+.summary-trigger {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #9B72D4, #7B52B4);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 18px rgba(155,114,212,0.4);
+  transition: all 0.2s;
+}
+.summary-trigger:hover { transform: translateY(-2px); }
+
+.summary-overlay {
+  position: fixed; inset: 0;
+  background: rgba(58,42,53,0.5);
+  z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  backdrop-filter: blur(4px);
+}
+.summary-card {
+  background: var(--warm-white);
+  border-radius: 24px;
+  padding: 24px;
+  max-width: 380px; width: 100%;
+  max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+.summary-card h2 {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--rose-deep);
+  text-align: center;
+  margin-bottom: 16px;
+}
+.summary-section {
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+.summary-section.cal     { background: var(--blush); }
+.summary-section.water-s { background: var(--sky); }
+.summary-section.fast-s  { background: var(--mint); }
+.summary-section h3 { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.85rem; margin-bottom: 8px; }
+.summary-row { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 3px; color: var(--text-mid); }
+.summary-result { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem; margin-top: 8px; color: var(--text-dark); }
+.summary-hint { font-size: 0.72rem; color: var(--text-mid); margin-top: 4px; line-height: 1.4; }
+.warning-box {
+  background: var(--butter);
+  border: 2px solid var(--amber);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  color: #6B4500;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+.close-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+  color: white; border: none;
+  border-radius: 14px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800; font-size: 1rem;
+  cursor: pointer; margin-top: 12px;
+}
+
+/* ── HISTORY ── */
+.history-day-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+.hd-item {
+  border-radius: 14px;
+  padding: 10px 8px;
+  text-align: center;
+}
+.hd-item.cal    { background: var(--blush); }
+.hd-item.burn   { background: var(--butter); }
+.hd-item.water  { background: var(--sky); }
+.hd-item.milk   { background: var(--lavender); }
+.hd-item.fast   { background: var(--mint); }
+.hd-item.weight { background: linear-gradient(135deg,#FFE8D6,#FFD0B0); }
+.hd-val { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.1rem; color: var(--text-dark); }
+.hd-lbl { font-size: 0.62rem; color: var(--text-mid); font-weight: 600; margin-top: 2px; }
+.hd-verdict {
+  margin-top: 10px;
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--cream);
+}
+
+/* emoji calendar */
+.trend-legend {
+  display: flex;
+  justify-content: space-around;
+  font-size: 0.7rem;
+  color: var(--text-mid);
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.emoji-calendar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.emoji-day {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  position: relative;
+  background: var(--cream);
+  transition: transform 0.15s;
+}
+.emoji-day:hover { transform: scale(1.15); }
+.emoji-day-label {
+  font-size: 0.45rem;
+  color: var(--text-light);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+/* Weight chart */
+#weightChart { width: 100%; }
+
+/* Two-col layout for small cards */
+.two-col-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.big-stat { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.6rem; color: var(--rose-deep); text-align: center; }
+.big-stat-sub { font-size: 0.7rem; color: var(--text-mid); text-align: center; margin-bottom: 8px; }
+
+/* ── PHOTO TAB ── */
+.photo-upload-area {
+  border: 2.5px dashed var(--rose);
+  border-radius: 16px;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  overflow: hidden;
+}
+.photo-upload-area:hover { background: var(--blush); }
+.photo-placeholder { text-align: center; color: var(--text-mid); padding: 20px; font-size: 0.85rem; line-height: 1.6; }
+.photo-result-box { background: var(--cream); border-radius: 14px; padding: 14px; margin-top: 12px; }
+.photo-result-title { font-family: 'Nunito', sans-serif; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; }
+.food-ref-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.food-ref-item {
+  background: var(--cream);
+  border-radius: 12px;
+  padding: 8px 4px;
+  text-align: center;
+  font-size: 0.65rem;
+  color: var(--text-mid);
+  font-weight: 600;
+}
+.food-ref-item span { font-size: 1.5rem; display: block; margin-bottom: 3px; }
+.food-cal { color: var(--rose-deep); font-weight: 800; font-size: 0.72rem; margin-top: 2px; }
+.info-box {
+  background: var(--butter);
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 0.78rem;
+  color: #6B4500;
+  line-height: 1.5;
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-dark);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  z-index: 200;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  white-space: nowrap;
+  animation: fadeInUp 0.3s ease;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--blush); border-radius: 10px; }
+
+</style>
+</head>
+<body>
+
+<!-- NAV TABS -->
+<div class="nav-bar">
+  <button class="nav-btn active" onclick="switchTab('today')" id="nav-today">🏠 今日</button>
+  <button class="nav-btn" onclick="switchTab('history')" id="nav-history">📊 歷史</button>
+  <button class="nav-btn" onclick="switchTab('photo')" id="nav-photo">📷 拍照估卡</button>
+</div>
+
+<!-- ══════════════════ TODAY TAB ══════════════════ -->
+<div id="tab-today" class="tab-content">
+
+  <div class="header">
+    <span class="header-emoji">🍼</span>
+    <h1>媽咪能量日誌</h1>
+    <p class="header-sub">哺乳期熱量 · 水分 · 斷食全追蹤</p>
+    <div class="date-badge" id="dateBadge">📅 載入中...</div>
+  </div>
+
+  <!-- PROFILE CARD -->
+  <div class="card">
+    <div class="card-title">👤 我的資料</div>
+    <div class="profile-grid">
+      <div class="input-group">
+        <label>體重 (kg)</label>
+        <input type="number" id="weightInput" value="70.5" step="0.1" min="30" max="200" oninput="onWeightChange()">
+      </div>
+      <div class="input-group">
+        <label>身高 (cm)</label>
+        <input type="number" id="heightInput" value="162" step="1" oninput="recalculate()">
+      </div>
+    </div>
+    <div class="bmr-display">
+      <div class="bmr-item"><div class="bmr-value" id="bmrVal">—</div><div class="bmr-label">基礎代謝 BMR</div></div>
+      <div class="bmr-item"><div class="bmr-value" id="tdeeVal">—</div><div class="bmr-label">日常消耗 TDEE</div></div>
+      <div class="bmr-item"><div class="bmr-value" id="waterGoalVal">—</div><div class="bmr-label">今日水目標</div></div>
+    </div>
+    <div class="goal-chip">🎯 目標：55 kg｜還差 <span id="goalDiff">—</span> kg</div>
+  </div>
+
+  <!-- DASHBOARD STATS -->
+  <div class="dashboard-grid">
+    <div class="stat-card calories"><div class="stat-emoji">🍽️</div><div class="stat-value" id="totalCalIn">0</div><div class="stat-label">今日攝取 kcal</div><div class="stat-sub">目標 ≥ 1,500</div></div>
+    <div class="stat-card water"><div class="stat-emoji">💧</div><div class="stat-value" id="totalWater">0</div><div class="stat-label">今日飲水 ml</div><div class="stat-sub" id="waterGoalSmall">目標 —</div></div>
+    <div class="stat-card milk"><div class="stat-emoji">🤱</div><div class="stat-value" id="totalMilk">0</div><div class="stat-label">今日奶量 ml</div><div class="stat-sub" id="milkBurn">消耗 — kcal</div></div>
+    <div class="stat-card fasting"><div class="stat-emoji">⏱️</div><div class="stat-value" id="fastHours">—</div><div class="stat-label">斷食時數</div><div class="stat-sub" id="fastStart">尚未開始</div></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="card progress-section">
+    <div class="card-title">📊 今日進度</div>
+    <div class="progress-label"><span>🔥 熱量攝取</span><span id="calPct">0 kcal</span></div>
+    <div class="progress-track"><div class="progress-fill calories-bar" id="calBar" style="width:0%"></div></div>
+    <div class="progress-label"><span>💧 水分補給</span><span id="waterPct">0%</span></div>
+    <div class="progress-track"><div class="progress-fill water-bar" id="waterBar" style="width:0%"></div></div>
+    <div class="progress-label"><span>✨ 熱量狀態</span><span id="deficitLabel">—</span></div>
+    <div class="progress-track"><div class="progress-fill deficit-bar" id="deficitBar" style="width:0%"></div></div>
+    <div style="font-size:0.72rem;color:var(--text-mid);text-align:right;margin-top:2px" id="deficitText">—</div>
+  </div>
+
+  <!-- FASTING BANNER -->
+  <div class="fasting-banner hidden" id="fastingBanner">
+    <div><div class="f-label">🌙 斷食進行中</div><div style="font-size:0.7rem;color:#1A6B55">燃脂黃金期！繼續加油 💪</div></div>
+    <div class="fasting-timer" id="fastTimerDisplay">0h 0m</div>
+  </div>
+
+  <!-- LOG FORM -->
+  <div class="card">
+    <div class="card-title">➕ 新增紀錄</div>
+    <div class="type-selector">
+      <button class="type-btn active-eat" onclick="selectType('eat')" id="btn-eat"><span class="t-emoji">🍽️</span>進食</button>
+      <button class="type-btn" onclick="selectType('milk')" id="btn-milk"><span class="t-emoji">🤱</span>擠奶</button>
+      <button class="type-btn" onclick="selectType('water')" id="btn-water"><span class="t-emoji">💧</span>喝水</button>
+      <button class="type-btn" onclick="selectType('fast')" id="btn-fast"><span class="t-emoji">⏱️</span>斷食</button>
+    </div>
+
+    <!-- FORM FIELDS — each type stacked vertically so they never crowd -->
+    <div id="fields-eat">
+      <div class="field-row">
+        <label class="form-label">⏰ 時間</label>
+        <input type="time" class="form-input" id="timeInput-eat">
+      </div>
+      <div class="field-row">
+        <label class="form-label">🔥 熱量 (kcal)</label>
+        <input type="number" class="form-input" id="valInput-eat" placeholder="例：450">
+      </div>
+      <div class="field-row">
+        <label class="form-label">📝 食物備註（選填）</label>
+        <input type="text" class="form-input" id="noteInput-eat" placeholder="例：雞腿便當">
+      </div>
+    </div>
+
+    <div id="fields-milk" class="hidden">
+      <div class="field-row">
+        <label class="form-label">⏰ 時間</label>
+        <input type="time" class="form-input" id="timeInput-milk">
+      </div>
+      <div class="field-row">
+        <label class="form-label">🍼 奶量 (ml)</label>
+        <input type="number" class="form-input" id="valInput-milk" placeholder="例：180">
+      </div>
+    </div>
+
+    <div id="fields-water" class="hidden">
+      <div class="field-row">
+        <label class="form-label">⏰ 時間</label>
+        <input type="time" class="form-input" id="timeInput-water">
+      </div>
+      <div class="field-row">
+        <label class="form-label">💧 水量 (ml)</label>
+        <input type="number" class="form-input" id="valInput-water" placeholder="例：300">
+      </div>
+    </div>
+
+    <div id="fields-fast" class="hidden">
+      <div class="field-row">
+        <label class="form-label">⏰ 開始斷食時間</label>
+        <input type="time" class="form-input" id="timeInput-fast">
+      </div>
+    </div>
+
+    <button class="add-btn" onclick="addEntry()">＋ 新增到日誌</button>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="card">
+    <div class="card-title">📋 今日時間軸</div>
+    <div class="timeline" id="timeline">
+      <div class="empty-timeline"><span class="big-emoji">🌸</span>開始記錄你的美好一天吧！</div>
+    </div>
+  </div>
+
+  <button class="summary-trigger" onclick="showSummary()">🌙 查看今日總結報告</button>
+
+</div><!-- end tab-today -->
+
+<!-- ══════════════════ HISTORY TAB ══════════════════ -->
+<div id="tab-history" class="tab-content hidden">
+
+  <div class="header">
+    <span class="header-emoji">📊</span>
+    <h1>歷史記錄</h1>
+    <p class="header-sub">查看每日成果與整體趨勢</p>
+  </div>
+
+  <!-- DATE PICKER -->
+  <div class="card">
+    <div class="card-title">📅 查看特定日期</div>
+    <div class="field-row">
+      <label class="form-label">選擇日期</label>
+      <input type="date" class="form-input" id="historyDatePicker" oninput="loadHistoryDay()">
+    </div>
+    <div id="historyDayCard" class="hidden">
+      <div class="history-day-grid">
+        <div class="hd-item cal"><div class="hd-val" id="h-calIn">—</div><div class="hd-lbl">攝取 kcal</div></div>
+        <div class="hd-item burn"><div class="hd-val" id="h-burn">—</div><div class="hd-lbl">消耗 kcal</div></div>
+        <div class="hd-item water"><div class="hd-val" id="h-water">—</div><div class="hd-lbl">飲水 ml</div></div>
+        <div class="hd-item milk"><div class="hd-val" id="h-milk">—</div><div class="hd-lbl">奶量 ml</div></div>
+        <div class="hd-item fast"><div class="hd-val" id="h-fast">—</div><div class="hd-lbl">斷食時數</div></div>
+        <div class="hd-item weight"><div class="hd-val" id="h-weight">—</div><div class="hd-lbl">體重 kg</div></div>
+      </div>
+      <div class="hd-verdict" id="h-verdict">—</div>
+    </div>
+    <div id="historyDayEmpty" class="empty-timeline hidden"><span class="big-emoji">🔍</span>這天沒有記錄</div>
+  </div>
+
+  <!-- OVERALL TREND -->
+  <div class="card">
+    <div class="card-title">🌟 整體表現趨勢</div>
+    <div class="trend-legend">
+      <span>😊 熱量赤字＋水分達標</span>
+      <span>😐 部分達標</span>
+      <span>😢 未達標</span>
+    </div>
+    <div class="emoji-calendar" id="emojiCalendar"></div>
+  </div>
+
+  <!-- WEIGHT CHART -->
+  <div class="card">
+    <div class="card-title">⚖️ 體重變化</div>
+    <canvas id="weightChart" height="160"></canvas>
+    <div id="noWeightData" class="empty-timeline hidden"><span class="big-emoji">📈</span>還沒有足夠的體重記錄</div>
+  </div>
+
+  <!-- MILK & FASTING SUMMARY -->
+  <div class="two-col-cards">
+    <div class="card">
+      <div class="card-title">🤱 擠奶累計</div>
+      <div class="big-stat" id="totalMilkAll">—</div>
+      <div class="big-stat-sub">總奶量 (ml)</div>
+      <div class="big-stat" id="totalMilkSessions">—</div>
+      <div class="big-stat-sub">總次數</div>
+    </div>
+    <div class="card">
+      <div class="card-title">⏱️ 斷食累計</div>
+      <div class="big-stat" id="totalFastHrs">—</div>
+      <div class="big-stat-sub">總斷食時數</div>
+      <div class="big-stat" id="avgFastHrs">—</div>
+      <div class="big-stat-sub">平均每日時數</div>
+    </div>
+  </div>
+
+</div><!-- end tab-history -->
+
+<!-- ══════════════════ PHOTO TAB ══════════════════ -->
+<div id="tab-photo" class="tab-content hidden">
+
+  <div class="header">
+    <span class="header-emoji">📷</span>
+    <h1>拍照估卡</h1>
+    <p class="header-sub">上傳食物照片，AI 幫你估算熱量</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📸 上傳食物照片</div>
+    <div class="photo-upload-area" id="photoUploadArea" onclick="document.getElementById('photoFileInput').click()">
+      <div class="photo-placeholder" id="photoPlaceholder">
+        <span style="font-size:2.5rem">🍱</span>
+        <p>點擊上傳食物照片</p>
+        <p style="font-size:0.72rem;color:var(--text-light)">支援 JPG / PNG</p>
+      </div>
+      <img id="photoPreview" class="hidden" style="width:100%;border-radius:12px;max-height:240px;object-fit:cover">
+    </div>
+    <input type="file" id="photoFileInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+
+    <!-- API KEY INPUT -->
+    <div class="field-row" style="margin-top:12px">
+      <label class="form-label">🔑 OpenAI API Key（僅存在本機，不上傳）</label>
+      <input type="password" class="form-input" id="openaiKey" placeholder="sk-...">
+    </div>
+
+    <button class="add-btn" id="analyzeBtn" onclick="analyzePhoto()" style="margin-top:10px" disabled>
+      🔍 分析食物熱量
+    </button>
+
+    <!-- RESULT -->
+    <div id="photoResult" class="hidden">
+      <div class="photo-result-box">
+        <div class="photo-result-title">🤖 AI 分析結果</div>
+        <div id="photoResultText" style="font-size:0.85rem;line-height:1.7;color:var(--text-mid)"></div>
+        <div class="field-row" style="margin-top:10px">
+          <label class="form-label">✏️ 確認熱量 (kcal)</label>
+          <input type="number" class="form-input" id="photoCalConfirm" placeholder="請輸入或修改數值">
+        </div>
+        <div class="field-row">
+          <label class="form-label">⏰ 進食時間</label>
+          <input type="time" class="form-input" id="photoTimeInput">
+        </div>
+        <button class="add-btn" onclick="addPhotoEntry()" style="background:linear-gradient(135deg,var(--mint-deep),#1A9A7E)">
+          ✅ 加入今日日誌
+        </button>
+      </div>
+    </div>
+
+    <!-- NO API KEY INFO -->
+    <div class="info-box" style="margin-top:12px">
+      💡 <strong>沒有 API Key？</strong> 可以前往 <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--rose-deep)">platform.openai.com</a> 申請（使用 GPT-4o Vision）。若不想設定，可手動輸入熱量後直接從「今日」分頁新增。
+    </div>
+  </div>
+
+  <!-- MANUAL FOOD GUIDE -->
+  <div class="card">
+    <div class="card-title">📖 常見食物熱量參考</div>
+    <div class="food-ref-grid">
+      <div class="food-ref-item"><span>🍚</span><div>白飯一碗</div><div class="food-cal">280 kcal</div></div>
+      <div class="food-ref-item"><span>🥚</span><div>水煮蛋</div><div class="food-cal">80 kcal</div></div>
+      <div class="food-ref-item"><span>🐔</span><div>雞胸肉100g</div><div class="food-cal">165 kcal</div></div>
+      <div class="food-ref-item"><span>🐟</span><div>鮭魚100g</div><div class="food-cal">208 kcal</div></div>
+      <div class="food-ref-item"><span>🥦</span><div>花椰菜100g</div><div class="food-cal">34 kcal</div></div>
+      <div class="food-ref-item"><span>🍌</span><div>香蕉一根</div><div class="food-cal">90 kcal</div></div>
+      <div class="food-ref-item"><span>🥛</span><div>全脂牛奶250ml</div><div class="food-cal">150 kcal</div></div>
+      <div class="food-ref-item"><span>🍱</span><div>便當（一般）</div><div class="food-cal">650 kcal</div></div>
+    </div>
+  </div>
+
+</div><!-- end tab-photo -->
+
+<!-- ══════════════════ SUMMARY OVERLAY ══════════════════ -->
+<div class="summary-overlay hidden" id="summaryOverlay">
+  <div class="summary-card">
+    <h2>📋 媽咪一日溫馨總結 ✨</h2>
+    <div id="summaryDate" style="text-align:center;font-size:0.8rem;color:var(--text-mid);margin-bottom:12px"></div>
+    <div class="summary-section cal">
+      <h3>🔥 熱量結算</h3>
+      <div class="summary-row"><span>今日攝取</span><span id="s-calIn">—</span></div>
+      <div class="summary-row"><span>代謝消耗（TDEE）</span><span id="s-bmr">—</span></div>
+      <div class="summary-row"><span>擠奶消耗</span><span id="s-milkBurn">—</span></div>
+      <div class="summary-row"><span>總消耗</span><span id="s-totalBurn">—</span></div>
+      <div class="summary-result" id="s-calResult">—</div>
+      <div class="summary-hint" id="s-calHint">—</div>
+    </div>
+    <div class="summary-section water-s">
+      <h3>💧 水分補給</h3>
+      <div class="summary-row"><span>目標飲水量</span><span id="s-waterGoal">—</span></div>
+      <div class="summary-row"><span>實際飲水量</span><span id="s-waterIn">—</span></div>
+      <div class="summary-result" id="s-waterResult">—</div>
+      <div class="summary-hint" id="s-waterHint">—</div>
+    </div>
+    <div class="summary-section fast-s">
+      <h3>⏱️ 斷食狀態</h3>
+      <div class="summary-row"><span>斷食開始</span><span id="s-fastStart">—</span></div>
+      <div class="summary-row"><span>累計斷食</span><span id="s-fastDur">—</span></div>
+      <div class="summary-hint" id="s-fastHint">—</div>
+    </div>
+    <div id="warningBox"></div>
+    <button class="close-btn" onclick="closeSummary()">✨ 繼續加油，媽咪！</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast hidden" id="toast"></div>
+
+<script>
+// ════════════════════════════════
+//  媽咪能量日誌 — app.js
+// ════════════════════════════════
+
+// ── STORAGE HELPERS ──
+const todayKey = () => new Date().toISOString().slice(0, 10);
+
+function getDayData(dateStr) {
+  return JSON.parse(localStorage.getItem('mama_' + dateStr) || 'null');
+}
+function saveDayData(dateStr, data) {
+  localStorage.setItem('mama_' + dateStr, JSON.stringify(data));
+}
+function getAllDates() {
+  return Object.keys(localStorage)
+    .filter(k => k.startsWith('mama_'))
+    .map(k => k.replace('mama_', ''))
+    .sort();
+}
+
+// ── TODAY STATE ──
+let todayData = getDayData(todayKey()) || { entries: [], weight: 70.5, height: 162 };
+let currentType = 'eat';
+let fastingStartTime = null;
+let fastTimerInterval = null;
+
+// ── INIT ──
+window.onload = () => {
+  updateDateBadge();
+  setDefaultTime();
+  document.getElementById('weightInput').value = todayData.weight || 70.5;
+  document.getElementById('heightInput').value = todayData.height || 162;
+  recalculate();
+  renderTimeline();
+  updateDashboard();
+
+  const lastFast = todayData.entries.filter(e => e.type === 'fast').pop();
+  if (lastFast) startFastingTimer(lastFast.time);
+
+  scheduleAutoSummary();
+  loadHistoryDefault();
+};
+
+// ── TAB SWITCHING ──
+function switchTab(tab) {
+  ['today', 'history', 'photo'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
+    document.getElementById('nav-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'history') renderHistory();
+}
+
+// ── DATE / TIME ──
+function updateDateBadge() {
+  const now = new Date();
+  const days = ['日','一','二','三','四','五','六'];
+  document.getElementById('dateBadge').textContent =
+    `📅 ${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（週${days[now.getDay()]}）`;
+  const sd = document.getElementById('summaryDate');
+  if (sd) sd.textContent = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
+}
+
+function setDefaultTime() {
+  const now = new Date();
+  const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  ['eat','milk','water','fast'].forEach(type => {
+    const el = document.getElementById(`timeInput-${type}`);
+    if (el) el.value = t;
+  });
+}
+
+// ── CALCULATIONS ──
+function getMifflinBMR(weight, height, age = 30) {
+  return Math.round(10 * weight + 6.25 * height - 5 * age - 161);
+}
+
+function onWeightChange() {
+  todayData.weight = parseFloat(document.getElementById('weightInput').value) || 70.5;
+  saveDayData(todayKey(), todayData);
+  recalculate();
+}
+
+function recalculate() {
+  const w = parseFloat(document.getElementById('weightInput').value) || 70.5;
+  const h = parseFloat(document.getElementById('heightInput').value) || 162;
+  todayData.height = h;
+
+  const bmr = getMifflinBMR(w, h);
+  const tdee = Math.round(bmr * 1.2);
+  const milkTotal = todayData.entries.filter(e => e.type === 'milk').reduce((s, e) => s + e.value, 0);
+  const waterGoal = Math.round(w * 35 + milkTotal);
+
+  document.getElementById('bmrVal').textContent = bmr + ' kcal';
+  document.getElementById('tdeeVal').textContent = tdee + ' kcal';
+  document.getElementById('waterGoalVal').textContent = waterGoal + ' ml';
+  document.getElementById('goalDiff').textContent = Math.max(0, w - 55).toFixed(1);
+  document.getElementById('waterGoalSmall').textContent = `目標 ${waterGoal} ml`;
+
+  updateDashboard();
+}
+
+function updateDashboard() {
+  const w = parseFloat(document.getElementById('weightInput').value) || 70.5;
+  const h = parseFloat(document.getElementById('heightInput').value) || 162;
+  const bmr = getMifflinBMR(w, h);
+  const tdee = Math.round(bmr * 1.2);
+
+  const calIn = todayData.entries.filter(e => e.type === 'eat').reduce((s, e) => s + e.value, 0);
+  const milkTotal = todayData.entries.filter(e => e.type === 'milk').reduce((s, e) => s + e.value, 0);
+  const waterIn = todayData.entries.filter(e => e.type === 'water').reduce((s, e) => s + e.value, 0);
+  const milkBurn = Math.round(milkTotal * 0.8);
+  const totalBurn = tdee + milkBurn;
+  const waterGoal = Math.round(w * 35 + milkTotal);
+  const deficit = calIn - totalBurn;
+
+  document.getElementById('totalCalIn').textContent = calIn.toLocaleString();
+  document.getElementById('totalWater').textContent = waterIn.toLocaleString();
+  document.getElementById('totalMilk').textContent = milkTotal.toLocaleString();
+  document.getElementById('milkBurn').textContent = `消耗 ${milkBurn} kcal`;
+
+  const calPct = Math.min(Math.round(calIn / 2000 * 100), 100);
+  const waterPct = Math.min(Math.round(waterIn / Math.max(waterGoal, 1) * 100), 100);
+  const deficitPct = Math.min(Math.abs(deficit) / 500 * 100, 100);
+
+  document.getElementById('calBar').style.width = calPct + '%';
+  document.getElementById('waterBar').style.width = waterPct + '%';
+  document.getElementById('deficitBar').style.width = deficitPct + '%';
+  document.getElementById('calPct').textContent = calIn + ' kcal';
+  document.getElementById('waterPct').textContent = waterPct + '%';
+
+  if (deficit < 0) {
+    document.getElementById('deficitLabel').textContent = '赤字 💪';
+    document.getElementById('deficitText').textContent = `赤字 ${Math.abs(deficit)} kcal`;
+    document.getElementById('deficitBar').style.background = 'linear-gradient(90deg,#3DBFA0,#1A9A7E)';
+  } else if (deficit > 0) {
+    document.getElementById('deficitLabel').textContent = '盈餘 📈';
+    document.getElementById('deficitText').textContent = `盈餘 +${deficit} kcal`;
+    document.getElementById('deficitBar').style.background = 'linear-gradient(90deg,#FF8FA3,#FF5C8A)';
+  } else {
+    document.getElementById('deficitLabel').textContent = '完美平衡 ⚖️';
+    document.getElementById('deficitText').textContent = '';
+  }
+}
+
+// ── TYPE SELECTOR ──
+const typeClasses = { eat:'active-eat', milk:'active-milk', water:'active-water', fast:'active-fast' };
+
+function selectType(type) {
+  currentType = type;
+  ['eat','milk','water','fast'].forEach(t => {
+    document.getElementById(`btn-${t}`).className = 'type-btn';
+    document.getElementById(`fields-${t}`).classList.add('hidden');
+  });
+  document.getElementById(`btn-${type}`).classList.add(typeClasses[type]);
+  document.getElementById(`fields-${type}`).classList.remove('hidden');
+}
+
+// ── ADD ENTRY ──
+function addEntry() {
+  const time = document.getElementById(`timeInput-${currentType}`).value;
+  if (!time) { showToast('⚠️ 請填寫時間！'); return; }
+
+  let value = 0;
+  let note = '';
+  if (currentType !== 'fast') {
+    value = parseFloat(document.getElementById(`valInput-${currentType}`).value);
+    if (!value || value <= 0) { showToast('⚠️ 請填寫數量！'); return; }
+  }
+  if (currentType === 'eat') {
+    note = document.getElementById('noteInput-eat').value.trim();
+  }
+
+  const labels = { eat:'進食', milk:'擠奶', water:'喝水', fast:'開始斷食' };
+  const icons  = { eat:'🍽️', milk:'🤱', water:'💧', fast:'⏱️' };
+  const units  = { eat:'kcal', milk:'ml', water:'ml', fast:'' };
+
+  todayData.entries.push({ id: Date.now(), type: currentType, time, value, note,
+    label: labels[currentType], icon: icons[currentType], unit: units[currentType] });
+  todayData.entries.sort((a, b) => a.time.localeCompare(b.time));
+  saveDayData(todayKey(), todayData);
+
+  if (currentType === 'fast') startFastingTimer(time);
+  if (currentType !== 'fast') document.getElementById(`valInput-${currentType}`).value = '';
+  if (currentType === 'eat') document.getElementById('noteInput-eat').value = '';
+
+  renderTimeline();
+  recalculate();
+  updateDashboard();
+  showToast('✅ 已新增到日誌！');
+}
+
+// ── FASTING ──
+function startFastingTimer(startTime) {
+  if (fastTimerInterval) clearInterval(fastTimerInterval);
+  fastingStartTime = startTime;
+  document.getElementById('fastingBanner').classList.remove('hidden');
+  updateFastTimer();
+  fastTimerInterval = setInterval(updateFastTimer, 60000);
+}
+
+function updateFastTimer() {
+  if (!fastingStartTime) return;
+  const now = new Date();
+  const [sh, sm] = fastingStartTime.split(':').map(Number);
+  const start = new Date();
+  start.setHours(sh, sm, 0, 0);
+  if (start > now) start.setDate(start.getDate() - 1);
+  const diffMin = Math.floor((now - start) / 60000);
+  const hours = Math.floor(diffMin / 60);
+  const mins = diffMin % 60;
+  document.getElementById('fastHours').textContent = hours + 'h';
+  document.getElementById('fastStart').textContent = `從 ${fastingStartTime} 開始`;
+  document.getElementById('fastTimerDisplay').textContent = `${hours}h ${mins}m`;
+}
+
+// ── TIMELINE ──
+function renderTimeline() {
+  const tl = document.getElementById('timeline');
+  if (!todayData.entries.length) {
+    tl.innerHTML = `<div class="empty-timeline"><span class="big-emoji">🌸</span>開始記錄你的美好一天吧！</div>`;
+    return;
+  }
+  tl.innerHTML = todayData.entries.map(e => {
+    const val = e.type === 'fast' ? '斷食開始 🌙'
+      : `${e.value.toLocaleString()} ${e.unit}${e.note ? ` · ${e.note}` : ''}`;
+    const sub = e.type === 'milk' ? `（消耗 ${Math.round(e.value * 0.8)} kcal）` : '';
+    return `<div class="timeline-item">
+      <div class="tl-time">${e.time}</div>
+      <div class="tl-dot ${e.type}">${e.icon}</div>
+      <div class="tl-desc">
+        <div class="tl-title">${e.label}</div>
+        <div class="tl-value">${val}${sub}</div>
+      </div>
+      <button class="tl-delete" onclick="deleteEntry(${e.id})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function deleteEntry(id) {
+  todayData.entries = todayData.entries.filter(e => e.id !== id);
+  const remainFast = todayData.entries.filter(e => e.type === 'fast').pop();
+  if (!remainFast) {
+    fastingStartTime = null;
+    if (fastTimerInterval) clearInterval(fastTimerInterval);
+    document.getElementById('fastingBanner').classList.add('hidden');
+    document.getElementById('fastHours').textContent = '—';
+    document.getElementById('fastStart').textContent = '尚未開始';
+  }
+  saveDayData(todayKey(), todayData);
+  renderTimeline(); recalculate(); updateDashboard();
+}
+
+// ── SUMMARY ──
+function showSummary() {
+  const w = parseFloat(document.getElementById('weightInput').value) || 70.5;
+  const h = parseFloat(document.getElementById('heightInput').value) || 162;
+  const bmr = getMifflinBMR(w, h);
+  const tdee = Math.round(bmr * 1.2);
+  const calIn = todayData.entries.filter(e => e.type === 'eat').reduce((s, e) => s + e.value, 0);
+  const milkTotal = todayData.entries.filter(e => e.type === 'milk').reduce((s, e) => s + e.value, 0);
+  const waterIn = todayData.entries.filter(e => e.type === 'water').reduce((s, e) => s + e.value, 0);
+  const milkBurn = Math.round(milkTotal * 0.8);
+  const totalBurn = tdee + milkBurn;
+  const waterGoal = Math.round(w * 35 + milkTotal);
+  const deficit = calIn - totalBurn;
+  const waterPct = Math.round(waterIn / Math.max(waterGoal, 1) * 100);
+
+  document.getElementById('s-calIn').textContent = `${calIn.toLocaleString()} kcal`;
+  document.getElementById('s-bmr').textContent = `${tdee.toLocaleString()} kcal`;
+  document.getElementById('s-milkBurn').textContent = `${milkBurn} kcal`;
+  document.getElementById('s-totalBurn').textContent = `${totalBurn.toLocaleString()} kcal`;
+  document.getElementById('s-waterGoal').textContent = `${waterGoal.toLocaleString()} ml`;
+  document.getElementById('s-waterIn').textContent = `${waterIn.toLocaleString()} ml`;
+
+  document.getElementById('s-calResult').textContent = deficit < 0
+    ? `👉 熱量赤字 ${deficit} kcal` : `👉 熱量盈餘 +${deficit} kcal`;
+  document.getElementById('s-calHint').textContent = deficit < 0
+    ? (Math.abs(deficit) <= 500 ? '完美的健康減脂區間！穩定瘦身中 💪' : '赤字偏大，記得補充蛋白質維持奶量 🤍')
+    : '今天熱量充足，有足夠能量產奶 🍼';
+
+  document.getElementById('s-waterResult').textContent = waterPct >= 100 ? '💧 水分達標 🎉' : `💧 達成 ${waterPct}%`;
+  document.getElementById('s-waterHint').textContent = waterPct >= 100
+    ? '充足水分對明天的奶量非常有幫助 🌟'
+    : (waterPct < 80 ? `睡前再補 ${Math.round((waterGoal - waterIn) / 100) * 100} ml 溫水，避免明天塞奶喔！` : '快到了！睡前再補一杯水就達標 🥛');
+
+  const lastFast = todayData.entries.filter(e => e.type === 'fast').pop();
+  if (lastFast) {
+    const [sh, sm] = lastFast.time.split(':').map(Number);
+    const start = new Date(); start.setHours(sh, sm, 0, 0);
+    const end = new Date(); end.setHours(23, 59, 0, 0);
+    document.getElementById('s-fastStart').textContent = lastFast.time;
+    document.getElementById('s-fastDur').textContent = `${((end - start) / 3600000).toFixed(1)} 小時`;
+    document.getElementById('s-fastHint').textContent = '睡眠時間也是燃脂黃金期！🌙';
+  } else {
+    document.getElementById('s-fastStart').textContent = '今日尚未斷食';
+    document.getElementById('s-fastDur').textContent = '—';
+    document.getElementById('s-fastHint').textContent = '明天可以試試輕斷食 🌟';
+  }
+
+  let warnings = '';
+  if (calIn > 0 && calIn < 1500)
+    warnings += `<div class="warning-box">⚠️ 媽咪今天吃得太少囉！熱量不足可能讓奶量減少，明天記得多補充蛋白質。</div>`;
+  if (waterIn > 0 && waterPct < 80)
+    warnings += `<div class="warning-box" style="margin-top:6px">💧 今天水分有點不夠，睡前再補 100ml 溫水，避免明天塞奶喔！</div>`;
+  document.getElementById('warningBox').innerHTML = warnings;
+
+  document.getElementById('summaryOverlay').classList.remove('hidden');
+}
+
+function closeSummary() {
+  document.getElementById('summaryOverlay').classList.add('hidden');
+}
+document.getElementById('summaryOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeSummary();
+});
+
+// ── AUTO SUMMARY AT MIDNIGHT ──
+function scheduleAutoSummary() {
+  const now = new Date();
+  const midnight = new Date(); midnight.setHours(24, 0, 0, 0);
+  setTimeout(showSummary, midnight - now);
+}
+
+// ── TOAST ──
+let toastTimeout;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.add('hidden'), 2000);
+}
+
+// ══════════════════════════════════
+//  HISTORY TAB
+// ══════════════════════════════════
+function loadHistoryDefault() {
+  const dp = document.getElementById('historyDatePicker');
+  if (dp) dp.value = todayKey();
+}
+
+function loadHistoryDay() {
+  const dateStr = document.getElementById('historyDatePicker').value;
+  const data = getDayData(dateStr);
+  const card = document.getElementById('historyDayCard');
+  const empty = document.getElementById('historyDayEmpty');
+
+  if (!data) {
+    card.classList.add('hidden');
+    empty.classList.remove('hidden');
+    return;
+  }
+  card.classList.remove('hidden');
+  empty.classList.add('hidden');
+
+  const w = data.weight || 70.5;
+  const h = data.height || 162;
+  const bmr = getMifflinBMR(w, h);
+  const tdee = Math.round(bmr * 1.2);
+  const calIn = data.entries.filter(e => e.type === 'eat').reduce((s, e) => s + e.value, 0);
+  const milkTotal = data.entries.filter(e => e.type === 'milk').reduce((s, e) => s + e.value, 0);
+  const waterIn = data.entries.filter(e => e.type === 'water').reduce((s, e) => s + e.value, 0);
+  const milkBurn = Math.round(milkTotal * 0.8);
+  const totalBurn = tdee + milkBurn;
+  const waterGoal = Math.round(w * 35 + milkTotal);
+  const waterPct = Math.round(waterIn / Math.max(waterGoal, 1) * 100);
+  const deficit = calIn - totalBurn;
+
+  // Fasting hours
+  const fastEntry = data.entries.filter(e => e.type === 'fast').pop();
+  let fastHrs = '—';
+  if (fastEntry) {
+    const [sh, sm] = fastEntry.time.split(':').map(Number);
+    fastHrs = ((24 * 60 - sh * 60 - sm) / 60).toFixed(1) + 'h';
+  }
+
+  document.getElementById('h-calIn').textContent = calIn ? calIn.toLocaleString() + ' kcal' : '—';
+  document.getElementById('h-burn').textContent = totalBurn.toLocaleString() + ' kcal';
+  document.getElementById('h-water').textContent = waterIn ? waterIn + ' ml' : '—';
+  document.getElementById('h-milk').textContent = milkTotal ? milkTotal + ' ml' : '—';
+  document.getElementById('h-fast').textContent = fastHrs;
+  document.getElementById('h-weight').textContent = w + ' kg';
+
+  // Verdict
+  const goodCal = deficit <= 0 && deficit >= -600;
+  const goodWater = waterPct >= 80;
+  let verdict, bg;
+  if (goodCal && goodWater) { verdict = '😊 表現優秀！完美的一天'; bg = '#C8F0E8'; }
+  else if (goodCal || goodWater) { verdict = '😐 繼續努力！快到目標了'; bg = '#FFF0C8'; }
+  else { verdict = '😢 不用氣餒！明天繼續加油'; bg = '#FFD6E0'; }
+  const vEl = document.getElementById('h-verdict');
+  vEl.textContent = verdict;
+  vEl.style.background = bg;
+}
+
+function renderHistory() {
+  renderEmojiCalendar();
+  renderWeightChart();
+  renderMilkFastStats();
+}
+
+function renderEmojiCalendar() {
+  const dates = getAllDates();
+  const cal = document.getElementById('emojiCalendar');
+  if (!dates.length) {
+    cal.innerHTML = '<div style="font-size:0.8rem;color:var(--text-light);padding:10px">還沒有歷史記錄 🌱</div>';
+    return;
+  }
+  cal.innerHTML = dates.map(d => {
+    const data = getDayData(d);
+    const emoji = getDayEmoji(data, d);
+    const label = d.slice(5); // MM-DD
+    return `<div class="emoji-day" title="${d}" onclick="jumpToDate('${d}')">
+      ${emoji}<div class="emoji-day-label">${label}</div>
+    </div>`;
+  }).join('');
+}
+
+function getDayEmoji(data, dateStr) {
+  if (!data || !data.entries.length) return '⬜';
+  const w = data.weight || 70.5;
+  const h = data.height || 162;
+  const bmr = getMifflinBMR(w, h);
+  const tdee = Math.round(bmr * 1.2);
+  const calIn = data.entries.filter(e => e.type === 'eat').reduce((s, e) => s + e.value, 0);
+  const milkTotal = data.entries.filter(e => e.type === 'milk').reduce((s, e) => s + e.value, 0);
+  const waterIn = data.entries.filter(e => e.type === 'water').reduce((s, e) => s + e.value, 0);
+  const milkBurn = Math.round(milkTotal * 0.8);
+  const totalBurn = tdee + milkBurn;
+  const waterGoal = Math.round(w * 35 + milkTotal);
+  const waterPct = Math.round(waterIn / Math.max(waterGoal, 1) * 100);
+  const deficit = calIn - totalBurn;
+  const goodCal = deficit <= 0 && deficit >= -600 && calIn >= 1500;
+  const goodWater = waterPct >= 80;
+  if (goodCal && goodWater) return '😊';
+  if (goodCal || goodWater) return '😐';
+  return '😢';
+}
+
+function jumpToDate(d) {
+  document.getElementById('historyDatePicker').value = d;
+  loadHistoryDay();
+}
+
+function renderWeightChart() {
+  const dates = getAllDates();
+  const weights = dates.map(d => {
+    const data = getDayData(d);
+    return data ? { d, w: data.weight || null } : null;
+  }).filter(x => x && x.w);
+
+  const noData = document.getElementById('noWeightData');
+  const canvas = document.getElementById('weightChart');
+
+  if (weights.length < 2) {
+    noData.classList.remove('hidden');
+    canvas.classList.add('hidden');
+    return;
+  }
+  noData.classList.add('hidden');
+  canvas.classList.remove('hidden');
+
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 300;
+  canvas.width = W;
+  canvas.height = 160;
+
+  const vals = weights.map(x => x.w);
+  const minW = Math.min(...vals) - 1;
+  const maxW = Math.max(...vals) + 1;
+  const n = weights.length;
+
+  ctx.clearRect(0, 0, W, 160);
+
+  // Grid lines
+  ctx.strokeStyle = '#EEE';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = 20 + (i / 4) * 120;
+    ctx.beginPath(); ctx.moveTo(30, y); ctx.lineTo(W - 10, y); ctx.stroke();
+    const lbl = (maxW - (i / 4) * (maxW - minW)).toFixed(1);
+    ctx.fillStyle = '#B8A0AA';
+    ctx.font = '10px Nunito';
+    ctx.fillText(lbl, 2, y + 4);
+  }
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = '#E05C7A';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  weights.forEach((pt, i) => {
+    const x = 30 + (i / (n - 1)) * (W - 40);
+    const y = 20 + ((maxW - pt.w) / (maxW - minW)) * 120;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Dots + labels
+  weights.forEach((pt, i) => {
+    const x = 30 + (i / (n - 1)) * (W - 40);
+    const y = 20 + ((maxW - pt.w) / (maxW - minW)) * 120;
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#E05C7A';
+    ctx.fill();
+    ctx.fillStyle = '#7A5C68';
+    ctx.font = '9px Nunito';
+    ctx.fillText(pt.d.slice(5), x - 8, 155);
+  });
+}
+
+function renderMilkFastStats() {
+  const dates = getAllDates();
+  let totalMilk = 0, totalSessions = 0, totalFastMins = 0, fastDays = 0;
+
+  dates.forEach(d => {
+    const data = getDayData(d);
+    if (!data) return;
+    const milkEntries = data.entries.filter(e => e.type === 'milk');
+    totalMilk += milkEntries.reduce((s, e) => s + e.value, 0);
+    totalSessions += milkEntries.length;
+    const lastFast = data.entries.filter(e => e.type === 'fast').pop();
+    if (lastFast) {
+      const [sh, sm] = lastFast.time.split(':').map(Number);
+      totalFastMins += (24 * 60 - sh * 60 - sm);
+      fastDays++;
+    }
+  });
+
+  document.getElementById('totalMilkAll').textContent = totalMilk.toLocaleString();
+  document.getElementById('totalMilkSessions').textContent = totalSessions;
+  document.getElementById('totalFastHrs').textContent = (totalFastMins / 60).toFixed(1);
+  document.getElementById('avgFastHrs').textContent = fastDays > 0 ? (totalFastMins / fastDays / 60).toFixed(1) : '—';
+}
+
+// ══════════════════════════════════
+//  PHOTO / AI CAL ESTIMATION
+// ══════════════════════════════════
+let photoBase64 = null;
+
+function handlePhotoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    photoBase64 = e.target.result;
+    document.getElementById('photoPreview').src = photoBase64;
+    document.getElementById('photoPreview').classList.remove('hidden');
+    document.getElementById('photoPlaceholder').classList.add('hidden');
+    document.getElementById('analyzeBtn').disabled = false;
+    document.getElementById('photoResult').classList.add('hidden');
+  };
+  reader.readAsDataURL(file);
+}
+
+async function analyzePhoto() {
+  const apiKey = document.getElementById('openaiKey').value.trim();
+  if (!apiKey) {
+    showToast('⚠️ 請先輸入 OpenAI API Key');
+    return;
+  }
+  if (!photoBase64) {
+    showToast('⚠️ 請先上傳食物照片');
+    return;
+  }
+
+  const btn = document.getElementById('analyzeBtn');
+  btn.textContent = '🔍 AI 分析中...';
+  btn.disabled = true;
+
+  try {
+    const base64Data = photoBase64.split(',')[1];
+    const mimeType = photoBase64.split(';')[0].split(':')[1];
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: '請分析這張食物照片，用繁體中文回答：\n1. 識別照片中的食物名稱\n2. 估算每樣食物的份量（克/毫升）\n3. 估算各食物的熱量（大卡）\n4. 給出總熱量估算\n\n請用這個格式回答：\n食物：[食物名稱]\n份量：[估算份量]\n熱量：[大卡數]\n---\n總熱量：[總大卡數] kcal\n\n注意：這是哺乳媽媽使用的追蹤工具，請盡量給出合理的估算範圍。'
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:${mimeType};base64,${base64Data}`,
+                detail: 'low'
+              }
+            }
+          ]
+        }],
+        max_tokens: 500
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || '分析失敗');
+    }
+
+    const data = await response.json();
+    const text = data.choices[0].message.content;
+
+    // Extract total calories
+    const match = text.match(/總熱量[：:]\s*(\d+)/);
+    const totalCal = match ? parseInt(match[1]) : '';
+
+    document.getElementById('photoResultText').innerHTML = text.replace(/\n/g, '<br>');
+    document.getElementById('photoCalConfirm').value = totalCal;
+
+    const now = new Date();
+    document.getElementById('photoTimeInput').value =
+      `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+    document.getElementById('photoResult').classList.remove('hidden');
+
+  } catch (err) {
+    showToast('❌ 分析失敗：' + err.message);
+  } finally {
+    btn.textContent = '🔍 分析食物熱量';
+    btn.disabled = false;
+  }
+}
+
+function addPhotoEntry() {
+  const cal = parseFloat(document.getElementById('photoCalConfirm').value);
+  const time = document.getElementById('photoTimeInput').value;
+  if (!cal || cal <= 0) { showToast('⚠️ 請輸入熱量'); return; }
+  if (!time) { showToast('⚠️ 請輸入時間'); return; }
+
+  todayData.entries.push({
+    id: Date.now(), type: 'eat', time, value: cal,
+    note: '📷 拍照估算', label: '進食', icon: '🍽️', unit: 'kcal'
+  });
+  todayData.entries.sort((a, b) => a.time.localeCompare(b.time));
+  saveDayData(todayKey(), todayData);
+
+  renderTimeline(); recalculate(); updateDashboard();
+  showToast('✅ 已加入今日日誌！');
+
+  // Reset photo tab
+  document.getElementById('photoResult').classList.add('hidden');
+  document.getElementById('photoPreview').classList.add('hidden');
+  document.getElementById('photoPlaceholder').classList.remove('hidden');
+  document.getElementById('analyzeBtn').disabled = true;
+  document.getElementById('photoFileInput').value = '';
+  photoBase64 = null;
+
+  switchTab('today');
+}
+
+</script>
+</body>
+</html>
