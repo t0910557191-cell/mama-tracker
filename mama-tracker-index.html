@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>🍼 媽咪能量日誌</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700&display=swap');
@@ -28,6 +28,10 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  overscroll-behavior-y: none;
+}
 
 body {
   font-family: 'Noto Sans TC', sans-serif;
@@ -314,10 +318,13 @@ body {
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  padding: 8px 0;
+  padding: 10px 0;
   border-bottom: 1px dashed rgba(0,0,0,0.07);
 }
 .timeline-item:last-child { border-bottom: none; }
+
+/* The card holding the timeline grows freely with content */
+#timeline { overflow: visible; }
 .tl-time {
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
@@ -340,12 +347,14 @@ body {
 .tl-desc { flex: 1; }
 .tl-title { font-size: 0.82rem; font-weight: 700; color: var(--text-dark); }
 .tl-value { font-size: 0.72rem; color: var(--text-mid); margin-top: 1px; }
-.tl-delete {
+.tl-actions { display: flex; gap: 4px; flex-shrink: 0; align-items: center; }
+.tl-edit, .tl-delete {
   background: none; border: none; cursor: pointer;
-  font-size: 0.75rem; color: var(--text-light);
-  padding: 4px; border-radius: 6px; transition: all 0.2s;
+  font-size: 0.85rem; padding: 5px 6px; border-radius: 8px; transition: all 0.2s;
+  line-height: 1;
 }
-.tl-delete:hover { background: #FFE0E0; color: var(--rose-deep); }
+.tl-edit:hover  { background: var(--lavender); }
+.tl-delete:hover { background: #FFE0E0; }
 .empty-timeline { text-align: center; padding: 20px; color: var(--text-light); font-size: 0.85rem; }
 .big-emoji { font-size: 2rem; display: block; margin-bottom: 6px; }
 
@@ -942,6 +951,32 @@ body {
   </div>
 </div>
 
+<!-- EDIT ENTRY OVERLAY -->
+<div class="summary-overlay hidden" id="editOverlay">
+  <div class="summary-card" style="max-width:340px">
+    <h2 style="font-size:1rem;margin-bottom:16px">✏️ 修改紀錄</h2>
+    <input type="hidden" id="editEntryId">
+
+    <div class="field-row">
+      <label class="form-label">⏰ 時間</label>
+      <input type="time" class="form-input" id="editTime">
+    </div>
+    <div class="field-row" id="editValueRow">
+      <label class="form-label" id="editValueLabel">數值</label>
+      <input type="number" class="form-input" id="editValue" min="0">
+    </div>
+    <div class="field-row" id="editNoteRow">
+      <label class="form-label">📝 備註</label>
+      <input type="text" class="form-input" id="editNote" placeholder="食物名稱（選填）">
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="add-btn" onclick="saveEdit()" style="flex:1">💾 儲存</button>
+      <button class="close-btn" onclick="closeEdit()" style="flex:0.5;margin-top:0;background:var(--text-light)">取消</button>
+    </div>
+  </div>
+</div>
+
 <!-- CONFIRM OVERLAY -->
 <div class="summary-overlay hidden" id="confirmOverlay">
   <div class="summary-card" style="max-width:320px">
@@ -1172,12 +1207,16 @@ function renderTimeline() {
       <div class="tl-time">${e.time}</div>
       <div class="tl-dot ${e.type}">${e.icon}</div>
       <div class="tl-desc"><div class="tl-title">${e.label}</div><div class="tl-value">${val}${sub}</div></div>
-      <button class="tl-delete" onclick="deleteEntry(${e.id})">✕</button>
+      <div class="tl-actions">
+        <button class="tl-edit" onclick="openEdit(${e.id})" title="修改">✏️</button>
+        <button class="tl-delete" onclick="deleteEntry(${e.id})" title="刪除">🗑️</button>
+      </div>
     </div>`;
   }).join('');
 }
 
 function deleteEntry(id) {
+  if (!confirm('確定要刪除這筆紀錄嗎？')) return;
   todayData.entries = todayData.entries.filter(e => e.id !== id);
   const remainFast = todayData.entries.filter(e => e.type === 'fast').pop();
   if (!remainFast) {
@@ -1189,7 +1228,70 @@ function deleteEntry(id) {
   }
   saveDayData(todayKey(), todayData);
   renderTimeline(); recalculate(); updateDashboard();
+  showToast('🗑️ 已刪除');
 }
+
+// ── EDIT ENTRY ──
+function openEdit(id) {
+  const e = todayData.entries.find(x => x.id === id);
+  if (!e) return;
+
+  document.getElementById('editEntryId').value = id;
+  document.getElementById('editTime').value = e.time;
+
+  const valueRow = document.getElementById('editValueRow');
+  const noteRow  = document.getElementById('editNoteRow');
+  const valLabel = document.getElementById('editValueLabel');
+
+  if (e.type === 'fast') {
+    valueRow.classList.add('hidden');
+    noteRow.classList.add('hidden');
+  } else {
+    valueRow.classList.remove('hidden');
+    document.getElementById('editValue').value = e.value;
+    const labelMap = { eat:'🔥 熱量 (kcal)', milk:'🍼 奶量 (ml)', water:'💧 水量 (ml)' };
+    valLabel.textContent = labelMap[e.type] || '數值';
+    if (e.type === 'eat') {
+      noteRow.classList.remove('hidden');
+      document.getElementById('editNote').value = e.note || '';
+    } else {
+      noteRow.classList.add('hidden');
+    }
+  }
+
+  document.getElementById('editOverlay').classList.remove('hidden');
+}
+
+function saveEdit() {
+  const id = parseInt(document.getElementById('editEntryId').value);
+  const e = todayData.entries.find(x => x.id === id);
+  if (!e) return;
+
+  const newTime = document.getElementById('editTime').value;
+  if (!newTime) { showToast('⚠️ 請填寫時間'); return; }
+
+  e.time = newTime;
+
+  if (e.type !== 'fast') {
+    const newVal = parseFloat(document.getElementById('editValue').value);
+    if (!newVal || newVal <= 0) { showToast('⚠️ 請填寫正確數值'); return; }
+    e.value = newVal;
+    if (e.type === 'eat') e.note = document.getElementById('editNote').value.trim();
+  }
+
+  todayData.entries.sort((a,b) => a.time.localeCompare(b.time));
+  saveDayData(todayKey(), todayData);
+  closeEdit();
+  renderTimeline(); recalculate(); updateDashboard();
+  showToast('✅ 已儲存修改！');
+}
+
+function closeEdit() {
+  document.getElementById('editOverlay').classList.add('hidden');
+}
+document.getElementById('editOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeEdit();
+});
 
 // ── SUMMARY ──
 function showSummary() {
