@@ -555,14 +555,50 @@ body::before, body::after { display: none; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--blush); border-radius: 10px; }
 
+/* ── POOP ── */
+.type-btn.active-poop { border-color: #A0522D; background: #FFF3E0; color: #7B3A10; }
+.tl-dot.poop { background: #FFE0B0; }
+.type-selector { grid-template-columns: repeat(5,1fr); }
+
+.poop-reminder {
+  margin-top: 8px;
+  background: #FFF3E0;
+  border: 2px solid #FFB347;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: var(--fs-sm);
+  color: #7B3A10;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ── POOP CARD ── */
+.poop-card { background: linear-gradient(135deg, #FFF8F0, var(--warm-white)); border-color: rgba(160,82,45,0.2); }
+.poop-add-btn {
+  width: 100%; padding: 13px; border: 2px solid #A0522D; border-radius: 14px;
+  background: linear-gradient(135deg, #D2691E, #A0522D); color: white;
+  font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-lg);
+  cursor: pointer; box-shadow: 3px 3px 0 rgba(160,82,45,0.2); transition: all 0.15s;
+}
+.poop-add-btn:hover  { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(160,82,45,0.2); }
+.poop-add-btn:active { transform: translate(1px,1px); box-shadow: none; }
+
+.poop-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 0; border-bottom: 1.5px dashed rgba(160,82,45,0.12);
+}
+.poop-row:last-child { border-bottom: none; }
+.poop-time { font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-body); color: var(--text-light); min-width: 40px; }
+.poop-note { flex: 1; font-size: var(--fs-sm); color: var(--text-mid); }
+
 </style>
 </head>
 <body>
 
 <div class="nav-bar">
-  <button class="nav-btn active" onclick="switchTab('today')" id="nav-today">🏠 今日</button>
-  <button class="nav-btn" onclick="switchTab('history')" id="nav-history">📊 歷史</button>
-  <button class="nav-btn" onclick="switchTab('sync')" id="nav-sync">☁️ 同步</button>
+  <button class="nav-btn active" onclick="switchTab('today')" id="nav-today">今日</button>
+  <button class="nav-btn" onclick="switchTab('history')" id="nav-history">歷史</button>
+  <button class="nav-btn" onclick="switchTab('sync')" id="nav-sync">同步</button>
 </div>
 
 <!-- ══════ TODAY ══════ -->
@@ -647,6 +683,23 @@ body::before, body::after { display: none; }
     </div>
   </div>
 
+  <!-- POOP CARD — independent log -->
+  <div class="card poop-card">
+    <div class="card-title">💩 便便紀錄</div>
+    <div class="field-row">
+      <label class="form-label">⏰ 時間（可修改）</label>
+      <input type="time" class="form-input" id="poopTimeInput">
+    </div>
+    <div class="field-row">
+      <label class="form-label">📝 備註（選填）</label>
+      <input type="text" class="form-input" id="poopNoteInput" placeholder="例：正常、偏硬、偏軟">
+    </div>
+    <button class="poop-add-btn" onclick="addPoopEntry()">💩 記錄便便</button>
+
+    <!-- today's poop list -->
+    <div id="poopTodayList" style="margin-top:12px"></div>
+  </div>
+
   <!-- LOG FORM -->
   <div class="card">
     <div class="card-title">➕ 新增紀錄</div>
@@ -721,6 +774,9 @@ body::before, body::after { display: none; }
         <div class="hd-item weight"><div class="hd-val" id="h-weight">—</div><div class="hd-lbl">體重 kg</div></div>
       </div>
       <div class="hd-verdict" id="h-verdict">—</div>
+      <div id="poopReminder" class="poop-reminder hidden">
+        💩 這天沒有便便紀錄，腸道健康也很重要喔！
+      </div>
       <div style="margin-top:14px">
         <div class="section-label">📋 當日完整明細</div>
         <div id="historyDayTimeline"></div>
@@ -747,6 +803,14 @@ body::before, body::after { display: none; }
     <div class="card-title">🌙 斷食週期紀錄</div>
     <div id="fastingCycleList">
       <div class="empty-timeline"><span class="big-emoji">⏱️</span>還沒有斷食紀錄</div>
+    </div>
+  </div>
+
+  <!-- Poop history -->
+  <div class="card">
+    <div class="card-title">💩 便便紀錄（選取日）</div>
+    <div id="poopHistoryList">
+      <div class="empty-timeline" style="padding:12px">選擇日期後顯示</div>
     </div>
   </div>
 
@@ -903,6 +967,10 @@ function getFastCycles()       { return JSON.parse(localStorage.getItem('mama_fa
 function saveFastCycles(arr)   { localStorage.setItem('mama_fast_cycles', JSON.stringify(arr)); }
 function getActiveCycle()      { const c = getFastCycles(); return c.find(x => !x.endISO) || null; }
 
+// Poop log: stored as array of {id, dateKey, time, note}
+function getPoopLog()          { return JSON.parse(localStorage.getItem('mama_poop_log') || '[]'); }
+function savePoopLog(arr)      { localStorage.setItem('mama_poop_log', JSON.stringify(arr)); }
+
 // ── STATE ──
 let todayData   = null;
 let currentType = 'eat';
@@ -927,6 +995,7 @@ window.onload = () => {
   renderTimeline();
   updateDashboard();
   initFastingCard();
+  initPoopCard();
   scheduleAutoSummary();
   startDayWatcher();
   loadHistoryDefault();
@@ -975,6 +1044,17 @@ function loadLogDay(day) {
   recalculate();
   renderTimeline();
   updateDashboard();
+  renderPoopToday();
+  // Reset poop time to noon for past days, now for today
+  const poopTimeEl = document.getElementById('poopTimeInput');
+  if (poopTimeEl) {
+    if (day === currentDay) {
+      const now = new Date();
+      poopTimeEl.value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    } else {
+      poopTimeEl.value = '12:00';
+    }
+  }
 }
 
 function updateDateBadge() {
@@ -1163,7 +1243,77 @@ function tickFastTimer() {
   document.getElementById('fastRunningTimer').textContent = `${hours}h ${mins}m`;
 }
 
-// ── TYPE SELECTOR (no 'fast' type anymore) ──
+// ══════════════════════════════════
+//  POOP LOG
+// ══════════════════════════════════
+function initPoopCard() {
+  const now = new Date();
+  const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('poopTimeInput').value = t;
+  renderPoopToday();
+}
+
+function addPoopEntry() {
+  const time = document.getElementById('poopTimeInput').value;
+  if (!time) { showToast('⚠️ 請填寫時間！'); return; }
+  const note = document.getElementById('poopNoteInput').value.trim();
+
+  const log = getPoopLog();
+  log.push({ id: Date.now(), dateKey: logDay, time, note });
+  savePoopLog(log);
+
+  document.getElementById('poopNoteInput').value = '';
+  // reset time to now
+  const now = new Date();
+  document.getElementById('poopTimeInput').value =
+    `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  renderPoopToday();
+  syncHistoryIfVisible(logDay);
+  showToast('💩 記錄成功！');
+}
+
+function renderPoopToday() {
+  const el = document.getElementById('poopTodayList');
+  if (!el) return;
+  const entries = getPoopLog().filter(p => p.dateKey === logDay)
+    .sort((a,b) => a.time.localeCompare(b.time));
+  if (!entries.length) {
+    el.innerHTML = `<div style="font-size:var(--fs-sm);color:var(--text-light);text-align:center;padding:8px">今天還沒有便便紀錄</div>`;
+    return;
+  }
+  el.innerHTML = entries.map(p => `
+    <div class="poop-row">
+      <span class="poop-time">${p.time}</span>
+      <span class="poop-note">${p.note || '正常'}</span>
+      <button class="tl-delete" onclick="deletePoopEntry(${p.id})">🗑️</button>
+    </div>`).join('');
+}
+
+function deletePoopEntry(id) {
+  const log = getPoopLog().filter(p => p.id !== id);
+  savePoopLog(log);
+  renderPoopToday();
+  showToast('🗑️ 已刪除');
+}
+
+function renderPoopHistory(dateStr) {
+  const el = document.getElementById('poopHistoryList');
+  if (!el) return;
+  const entries = getPoopLog().filter(p => p.dateKey === dateStr)
+    .sort((a,b) => a.time.localeCompare(b.time));
+  if (!entries.length) {
+    el.innerHTML = `<div style="font-size:var(--fs-sm);color:var(--text-light);text-align:center;padding:8px">這天沒有便便紀錄</div>`;
+    return;
+  }
+  el.innerHTML = entries.map(p => `
+    <div class="poop-row">
+      <span class="poop-time">${p.time}</span>
+      <span class="poop-note">${p.note || '正常'}</span>
+    </div>`).join('');
+}
+
+// ── TYPE SELECTOR (no 'fast' or 'poop' type) ──
 const typeClasses = { eat:'active-eat', exercise:'active-exercise', milk:'active-milk', water:'active-water' };
 function selectType(type) {
   currentType = type;
@@ -1173,6 +1323,14 @@ function selectType(type) {
   });
   document.getElementById(`btn-${type}`).classList.add(typeClasses[type]);
   document.getElementById(`fields-${type}`).classList.remove('hidden');
+
+  // Always update to current time when switching type (only for today)
+  if (logDay === currentDay) {
+    const now = new Date();
+    const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const el = document.getElementById(`timeInput-${type}`);
+    if (el) el.value = t;
+  }
 }
 
 // ── ADD ENTRY ──
@@ -1180,19 +1338,18 @@ function addEntry() {
   const time = document.getElementById(`timeInput-${currentType}`).value;
   if (!time) { showToast('⚠️ 請填寫時間！'); return; }
 
+  const labels = { eat:'進食', exercise:'運動', milk:'擠奶', water:'喝水', poop:'便便' };
+  const icons  = { eat:'🍽️', exercise:'🏃', milk:'🤱', water:'💧', poop:'💩' };
+  const units  = { eat:'kcal', exercise:'kcal', milk:'ml', water:'ml', poop:'' };
+
   let value = 0, note = '';
   value = parseFloat(document.getElementById(`valInput-${currentType}`).value);
   const isEmpty = isNaN(value) || document.getElementById(`valInput-${currentType}`).value === '';
   if (isEmpty) { showToast('⚠️ 請填寫數量！'); return; }
   if (currentType !== 'eat' && value <= 0) { showToast('⚠️ 請填寫正確數量！'); return; }
   if (value < 0) { showToast('⚠️ 數值不能是負數！'); return; }
-  if (currentType === 'eat' || currentType === 'exercise') {
+  if (currentType === 'eat' || currentType === 'exercise')
     note = document.getElementById(`noteInput-${currentType}`).value.trim();
-  }
-
-  const labels = { eat:'進食', exercise:'運動', milk:'擠奶', water:'喝水' };
-  const icons  = { eat:'🍽️', exercise:'🏃', milk:'🤱', water:'💧' };
-  const units  = { eat:'kcal', exercise:'kcal', milk:'ml', water:'ml' };
 
   todayData.entries.push({ id:Date.now(), type:currentType, time, value, note,
     label:labels[currentType], icon:icons[currentType], unit:units[currentType] });
@@ -1200,7 +1357,8 @@ function addEntry() {
   saveDayData(logDay, todayData);
 
   document.getElementById(`valInput-${currentType}`).value = '';
-  if (currentType === 'eat' || currentType === 'exercise') document.getElementById(`noteInput-${currentType}`).value = '';
+  if (currentType === 'eat' || currentType === 'exercise')
+    document.getElementById(`noteInput-${currentType}`).value = '';
 
   renderTimeline(); recalculate(); updateDashboard();
   syncHistoryIfVisible(logDay);
@@ -1419,8 +1577,29 @@ function loadHistoryDay() {
   document.getElementById('h-weight').textContent = w;
 
   const goodCal=deficit<=0&&deficit>=-600&&calIn>=1500, goodWater=waterPct>=80;
-  const [verdict,bg] = goodCal&&goodWater?['😊 表現優秀！完美的一天','#C8F0E8']:goodCal||goodWater?['😐 繼續努力！快到目標了','#FFF0C8']:['😢 不用氣餒！明天繼續加油','#FFD6E0'];
+  const isToday = dateStr === currentDay;
+  let verdict, bg;
+  if (isToday) {
+    verdict = '📝 今天還沒結束，繼續加油！';
+    bg = '#FFF8F5';
+  } else if (goodCal && goodWater) {
+    verdict = '😊 表現優秀！完美的一天';  bg = '#C8F0E8';
+  } else if (goodCal || goodWater) {
+    verdict = '😐 繼續努力！快到目標了';   bg = '#FFF0C8';
+  } else {
+    verdict = '😢 不用氣餒！明天繼續加油'; bg = '#FFD6E0';
+  }
   const vEl=document.getElementById('h-verdict'); vEl.textContent=verdict; vEl.style.background=bg;
+
+  // Poop reminder: past day with no poop entry
+  const [py,pm,pd] = dateStr.split('-').map(Number);
+  const isPast = new Date(py,pm-1,pd) < new Date(new Date().setHours(0,0,0,0));
+  const hasPoop = getPoopLog().some(p => p.dateKey === dateStr);
+  const poopEl = document.getElementById('poopReminder');
+  if (poopEl) poopEl.classList.toggle('hidden', !(isPast && !hasPoop));
+
+  // Render poop history for this date
+  renderPoopHistory(dateStr);
 
   const tl = document.getElementById('historyDayTimeline');
   if (!data.entries.length) { tl.innerHTML='<div style="font-size:0.8rem;color:var(--text-light);text-align:center;padding:8px">無記錄</div>'; return; }
@@ -1445,13 +1624,16 @@ function getDayScore(data) {
   if (!data||!data.entries||!data.entries.length) return null;
   const w=data.weight||70.5,h=data.height||162;
   const bmr=getMifflinBMR(w,h),tdee=Math.round(bmr*1.2);
-  const calIn =data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
+  const calIn  =data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
   const milkTot=data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
   const waterIn=data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
-  const exBurn=data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
+  const exBurn =data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
   const deficit=calIn-(tdee+Math.round(milkTot*0.8)+exBurn);
-  const wGoal=Math.round(w*35+milkTot);
-  return { goodCal:deficit<=0&&deficit>=-600&&calIn>=1500, goodWater:Math.round(waterIn/Math.max(wGoal,1)*100)>=80 };
+  const wGoal  =Math.round(w*35+milkTot);
+  // 70% threshold: waterPct >= 70 counts as good, cal deficit within range and >= 1500*0.7
+  const goodCal   = deficit<=0 && deficit>=-600 && calIn>=1050;  // 1500*0.7
+  const goodWater = Math.round(waterIn/Math.max(wGoal,1)*100) >= 70;
+  return { goodCal, goodWater };
 }
 
 function renderEmojiCalendar() {
@@ -1607,7 +1789,8 @@ function updateSyncStats() {
 
 function downloadBackup() {
   const obj={}; getAllDates().forEach(d=>{obj[d]=getDayData(d);});
-  const payload={version:3,exportedAt:new Date().toISOString(),appName:'媽咪能量日誌',fastCycles:getFastCycles(),data:obj};
+  const payload = { version:3, exportedAt:new Date().toISOString(), appName:'媽咪能量日誌',
+    fastCycles:getFastCycles(), poopLog:getPoopLog(), data:obj };
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url; a.download=`媽咪日誌備份_${currentDay}.json`; a.click();
@@ -1641,6 +1824,12 @@ function uploadBackup(event) {
         const newCycles = payload.fastCycles.filter(c=>!existStarts.has(c.startISO));
         saveFastCycles([...existing, ...newCycles].sort((a,b)=>a.startISO.localeCompare(b.startISO)));
       }
+      if (payload.poopLog && Array.isArray(payload.poopLog)) {
+        const existing = getPoopLog();
+        const existIds = new Set(existing.map(p=>p.id));
+        const newPoops = payload.poopLog.filter(p=>!existIds.has(p.id));
+        savePoopLog([...existing, ...newPoops]);
+      }
       todayData=getDayData(logDay)||{entries:[],weight:70.5,height:162};
       recalculate(); renderTimeline(); updateDashboard(); updateSyncStats(); initFastingCard();
       showToast(`✅ 合併完成！新增 ${merged} 天，略過 ${skipped} 天`);
@@ -1653,6 +1842,7 @@ function clearAllData() { document.getElementById('confirmOverlay').classList.re
 function confirmClear() {
   getAllDates().forEach(d=>localStorage.removeItem('mama_'+d));
   localStorage.removeItem('mama_fast_cycles');
+  localStorage.removeItem('mama_poop_log');
   todayData={entries:[],weight:70.5,height:162};
   saveDayData(logDay,todayData);
   if(fastTimerInterval){clearInterval(fastTimerInterval);fastTimerInterval=null;}
