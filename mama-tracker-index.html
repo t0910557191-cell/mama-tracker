@@ -44,12 +44,13 @@
   --shadow: 3px 3px 0px rgba(58,42,53,0.12);
 
   /* type scale */
-  --fs-xs:   0.75rem;
-  --fs-sm:   0.85rem;
-  --fs-body: 0.95rem;
-  --fs-lg:   1.05rem;
-  --fs-num:  1.55rem;    /* Patrick Hand numbers */
-  --fs-num-lg: 2rem;  /* big stat numbers */
+  --fs-xs:     0.75rem;   /* secondary info: units, hints, badge text */
+  --fs-sm:     0.875rem;  /* body / timeline values */
+  --fs-body:   0.95rem;   /* main body text */
+  --fs-label:  1rem;      /* form labels, card titles, tl-title — bigger than body */
+  --fs-lg:     1.05rem;   /* buttons */
+  --fs-num:    1.55rem;   /* Patrick Hand numbers */
+  --fs-num-lg: 2rem;      /* big stat numbers */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -156,7 +157,7 @@ body::before, body::after { display: none; }
 }
 .card-title {
   font-family: 'Nunito', sans-serif;
-  font-weight: 800; font-size: var(--fs-sm);
+  font-weight: 800; font-size: var(--fs-label);
   color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.6px;
   margin-bottom: 12px;
   display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
@@ -294,7 +295,7 @@ body::before, body::after { display: none; }
 /* ── FORM FIELDS ── */
 .field-row { margin-bottom: 10px; }
 .form-label {
-  display: block; font-size: var(--fs-xs); color: var(--text-mid);
+  display: block; font-size: var(--fs-label); color: var(--text-mid);
   font-weight: 700; margin-bottom: 4px;
   font-family: 'Nunito', sans-serif; text-transform: uppercase; letter-spacing: 0.4px;
 }
@@ -364,7 +365,7 @@ body::before, body::after { display: none; }
 .tl-dot.milk     { background: var(--lavender); }
 .tl-dot.water    { background: var(--sky); }
 .tl-desc { flex: 1; min-width: 0; }
-.tl-title { font-size: var(--fs-sm); font-weight: 700; color: var(--text-dark); }
+.tl-title { font-size: var(--fs-label); font-weight: 700; color: var(--text-dark); }
 .tl-value { font-size: var(--fs-xs); color: var(--text-mid); margin-top: 1px; word-break: break-word; }
 .tl-actions { display: flex; gap: 2px; flex-shrink: 0; align-items: center; }
 .tl-edit, .tl-delete {
@@ -444,7 +445,7 @@ body::before, body::after { display: none; }
 .hd-val { font-family: 'Patrick Hand', sans-serif; font-size: 1.1rem; color: var(--text-dark); }
 .hd-lbl { font-size: var(--fs-xs); color: var(--text-mid); font-weight: 700; margin-top: 2px; font-family: 'Nunito', sans-serif; text-transform: uppercase; letter-spacing: 0.3px; }
 .hd-verdict { margin-top: 10px; text-align: center; font-size: 1.1rem; padding: 8px; border-radius: 12px; background: var(--cream); }
-.section-label { font-size: var(--fs-sm); font-weight: 700; color: var(--text-mid); margin-bottom: 8px; font-family: 'Nunito', sans-serif; text-transform: uppercase; letter-spacing: 0.4px; }
+.section-label { font-size: var(--fs-label); font-weight: 700; color: var(--text-mid); margin-bottom: 8px; font-family: 'Nunito', sans-serif; text-transform: uppercase; letter-spacing: 0.4px; }
 
 /* ── EMOJI CALENDAR ── */
 .trend-legend {
@@ -607,7 +608,6 @@ body::before, body::after { display: none; }
   <div class="header">
     
     <h1>媽咪能量日誌</h1>
-    <p class="header-sub">🍼 哺乳期熱量 · 水分 · 斷食全追蹤 🌸</p>
     <div class="date-nav">
       <button class="date-nav-btn" onclick="shiftLogDay(-1)">‹</button>
       <div class="date-badge" id="dateBadge">📅 載入中...</div>
@@ -755,7 +755,6 @@ body::before, body::after { display: none; }
   <div class="header">
     
     <h1>歷史記錄</h1>
-    <p class="header-sub">📊 查看每日成果與整體趨勢</p>
   </div>
 
   <div class="card">
@@ -808,7 +807,7 @@ body::before, body::after { display: none; }
 
   <!-- Poop history -->
   <div class="card">
-    <div class="card-title">💩 便便紀錄（選取日）</div>
+    <div class="card-title">💩 便便紀錄</div>
     <div id="poopHistoryList">
       <div class="empty-timeline" style="padding:12px">選擇日期後顯示</div>
     </div>
@@ -816,7 +815,7 @@ body::before, body::after { display: none; }
 
   <div class="two-col-cards">
     <div class="card">
-      <div class="card-title">🤱 今日擠奶（選取日）</div>
+      <div class="card-title">🤱 當日擠奶</div>
       <div class="big-stat" id="totalMilkAll">—</div><div class="big-stat-sub">奶量 ml</div>
       <div class="big-stat" id="totalMilkSessions">—</div><div class="big-stat-sub">次數</div>
     </div>
@@ -833,7 +832,6 @@ body::before, body::after { display: none; }
   <div class="header">
     
     <h1>資料同步</h1>
-    <p class="header-sub">☁️ 備份 · 還原 · 跨裝置同步 · 匯出 Excel</p>
   </div>
   <div class="card info-card">
     <div class="card-title">💡 跨裝置同步說明</div>
