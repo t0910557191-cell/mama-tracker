@@ -473,6 +473,93 @@ body {
 /* fast-end dot in timeline */
 .tl-dot.fast-end { background: #C8F0E8; }
 
+/* ── WEIGHT LIST ── */
+.weight-summary {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 6px; margin-bottom: 14px;
+}
+.ws-item { background: var(--cream); border-radius: 12px; padding: 8px 4px; text-align: center; }
+.ws-val { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 0.95rem; color: var(--text-dark); }
+.ws-lbl { font-size: 0.6rem; color: var(--text-light); font-weight: 600; margin-top: 2px; }
+
+.weight-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 0; border-bottom: 1px dashed rgba(0,0,0,0.06);
+}
+.weight-row:last-child { border-bottom: none; }
+.weight-row-date { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.72rem; color: var(--text-light); min-width: 32px; }
+.weight-row-bar-wrap { flex: 1; height: 10px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+.weight-row-bar { height: 100%; border-radius: 10px; transition: width 0.4s ease; }
+.weight-row-val { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 0.82rem; min-width: 52px; text-align: right; }
+
+/* ── FASTING LOG ── */
+.fast-log-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px dashed rgba(0,0,0,0.06);
+}
+.fast-log-row:last-child { border-bottom: none; }
+.fast-log-date { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.72rem; color: var(--text-light); min-width: 32px; }
+.fast-log-info { flex: 1; }
+.fast-log-time { font-size: 0.78rem; font-weight: 700; color: var(--text-dark); }
+.fast-log-note { font-size: 0.68rem; color: var(--text-light); margin-top: 1px; }
+.fast-log-hrs  { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 0.85rem; white-space: nowrap; }
+
+/* ── FASTING CARD ── */
+.fasting-card { background: linear-gradient(135deg, #F0FBF7, var(--warm-white)); }
+.fasting-hint { font-size: 0.78rem; color: var(--text-light); margin-bottom: 12px; line-height: 1.5; }
+
+.fast-start-btn {
+  width: 100%; padding: 13px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #3DBFA0, #1A9A7E);
+  color: white; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1rem;
+  cursor: pointer; box-shadow: 0 4px 14px rgba(61,191,160,0.35); transition: all 0.2s;
+}
+.fast-start-btn:hover { transform: translateY(-2px); }
+
+.fast-stop-btn {
+  width: 100%; padding: 13px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #9B72D4, #7B52B4);
+  color: white; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1rem;
+  cursor: pointer; box-shadow: 0 4px 14px rgba(155,114,212,0.35); transition: all 0.2s;
+}
+.fast-stop-btn:hover { transform: translateY(-2px); }
+
+.fast-running-info {
+  background: linear-gradient(135deg, var(--mint), #A8F0DC);
+  border-radius: 14px; padding: 12px 16px; margin-bottom: 4px;
+}
+.fast-running-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.fast-running-row:last-child { margin-bottom: 0; }
+.fast-running-lbl { font-size: 0.75rem; font-weight: 700; color: #1A6B55; }
+.fast-running-val { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.9rem; color: var(--mint-deep); }
+.fast-running-timer { font-size: 1.4rem !important; color: #1A6B55 !important; }
+
+/* ── FASTING CYCLES (history) ── */
+.fast-cycle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px dashed rgba(0,0,0,0.07);
+  gap: 10px;
+}
+.fast-cycle-row:last-child { border-bottom: none; }
+.fast-cycle-dates { flex: 1; }
+.fast-cycle-time { font-size: 0.78rem; color: var(--text-mid); font-family: 'Nunito', sans-serif; font-weight: 700; }
+.fast-cycle-arrow { font-size: 0.65rem; color: var(--text-light); margin: 2px 0; }
+.fast-cycle-hrs { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.4rem; text-align: right; white-space: nowrap; }
+.fast-cycle-unit { font-size: 0.7rem; font-weight: 600; margin-left: 1px; }
+.cross-day-tag {
+  display: inline-block; background: var(--lavender); color: var(--lav-deep);
+  font-size: 0.6rem; font-weight: 800; padding: 1px 6px; border-radius: 8px; margin-left: 4px;
+  vertical-align: middle;
+}
+
+/* ── WEIGHT DOT CHART ── */
+.weight-summary {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 10px;
+}
+.ws-item { background: var(--cream); border-radius: 12px; padding: 8px 4px; text-align: center; }
+.ws-val { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 0.95rem; color: var(--text-dark); }
+.ws-lbl { font-size: 0.6rem; color: var(--text-light); font-weight: 600; margin-top: 2px; }
+
 </style>
 </head>
 <body>
@@ -483,22 +570,24 @@ body {
   <button class="nav-btn" onclick="switchTab('sync')" id="nav-sync">☁️ 同步</button>
 </div>
 
-<!-- ══════ TODAY TAB ══════ -->
+<!-- ══════ TODAY ══════ -->
 <div id="tab-today" class="tab-content">
+
   <div class="header">
     <span class="header-emoji">🍼</span>
     <h1>媽咪能量日誌</h1>
     <p class="header-sub">哺乳期熱量 · 水分 · 斷食全追蹤</p>
     <div class="date-nav">
-      <button class="date-nav-btn" onclick="shiftLogDay(-1)" title="前一天">‹</button>
+      <button class="date-nav-btn" onclick="shiftLogDay(-1)">‹</button>
       <div class="date-badge" id="dateBadge">📅 載入中...</div>
-      <button class="date-nav-btn" onclick="shiftLogDay(1)" id="dateNavNext" title="後一天">›</button>
+      <button class="date-nav-btn" onclick="shiftLogDay(1)" id="dateNavNext">›</button>
     </div>
     <div id="notTodayBanner" class="not-today-banner hidden">
-      ⚠️ 目前正在補記 <span id="notTodayLabel"></span>　<button onclick="goToToday()">回今天</button>
+      ⚠️ 補記 <span id="notTodayLabel"></span>　<button onclick="goToToday()">回今天</button>
     </div>
   </div>
 
+  <!-- PROFILE -->
   <div class="card">
     <div class="card-title">👤 我的資料</div>
     <div class="profile-grid">
@@ -506,31 +595,22 @@ body {
       <div class="input-group"><label>身高 (cm)</label><input type="number" id="heightInput" value="162" step="1" oninput="recalculate()"></div>
     </div>
     <div class="bmr-display">
-      <div class="bmr-item"><div class="bmr-value" id="bmrVal">—</div><div class="bmr-label">基礎代謝 BMR</div></div>
-      <div class="bmr-item"><div class="bmr-value" id="tdeeVal">—</div><div class="bmr-label">日常消耗 TDEE</div></div>
-      <div class="bmr-item"><div class="bmr-value" id="waterGoalVal">—</div><div class="bmr-label">今日水目標</div></div>
+      <div class="bmr-item"><div class="bmr-value" id="bmrVal">—</div><div class="bmr-label">BMR</div></div>
+      <div class="bmr-item"><div class="bmr-value" id="tdeeVal">—</div><div class="bmr-label">TDEE</div></div>
+      <div class="bmr-item"><div class="bmr-value" id="waterGoalVal">—</div><div class="bmr-label">水目標</div></div>
     </div>
     <div class="goal-chip">🎯 目標 55 kg｜還差 <span id="goalDiff">—</span> kg</div>
   </div>
 
+  <!-- STATS -->
   <div class="dashboard-grid">
     <div class="stat-card calories"><div class="stat-emoji">🍽️</div><div class="stat-value" id="totalCalIn">0</div><div class="stat-label">攝取 kcal</div><div class="stat-sub">目標≥1500</div></div>
     <div class="stat-card water"><div class="stat-emoji">💧</div><div class="stat-value" id="totalWater">0</div><div class="stat-label">飲水 ml</div><div class="stat-sub" id="waterGoalSmall">—</div></div>
     <div class="stat-card milk"><div class="stat-emoji">🤱</div><div class="stat-value" id="totalMilk">0</div><div class="stat-label">奶量 ml</div><div class="stat-sub" id="milkBurnSub">—</div></div>
     <div class="stat-card exercise"><div class="stat-emoji">🏃</div><div class="stat-value" id="totalExBurn">0</div><div class="stat-label">運動消耗 kcal</div><div class="stat-sub">已燃燒</div></div>
   </div>
-  <div class="fasting-stat-card" id="fastingStatCard">
-    <div>
-      <span class="stat-emoji">⏱️</span>
-      <span class="fasting-stat-label">斷食時數</span>
-      <div class="fasting-stat-sub" id="fastStart">尚未開始</div>
-    </div>
-    <div class="fasting-stat-right">
-      <span class="fasting-stat-val" id="fastHours">—</span>
-      <button class="stop-fast-btn hidden" id="stopFastBtn" onclick="stopFasting()">⏹ 結束斷食</button>
-    </div>
-  </div>
 
+  <!-- PROGRESS -->
   <div class="card progress-section">
     <div class="card-title">📊 今日進度</div>
     <div class="progress-label"><span>🔥 熱量攝取</span><span id="calPct">0 kcal</span></div>
@@ -542,14 +622,33 @@ body {
     <div style="font-size:0.72rem;color:var(--text-mid);text-align:right;margin-top:2px" id="deficitText">—</div>
   </div>
 
-  <div class="fasting-banner hidden" id="fastingBanner">
-    <div>
-      <div class="f-label">🌙 斷食進行中</div>
-      <div style="font-size:0.7rem;color:#1A6B55">燃脂黃金期！繼續加油 💪</div>
+  <!-- FASTING CARD — independent cross-day cycle -->
+  <div class="card fasting-card">
+    <div class="card-title">⏱️ 斷食週期</div>
+    <div id="fastingIdleView">
+      <p class="fasting-hint">記錄你的斷食開始和結束時間，自動計算跨日時長</p>
+      <div class="field-row" style="margin-bottom:8px">
+        <label class="form-label">⏰ 開始時間（可修改）</label>
+        <input type="datetime-local" class="form-input" id="fastStartInput">
+      </div>
+      <button class="fast-start-btn" onclick="startFastCycle()">🌙 開始斷食</button>
     </div>
-    <div style="display:flex;align-items:center;gap:10px">
-      <div class="fasting-timer" id="fastTimerDisplay">0h 0m</div>
-      <button class="stop-fast-btn-banner" onclick="stopFasting()">⏹ 結束</button>
+    <div id="fastingActiveView" class="hidden">
+      <div class="fast-running-info">
+        <div class="fast-running-row">
+          <span class="fast-running-lbl">開始</span>
+          <span class="fast-running-val" id="fastRunningStart">—</span>
+        </div>
+        <div class="fast-running-row">
+          <span class="fast-running-lbl">已斷食</span>
+          <span class="fast-running-val fast-running-timer" id="fastRunningTimer">—</span>
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:10px;margin-bottom:8px">
+        <label class="form-label">⏰ 結束時間（可修改）</label>
+        <input type="datetime-local" class="form-input" id="fastEndInput">
+      </div>
+      <button class="fast-stop-btn" onclick="stopFastCycle()">✅ 結束斷食</button>
     </div>
   </div>
 
@@ -561,9 +660,7 @@ body {
       <button class="type-btn"                 onclick="selectType('exercise')" id="btn-exercise"><span class="t-emoji">🏃</span>運動</button>
       <button class="type-btn"                 onclick="selectType('milk')"     id="btn-milk"><span class="t-emoji">🤱</span>擠奶</button>
       <button class="type-btn"                 onclick="selectType('water')"    id="btn-water"><span class="t-emoji">💧</span>喝水</button>
-      <button class="type-btn"                 onclick="selectType('fast')"     id="btn-fast"><span class="t-emoji">⏱️</span>斷食</button>
     </div>
-
     <div id="fields-eat">
       <div class="field-row"><label class="form-label">⏰ 時間</label><input type="time" class="form-input" id="timeInput-eat"></div>
       <div class="field-row"><label class="form-label">🔥 熱量 (kcal)</label><input type="number" class="form-input" id="valInput-eat" placeholder="例：450"></div>
@@ -582,13 +679,10 @@ body {
       <div class="field-row"><label class="form-label">⏰ 時間</label><input type="time" class="form-input" id="timeInput-water"></div>
       <div class="field-row"><label class="form-label">💧 水量 (ml)</label><input type="number" class="form-input" id="valInput-water" placeholder="例：300"></div>
     </div>
-    <div id="fields-fast" class="hidden">
-      <div class="field-row"><label class="form-label">⏰ 開始斷食時間</label><input type="time" class="form-input" id="timeInput-fast"></div>
-    </div>
     <button class="add-btn" onclick="addEntry()">＋ 新增到日誌</button>
   </div>
 
-  <!-- TIMELINE with filter -->
+  <!-- TIMELINE -->
   <div class="card">
     <div class="card-title" style="flex-wrap:wrap;gap:8px">
       <span>📋 今日時間軸</span>
@@ -598,7 +692,6 @@ body {
         <button class="chip"             onclick="setFilter('exercise')" id="chip-exercise">🏃運動</button>
         <button class="chip"             onclick="setFilter('milk')"     id="chip-milk">🤱擠奶</button>
         <button class="chip"             onclick="setFilter('water')"    id="chip-water">💧喝水</button>
-        <button class="chip"             onclick="setFilter('fast')"     id="chip-fast">⏱️斷食</button>
       </div>
     </div>
     <div id="timeline">
@@ -609,7 +702,7 @@ body {
   <button class="summary-trigger" onclick="showSummary()">🌙 查看今日總結報告</button>
 </div>
 
-<!-- ══════ HISTORY TAB ══════ -->
+<!-- ══════ HISTORY ══════ -->
 <div id="tab-history" class="tab-content hidden">
   <div class="header">
     <span class="header-emoji">📊</span>
@@ -643,16 +736,23 @@ body {
 
   <div class="card">
     <div class="card-title">🌟 整體表現趨勢</div>
-    <div class="trend-legend">
-      <span>😊 完美</span><span>😐 普通</span><span>😢 加油</span>
-    </div>
+    <div class="trend-legend"><span>😊 完美</span><span>😐 普通</span><span>😢 加油</span></div>
     <div class="emoji-calendar" id="emojiCalendar"></div>
   </div>
 
+  <!-- Weight dot chart -->
   <div class="card">
     <div class="card-title">⚖️ 體重變化</div>
-    <div style="overflow-x:auto"><canvas id="weightChart" height="160"></canvas></div>
-    <div id="noWeightData" class="empty-timeline hidden"><span class="big-emoji">📈</span>還沒有足夠的體重記錄</div>
+    <div id="weightDotChart"></div>
+    <div id="noWeightData" class="empty-timeline hidden"><span class="big-emoji">📈</span>還沒有體重記錄</div>
+  </div>
+
+  <!-- Fasting cycles -->
+  <div class="card">
+    <div class="card-title">🌙 斷食週期紀錄</div>
+    <div id="fastingCycleList">
+      <div class="empty-timeline"><span class="big-emoji">⏱️</span>還沒有斷食紀錄</div>
+    </div>
   </div>
 
   <div class="two-col-cards">
@@ -663,13 +763,13 @@ body {
     </div>
     <div class="card">
       <div class="card-title">⏱️ 斷食累計</div>
-      <div class="big-stat" id="totalFastHrs">—</div><div class="big-stat-sub">總時數</div>
-      <div class="big-stat" id="avgFastHrs">—</div><div class="big-stat-sub">日均時數</div>
+      <div class="big-stat" id="totalFastHrs">—</div><div class="big-stat-sub">總時數 hrs</div>
+      <div class="big-stat" id="avgFastHrs">—</div><div class="big-stat-sub">平均每次</div>
     </div>
   </div>
 </div>
 
-<!-- ══════ SYNC TAB ══════ -->
+<!-- ══════ SYNC ══════ -->
 <div id="tab-sync" class="tab-content hidden">
   <div class="header">
     <span class="header-emoji">☁️</span>
@@ -737,9 +837,8 @@ body {
     </div>
     <div class="summary-section fast-s">
       <h3>⏱️ 斷食狀態</h3>
-      <div class="summary-row"><span>斷食開始</span><span id="s-fastStart">—</span></div>
-      <div class="summary-row"><span>斷食結束</span><span id="s-fastEnd">—</span></div>
-      <div class="summary-row"><span>累計斷食</span><span id="s-fastDur">—</span></div>
+      <div class="summary-row"><span>進行中週期</span><span id="s-fastStart">—</span></div>
+      <div class="summary-row"><span>累計時長</span><span id="s-fastDur">—</span></div>
       <div class="summary-hint" id="s-fastHint">—</div>
     </div>
     <div id="warningBox"></div>
@@ -785,41 +884,38 @@ body {
 <div class="toast hidden" id="toast"></div>
 <script>
 // ════════════════════════════════
-//  媽咪能量日誌 — app.js  v5.0
+//  媽咪能量日誌 — app.js  v6.0
 // ════════════════════════════════
 
 // ── STORAGE ──
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
 const todayKey = () => {
   const n = new Date();
   return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
 };
 
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;  // guard against 'fasting' key
-
 function getDayData(d)        { return JSON.parse(localStorage.getItem('mama_' + d) || 'null'); }
 function saveDayData(d, data) { localStorage.setItem('mama_' + d, JSON.stringify(data)); }
 function getAllDates() {
   return Object.keys(localStorage)
-    .filter(k => k.startsWith('mama_') && DATE_RE.test(k.slice(5)))  // ← exclude 'mama_fasting'
-    .map(k => k.slice(5))
-    .sort();
+    .filter(k => k.startsWith('mama_') && DATE_RE.test(k.slice(5)))
+    .map(k => k.slice(5)).sort();
 }
 
-// Fasting state stored separately (full ISO timestamps for cross-midnight)
-function getFastState()       { return JSON.parse(localStorage.getItem('mama_fasting') || 'null'); }
-function saveFastState(state) {
-  if (state) localStorage.setItem('mama_fasting', JSON.stringify(state));
-  else       localStorage.removeItem('mama_fasting');
-}
+// Fasting cycles stored separately as an array of {startISO, endISO|null}
+function getFastCycles()       { return JSON.parse(localStorage.getItem('mama_fast_cycles') || '[]'); }
+function saveFastCycles(arr)   { localStorage.setItem('mama_fast_cycles', JSON.stringify(arr)); }
+function getActiveCycle()      { const c = getFastCycles(); return c.find(x => !x.endISO) || null; }
 
 // ── STATE ──
-let todayData = null;
+let todayData   = null;
 let currentType = 'eat';
 let activeFilter = 'all';
 let fastTimerInterval = null;
 let dayCheckInterval  = null;
-let currentDay = '';   // always today's real date
-let logDay     = '';   // the date currently shown in the today-tab (may differ)
+let currentDay  = '';
+let logDay      = '';
 let historyEditDate = '';
 
 // ── INIT ──
@@ -835,24 +931,21 @@ window.onload = () => {
   recalculate();
   renderTimeline();
   updateDashboard();
-  restoreFastState();
+  initFastingCard();
   scheduleAutoSummary();
   startDayWatcher();
   loadHistoryDefault();
   updateSyncStats();
 };
 
-// ── DAY CHANGE WATCHER ──
+// ── DAY WATCHER ──
 function startDayWatcher() {
   dayCheckInterval = setInterval(() => {
     const newDay = todayKey();
     if (newDay === currentDay) return;
     currentDay = newDay;
-    // If user is viewing today, advance the log view too
-    if (logDay < currentDay) {
-      loadLogDay(currentDay);
-    }
-    restoreFastState();
+    if (logDay < currentDay) loadLogDay(currentDay);
+    tickFastTimer();
     showToast('🌅 新的一天開始了！加油媽咪 💪');
   }, 30000);
 }
@@ -867,18 +960,15 @@ function switchTab(tab) {
   if (tab === 'sync')    updateSyncStats();
 }
 
-// ── DATE NAVIGATION (today tab) ──
+// ── DATE NAV ──
 function shiftLogDay(delta) {
-  const [y, m, d] = logDay.split('-').map(Number);
-  const date = new Date(y, m - 1, d + delta);  // local time, no UTC conversion
+  const [y,m,d] = logDay.split('-').map(Number);
+  const date = new Date(y, m-1, d+delta);
   const newDay = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
   if (newDay > currentDay) return;
   loadLogDay(newDay);
 }
-
-function goToToday() {
-  loadLogDay(currentDay);
-}
+function goToToday() { loadLogDay(currentDay); }
 
 function loadLogDay(day) {
   logDay    = day;
@@ -890,38 +980,28 @@ function loadLogDay(day) {
   recalculate();
   renderTimeline();
   updateDashboard();
-  // Restore fasting only for today
-  if (logDay === currentDay) restoreFastState();
 }
 
 function updateDateBadge() {
-  const [y, m, day] = logDay.split('-').map(Number);
-  const d    = new Date(y, m - 1, day);  // local time
+  const [y,m,day] = logDay.split('-').map(Number);
+  const d    = new Date(y, m-1, day);
   const days = ['日','一','二','三','四','五','六'];
-  const label = `📅 ${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（週${days[d.getDay()]}）`;
-  document.getElementById('dateBadge').textContent = label;
-
-  // Next arrow disabled if already on today
-  const nextBtn = document.getElementById('dateNavNext');
-  if (nextBtn) nextBtn.disabled = (logDay >= currentDay);
-
-  // Banner when not on today
-  const banner   = document.getElementById('notTodayBanner');
-  const bannerLbl= document.getElementById('notTodayLabel');
+  document.getElementById('dateBadge').textContent =
+    `📅 ${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（週${days[d.getDay()]}）`;
+  document.getElementById('dateNavNext').disabled = (logDay >= currentDay);
+  const banner = document.getElementById('notTodayBanner');
+  const lbl    = document.getElementById('notTodayLabel');
   if (logDay !== currentDay) {
-    bannerLbl.textContent = `${d.getMonth()+1}/${d.getDate()}`;
+    lbl.textContent = `${d.getMonth()+1}/${d.getDate()}`;
     banner.classList.remove('hidden');
   } else {
     banner.classList.add('hidden');
   }
-
-  // Also update summary date label
   const sd = document.getElementById('summaryDate');
   if (sd) sd.textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
 }
 
 function setDefaultTimeForDay(day) {
-  // For today: use current time. For past days: use 12:00 as default
   let t;
   if (day === currentDay) {
     const now = new Date();
@@ -929,14 +1009,14 @@ function setDefaultTimeForDay(day) {
   } else {
     t = '12:00';
   }
-  ['eat','exercise','milk','water','fast'].forEach(type => {
+  ['eat','exercise','milk','water'].forEach(type => {
     const el = document.getElementById(`timeInput-${type}`);
     if (el) el.value = t;
   });
 }
 
 // ── CALC ──
-function getMifflinBMR(w, h, age = 30) { return Math.round(10*w + 6.25*h - 5*age - 161); }
+function getMifflinBMR(w, h, age=30) { return Math.round(10*w + 6.25*h - 5*age - 161); }
 
 function onWeightChange() {
   todayData.weight = parseFloat(document.getElementById('weightInput').value) || 70.5;
@@ -950,8 +1030,8 @@ function recalculate() {
   if (todayData) todayData.height = h;
   const bmr  = getMifflinBMR(w, h);
   const tdee = Math.round(bmr * 1.2);
-  const milkTotal = todayData.entries.filter(e => e.type==='milk').reduce((s,e)=>s+e.value,0);
-  const waterGoal = Math.round(w * 35 + milkTotal);
+  const milkTotal = todayData ? todayData.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0) : 0;
+  const waterGoal = Math.round(w*35 + milkTotal);
   document.getElementById('bmrVal').textContent       = bmr + ' kcal';
   document.getElementById('tdeeVal').textContent      = tdee + ' kcal';
   document.getElementById('waterGoalVal').textContent = waterGoal + ' ml';
@@ -973,7 +1053,7 @@ function updateDashboard() {
   const totalBurn= tdee + milkBurn + exBurn;
   const waterGoal= Math.round(w*35 + milkTot);
   const deficit  = calIn - totalBurn;
-  const waterPct = Math.min(Math.round(waterIn / Math.max(waterGoal,1) * 100), 100);
+  const waterPct = Math.min(Math.round(waterIn/Math.max(waterGoal,1)*100), 100);
 
   document.getElementById('totalCalIn').textContent  = calIn.toLocaleString();
   document.getElementById('totalWater').textContent  = waterIn.toLocaleString();
@@ -981,8 +1061,7 @@ function updateDashboard() {
   document.getElementById('totalExBurn').textContent = exBurn.toLocaleString();
   document.getElementById('milkBurnSub').textContent = `消耗 ${milkBurn} kcal`;
 
-  const calPct = Math.min(Math.round(calIn/2000*100), 100);
-  document.getElementById('calBar').style.width    = calPct + '%';
+  document.getElementById('calBar').style.width    = Math.min(Math.round(calIn/2000*100),100) + '%';
   document.getElementById('waterBar').style.width  = waterPct + '%';
   document.getElementById('deficitBar').style.width= Math.min(Math.abs(deficit)/500*100,100) + '%';
   document.getElementById('calPct').textContent    = calIn + ' kcal';
@@ -1002,11 +1081,98 @@ function updateDashboard() {
   }
 }
 
-// ── TYPE SELECTOR ──
-const typeClasses = { eat:'active-eat', exercise:'active-exercise', milk:'active-milk', water:'active-water', fast:'active-fast' };
+// ══════════════════════════════════
+//  FASTING CYCLE SYSTEM
+//  Stored in 'mama_fast_cycles' as array of {startISO, endISO|null, note}
+//  Completely separate from the daily log — cross-day by design
+// ══════════════════════════════════
+
+function initFastingCard() {
+  // Set default start input to now
+  const now = new Date();
+  document.getElementById('fastStartInput').value = toLocalDatetimeInput(now);
+  document.getElementById('fastEndInput').value   = toLocalDatetimeInput(now);
+  const active = getActiveCycle();
+  if (active) {
+    showFastingActiveView(active);
+    launchFastTimer();
+  } else {
+    showFastingIdleView();
+  }
+}
+
+function showFastingIdleView() {
+  document.getElementById('fastingIdleView').classList.remove('hidden');
+  document.getElementById('fastingActiveView').classList.add('hidden');
+}
+
+function showFastingActiveView(cycle) {
+  document.getElementById('fastingIdleView').classList.add('hidden');
+  document.getElementById('fastingActiveView').classList.remove('hidden');
+  const sd = new Date(cycle.startISO);
+  document.getElementById('fastRunningStart').textContent = fmtFullDT(sd);
+  // Set end input to now as default
+  document.getElementById('fastEndInput').value = toLocalDatetimeInput(new Date());
+  tickFastTimer();
+}
+
+function startFastCycle() {
+  const input = document.getElementById('fastStartInput').value;
+  if (!input) { showToast('⚠️ 請選擇開始時間'); return; }
+  const startISO = new Date(input).toISOString();
+  const cycles = getFastCycles();
+  // End any lingering active cycle first
+  cycles.forEach(c => { if (!c.endISO) c.endISO = startISO; });
+  cycles.push({ startISO, endISO: null });
+  saveFastCycles(cycles);
+  showFastingActiveView({ startISO });
+  launchFastTimer();
+  showToast('🌙 斷食開始！加油媽咪');
+}
+
+function stopFastCycle() {
+  const input = document.getElementById('fastEndInput').value;
+  if (!input) { showToast('⚠️ 請選擇結束時間'); return; }
+  const endISO = new Date(input).toISOString();
+  const cycles = getFastCycles();
+  const active = cycles.find(c => !c.endISO);
+  if (!active) { showToast('⚠️ 找不到進行中的斷食'); return; }
+
+  const start = new Date(active.startISO);
+  const end   = new Date(endISO);
+  if (end <= start) { showToast('⚠️ 結束時間必須晚於開始時間'); return; }
+
+  active.endISO = endISO;
+  saveFastCycles(cycles);
+  if (fastTimerInterval) { clearInterval(fastTimerInterval); fastTimerInterval = null; }
+
+  const hrs = (end - start) / 3600000;
+  showFastingIdleView();
+  // Reset start input to now
+  document.getElementById('fastStartInput').value = toLocalDatetimeInput(new Date());
+  showToast(`✅ 斷食完成！共 ${hrs.toFixed(1)} 小時 🎉`);
+}
+
+function launchFastTimer() {
+  if (fastTimerInterval) clearInterval(fastTimerInterval);
+  tickFastTimer();
+  fastTimerInterval = setInterval(tickFastTimer, 30000);
+}
+
+function tickFastTimer() {
+  const active = getActiveCycle();
+  if (!active) return;
+  const start = new Date(active.startISO);
+  const dur   = (new Date() - start) / 3600000;
+  const hours = Math.floor(dur), mins = Math.round((dur-hours)*60);
+  document.getElementById('fastRunningTimer').textContent = `${hours}h ${mins}m`;
+}
+
+// ── TYPE SELECTOR (no 'fast' type anymore) ──
+const typeClasses = { eat:'active-eat', exercise:'active-exercise', milk:'active-milk', water:'active-water' };
 function selectType(type) {
   currentType = type;
-  ['eat','exercise','milk','water','fast'].forEach(t => {
+  ['eat','exercise','milk','water'].forEach(t => {
     document.getElementById(`btn-${t}`).className = 'type-btn';
     document.getElementById(`fields-${t}`).classList.add('hidden');
   });
@@ -1020,29 +1186,29 @@ function addEntry() {
   if (!time) { showToast('⚠️ 請填寫時間！'); return; }
 
   let value = 0, note = '';
-  if (currentType !== 'fast') {
-    value = parseFloat(document.getElementById(`valInput-${currentType}`).value);
-    if (!value || value <= 0) { showToast('⚠️ 請填寫數量！'); return; }
-  }
+  value = parseFloat(document.getElementById(`valInput-${currentType}`).value);
+  const isEmpty = isNaN(value) || document.getElementById(`valInput-${currentType}`).value === '';
+  if (isEmpty) { showToast('⚠️ 請填寫數量！'); return; }
+  if (currentType !== 'eat' && value <= 0) { showToast('⚠️ 請填寫正確數量！'); return; }
+  if (value < 0) { showToast('⚠️ 數值不能是負數！'); return; }
   if (currentType === 'eat' || currentType === 'exercise') {
     note = document.getElementById(`noteInput-${currentType}`).value.trim();
   }
 
-  const labels = { eat:'進食', exercise:'運動', milk:'擠奶', water:'喝水', fast:'開始斷食' };
-  const icons  = { eat:'🍽️', exercise:'🏃', milk:'🤱', water:'💧', fast:'⏱️' };
-  const units  = { eat:'kcal', exercise:'kcal', milk:'ml', water:'ml', fast:'' };
+  const labels = { eat:'進食', exercise:'運動', milk:'擠奶', water:'喝水' };
+  const icons  = { eat:'🍽️', exercise:'🏃', milk:'🤱', water:'💧' };
+  const units  = { eat:'kcal', exercise:'kcal', milk:'ml', water:'ml' };
 
-  todayData.entries.push({ id: Date.now(), type: currentType, time, value, note,
-    label: labels[currentType], icon: icons[currentType], unit: units[currentType] });
+  todayData.entries.push({ id:Date.now(), type:currentType, time, value, note,
+    label:labels[currentType], icon:icons[currentType], unit:units[currentType] });
   todayData.entries.sort((a,b) => a.time.localeCompare(b.time));
   saveDayData(logDay, todayData);
 
-  // Fasting timer only makes sense for today
-  if (currentType === 'fast' && logDay === currentDay) startFasting(time);
-  if (currentType !== 'fast') document.getElementById(`valInput-${currentType}`).value = '';
+  document.getElementById(`valInput-${currentType}`).value = '';
   if (currentType === 'eat' || currentType === 'exercise') document.getElementById(`noteInput-${currentType}`).value = '';
 
   renderTimeline(); recalculate(); updateDashboard();
+  syncHistoryIfVisible(logDay);
   showToast('✅ 已新增！');
 }
 
@@ -1052,114 +1218,6 @@ function setFilter(type) {
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('chip-active'));
   document.getElementById(`chip-${type}`).classList.add('chip-active');
   renderTimeline();
-}
-
-// ══════════════════════════════════
-//  FASTING — cross-midnight aware
-//  Stored as full ISO timestamps in 'mama_fasting'
-//  separate from daily 'mama_YYYY-MM-DD' keys
-// ══════════════════════════════════
-
-function startFasting(timeStr) {
-  const [h, m] = timeStr.split(':').map(Number);
-  const startDate = new Date();
-  startDate.setHours(h, m, 0, 0);
-  // If chosen time is in the future (user typed yesterday's time), shift back
-  if (startDate > new Date()) startDate.setDate(startDate.getDate() - 1);
-
-  saveFastState({ startISO: startDate.toISOString(), endISO: null });
-  launchFastTimer();
-  setFastingUI(true);
-}
-
-function stopFasting() {
-  const state = getFastState();
-  if (!state || state.endISO) { showToast('⚠️ 目前沒有進行中的斷食'); return; }
-
-  const endDate = new Date();
-  state.endISO  = endDate.toISOString();
-  saveFastState(state);
-
-  if (fastTimerInterval) { clearInterval(fastTimerInterval); fastTimerInterval = null; }
-
-  const dur      = fastDuration(state);                    // hours
-  const endTime  = fmtHHMM(endDate);
-  const startDate = new Date(state.startISO);
-  const startTime = fmtHHMM(startDate);
-  const startDay  = state.startISO.slice(0,10);
-  const crossNote = startDay !== currentDay
-    ? `從 ${startDay.slice(5)} ${startTime} 開始（跨日）` : `從 ${startTime} 開始`;
-
-  // Record the end in today's log
-  todayData.entries.push({
-    id: Date.now(), type: 'fast-end', time: endTime,
-    value: Math.round(dur * 10) / 10, unit: 'hr',
-    note: crossNote, label: '斷食結束', icon: '✅'
-  });
-  todayData.entries.sort((a,b) => a.time.localeCompare(b.time));
-  saveDayData(currentDay, todayData);
-
-  setFastingUI(false, dur);
-  renderTimeline(); recalculate(); updateDashboard();
-  showToast(`✅ 斷食完成！累計 ${dur.toFixed(1)} 小時 🎉`);
-}
-
-function restoreFastState() {
-  const state = getFastState();
-  if (!state) { setFastingUI(false); return; }
-  if (state.endISO) {
-    setFastingUI(false, fastDuration(state));
-  } else {
-    launchFastTimer();
-    setFastingUI(true);
-  }
-}
-
-function launchFastTimer() {
-  if (fastTimerInterval) clearInterval(fastTimerInterval);
-  tickFastTimer();
-  fastTimerInterval = setInterval(tickFastTimer, 30000);
-}
-
-function tickFastTimer() {
-  const state = getFastState();
-  if (!state || state.endISO) return;
-  const dur   = fastDuration(state);
-  const hours = Math.floor(dur);
-  const mins  = Math.round((dur - hours) * 60);
-  document.getElementById('fastHours').textContent      = `${hours}h ${mins}m`;
-  document.getElementById('fastTimerDisplay').textContent = `${hours}h ${mins}m`;
-  const sd  = new Date(state.startISO);
-  const day = state.startISO.slice(0,10);
-  const lbl = day !== currentDay
-    ? `從 ${day.slice(5)} ${fmtHHMM(sd)} 開始（跨日）` : `從 ${fmtHHMM(sd)} 開始`;
-  document.getElementById('fastStart').textContent = lbl;
-}
-
-function fastDuration(state) {
-  const start = new Date(state.startISO);
-  const end   = state.endISO ? new Date(state.endISO) : new Date();
-  return (end - start) / 3600000;
-}
-
-function setFastingUI(isActive, completedHrs) {
-  document.getElementById('fastingBanner').classList.toggle('hidden', !isActive);
-  const stopBtn = document.getElementById('stopFastBtn');
-  if (stopBtn) stopBtn.classList.toggle('hidden', !isActive);
-  if (!isActive) {
-    if (completedHrs !== undefined) {
-      document.getElementById('fastHours').textContent = completedHrs.toFixed(1) + 'h ✅';
-      document.getElementById('fastStart').textContent = '斷食已完成';
-    } else {
-      document.getElementById('fastHours').textContent = '—';
-      document.getElementById('fastStart').textContent = '尚未開始';
-    }
-    document.getElementById('fastTimerDisplay').textContent = '—';
-  }
-}
-
-function fmtHHMM(date) {
-  return `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
 }
 
 // ── TIMELINE ──
@@ -1173,145 +1231,121 @@ function renderTimeline() {
     return;
   }
   tl.innerHTML = entries.map(e => {
-    const isFastEnd = e.type === 'fast-end';
-    const val = e.type==='fast'   ? '斷食開始 🌙' :
-                isFastEnd         ? `${e.value} hr${e.note ? ` · ${e.note}` : ''}` :
-                `${e.value.toLocaleString()} ${e.unit}${e.note ? ` · ${e.note}` : ''}`;
+    const val = `${e.value.toLocaleString()} ${e.unit}${e.note?' · '+e.note:''}`;
     const sub = e.type==='milk'     ? `（消耗 ${Math.round(e.value*0.8)} kcal）` :
                 e.type==='exercise' ? `（燃燒 ${e.value} kcal 🔥）` : '';
-    const canEdit   = !['fast','fast-end'].includes(e.type);
-    const actionBtns = `<div class="tl-actions">
-      ${canEdit ? `<button class="tl-edit" onclick="openEdit(${e.id})" title="修改">✏️</button>` : ''}
-      <button class="tl-delete" onclick="deleteEntry(${e.id})" title="刪除">🗑️</button>
-    </div>`;
     return `<div class="timeline-item">
       <div class="tl-time">${e.time}</div>
       <div class="tl-dot ${e.type}">${e.icon}</div>
       <div class="tl-desc"><div class="tl-title">${e.label}</div><div class="tl-value">${val}${sub}</div></div>
-      ${actionBtns}
+      <div class="tl-actions">
+        <button class="tl-edit"   onclick="openEdit(${e.id})">✏️</button>
+        <button class="tl-delete" onclick="deleteEntry(${e.id})">🗑️</button>
+      </div>
     </div>`;
   }).join('');
 }
 
-function deleteEntry(id) {
-  showDeleteConfirm(id, 'today');
-}
-
-let _pendingDeleteId    = null;
-let _pendingDeleteScope = '';
-
+// ── DELETE ──
+let _pendingDeleteId = null, _pendingDeleteScope = '';
+function deleteEntry(id)     { showDeleteConfirm(id, 'today'); }
+function deleteHistEntry(id) { showDeleteConfirm(id, 'history'); }
 function showDeleteConfirm(id, scope) {
-  _pendingDeleteId    = id;
-  _pendingDeleteScope = scope;
+  _pendingDeleteId = id; _pendingDeleteScope = scope;
   document.getElementById('deleteConfirmOverlay').classList.remove('hidden');
 }
 function cancelDelete() {
-  _pendingDeleteId    = null;
-  _pendingDeleteScope = '';
+  _pendingDeleteId = null; _pendingDeleteScope = '';
   document.getElementById('deleteConfirmOverlay').classList.add('hidden');
 }
 function confirmDelete() {
   document.getElementById('deleteConfirmOverlay').classList.add('hidden');
-  if (_pendingDeleteScope === 'history') {
-    _doDeleteHistEntry(_pendingDeleteId);
-  } else {
-    _doDeleteEntry(_pendingDeleteId);
-  }
-  _pendingDeleteId    = null;
-  _pendingDeleteScope = '';
+  _pendingDeleteScope === 'history' ? _doDeleteHistEntry(_pendingDeleteId) : _doDeleteEntry(_pendingDeleteId);
+  _pendingDeleteId = null; _pendingDeleteScope = '';
 }
 document.getElementById('deleteConfirmOverlay').addEventListener('click', function(ev){ if(ev.target===this) cancelDelete(); });
 
 function _doDeleteEntry(id) {
-  const entry = todayData.entries.find(e => e.id === id);
   todayData.entries = todayData.entries.filter(e => e.id !== id);
-  if (entry && (entry.type === 'fast' || entry.type === 'fast-end')) {
-    saveFastState(null);
-    if (fastTimerInterval) { clearInterval(fastTimerInterval); fastTimerInterval = null; }
-    setFastingUI(false);
-  }
   saveDayData(logDay, todayData);
   renderTimeline(); recalculate(); updateDashboard();
-  // Sync history view if it's showing the same day
-  const histPicker = document.getElementById('historyDatePicker');
-  if (histPicker && histPicker.value === logDay) loadHistoryDay();
+  syncHistoryIfVisible(logDay);
+  showToast('🗑️ 已刪除');
+}
+function _doDeleteHistEntry(id) {
+  if (!historyEditDate) return;
+  const data = getDayData(historyEditDate); if (!data) return;
+  data.entries = data.entries.filter(e => e.id !== id);
+  saveDayData(historyEditDate, data);
+  if (historyEditDate === logDay) { todayData = data; renderTimeline(); recalculate(); updateDashboard(); }
+  loadHistoryDay();
   showToast('🗑️ 已刪除');
 }
 
 // ── EDIT ──
 function openEdit(id) {
-  const e = todayData.entries.find(x => x.id === id);
-  if (!e) return;
+  const e = todayData.entries.find(x => x.id === id); if (!e) return;
   document.getElementById('editEntryId').value = id;
-  document.getElementById('editEntryId').dataset.histDate = '';  // not a history edit
-  document.getElementById('editTime').value    = e.time;
-  const vRow = document.getElementById('editValueRow');
-  const nRow = document.getElementById('editNoteRow');
-  const vLbl = document.getElementById('editValueLabel');
-  vRow.classList.remove('hidden');
+  document.getElementById('editEntryId').dataset.histDate = '';
+  document.getElementById('editTime').value  = e.time;
+  document.getElementById('editValueRow').classList.remove('hidden');
   document.getElementById('editValue').value = e.value;
   const labelMap = { eat:'🔥 熱量 (kcal)', exercise:'🔥 消耗熱量 (kcal)', milk:'🍼 奶量 (ml)', water:'💧 水量 (ml)' };
-  vLbl.textContent = labelMap[e.type] || '數值';
+  document.getElementById('editValueLabel').textContent = labelMap[e.type] || '數值';
   if (e.type === 'eat' || e.type === 'exercise') {
-    nRow.classList.remove('hidden');
+    document.getElementById('editNoteRow').classList.remove('hidden');
     document.getElementById('editNote').value = e.note || '';
   } else {
-    nRow.classList.add('hidden');
+    document.getElementById('editNoteRow').classList.add('hidden');
   }
   document.getElementById('editOverlay').classList.remove('hidden');
 }
 
 function saveEdit() {
-  const id      = parseInt(document.getElementById('editEntryId').value);
+  const id       = parseInt(document.getElementById('editEntryId').value);
   const histDate = document.getElementById('editEntryId').dataset.histDate || '';
-  // Determine which dataset to edit
-  const isHist  = histDate && histDate !== currentDay;
-  const data    = isHist ? getDayData(histDate) : todayData;
+  const isHist   = histDate && histDate !== logDay;
+  const data     = isHist ? getDayData(histDate) : todayData;
   if (!data) return;
-
-  const e = data.entries.find(x => x.id === id);
-  if (!e) return;
+  const e = data.entries.find(x => x.id === id); if (!e) return;
   const newTime = document.getElementById('editTime').value;
   if (!newTime) { showToast('⚠️ 請填寫時間'); return; }
   e.time = newTime;
   const newVal = parseFloat(document.getElementById('editValue').value);
-  if (!newVal || newVal <= 0) { showToast('⚠️ 請填寫正確數值'); return; }
+  if (isNaN(newVal) || (e.type !== 'eat' && newVal <= 0)) { showToast('⚠️ 請填寫正確數值'); return; }
   e.value = newVal;
   if (e.type === 'eat' || e.type === 'exercise') e.note = document.getElementById('editNote').value.trim();
   data.entries.sort((a,b) => a.time.localeCompare(b.time));
   saveDayData(isHist ? histDate : logDay, data);
-
-  // Keep todayData in sync
   if (!isHist) { todayData = data; renderTimeline(); recalculate(); updateDashboard(); }
-  // Always refresh history view if it's showing the edited date
-  const histPicker = document.getElementById('historyDatePicker');
-  const shownDate  = histPicker ? histPicker.value : '';
-  const editedDate = isHist ? histDate : logDay;
-  if (shownDate === editedDate) loadHistoryDay();
-
-  // Clear the hist date tag
+  syncHistoryIfVisible(isHist ? histDate : logDay);
   document.getElementById('editEntryId').dataset.histDate = '';
   closeEdit();
-  showToast('✅ 已儲存修改！');
+  showToast('✅ 已儲存！');
 }
 
 function closeEdit() { document.getElementById('editOverlay').classList.add('hidden'); }
-document.getElementById('editOverlay').addEventListener('click', function(ev) { if (ev.target===this) closeEdit(); });
+document.getElementById('editOverlay').addEventListener('click', function(ev){ if(ev.target===this) closeEdit(); });
+
+function syncHistoryIfVisible(date) {
+  const dp = document.getElementById('historyDatePicker');
+  if (dp && dp.value === date) loadHistoryDay();
+}
 
 // ── SUMMARY ──
 function showSummary() {
-  const w = parseFloat(document.getElementById('weightInput').value) || 70.5;
-  const h = parseFloat(document.getElementById('heightInput').value) || 162;
+  const w = parseFloat(document.getElementById('weightInput').value)||70.5;
+  const h = parseFloat(document.getElementById('heightInput').value)||162;
   const bmr = getMifflinBMR(w,h), tdee = Math.round(bmr*1.2);
   const calIn    = todayData.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
   const milkTot  = todayData.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
   const waterIn  = todayData.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
   const exBurn   = todayData.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
   const milkBurn = Math.round(milkTot*0.8);
-  const totalBurn= tdee + milkBurn + exBurn;
-  const waterGoal= Math.round(w*35 + milkTot);
-  const deficit  = calIn - totalBurn;
-  const waterPct = Math.round(waterIn / Math.max(waterGoal,1) * 100);
+  const totalBurn= tdee+milkBurn+exBurn;
+  const waterGoal= Math.round(w*35+milkTot);
+  const deficit  = calIn-totalBurn;
+  const waterPct = Math.round(waterIn/Math.max(waterGoal,1)*100);
 
   document.getElementById('s-calIn').textContent     = `${calIn.toLocaleString()} kcal`;
   document.getElementById('s-bmr').textContent       = `${tdee.toLocaleString()} kcal`;
@@ -1320,46 +1354,35 @@ function showSummary() {
   document.getElementById('s-totalBurn').textContent = `${totalBurn.toLocaleString()} kcal`;
   document.getElementById('s-waterGoal').textContent = `${waterGoal.toLocaleString()} ml`;
   document.getElementById('s-waterIn').textContent   = `${waterIn.toLocaleString()} ml`;
+  document.getElementById('s-calResult').textContent = deficit<0?`👉 熱量赤字 ${deficit} kcal`:`👉 熱量盈餘 +${deficit} kcal`;
+  document.getElementById('s-calHint').textContent   = deficit<0?(Math.abs(deficit)<=500?'完美的健康減脂區間！💪':'赤字偏大，記得補充蛋白質 🤍'):'今天熱量充足，有足夠能量產奶 🍼';
+  document.getElementById('s-waterResult').textContent = waterPct>=100?'💧 水分達標 🎉':`💧 達成 ${waterPct}%`;
+  document.getElementById('s-waterHint').textContent   = waterPct>=100?'充足水分對明天的奶量很有幫助 🌟':(waterPct<80?`睡前再補 ${Math.round((waterGoal-waterIn)/100)*100} ml 溫水！`:'睡前一杯水就達標 🥛');
 
-  document.getElementById('s-calResult').textContent = deficit<0
-    ? `👉 熱量赤字 ${deficit} kcal` : `👉 熱量盈餘 +${deficit} kcal`;
-  document.getElementById('s-calHint').textContent = deficit<0
-    ? (Math.abs(deficit)<=500 ? '完美的健康減脂區間！穩定瘦身中 💪' : '赤字偏大，記得補充蛋白質 🤍')
-    : '今天熱量充足，有足夠能量產奶 🍼';
-
-  document.getElementById('s-waterResult').textContent = waterPct>=100 ? '💧 水分達標 🎉' : `💧 達成 ${waterPct}%`;
-  document.getElementById('s-waterHint').textContent   = waterPct>=100
-    ? '充足水分對明天的奶量很有幫助 🌟'
-    : (waterPct<80 ? `睡前再補 ${Math.round((waterGoal-waterIn)/100)*100} ml 溫水！` : '睡前一杯水就達標 🥛');
-
-  // Fasting summary: use the stored state for accuracy
-  const fastState = getFastState();
-  if (fastState) {
-    const dur = fastDuration(fastState);
-    const sd  = new Date(fastState.startISO);
-    document.getElementById('s-fastStart').textContent = fmtHHMM(sd);
-    document.getElementById('s-fastDur').textContent   = `${dur.toFixed(1)} 小時${fastState.endISO ? '' : '（進行中）'}`;
-    document.getElementById('s-fastHint').textContent  = '睡眠時間也是燃脂黃金期！🌙';
+  // Fasting: show active cycle info
+  const active = getActiveCycle();
+  if (active) {
+    const dur = (new Date() - new Date(active.startISO)) / 3600000;
+    document.getElementById('s-fastStart').textContent = fmtFullDT(new Date(active.startISO));
+    document.getElementById('s-fastDur').textContent   = `${dur.toFixed(1)} 小時（進行中）`;
+    document.getElementById('s-fastHint').textContent  = '睡眠也是燃脂黃金期！🌙';
   } else {
-    document.getElementById('s-fastStart').textContent = '今日尚未斷食';
+    document.getElementById('s-fastStart').textContent = '目前無進行中的斷食';
     document.getElementById('s-fastDur').textContent   = '—';
-    document.getElementById('s-fastHint').textContent  = '明天可以試試輕斷食 🌟';
+    document.getElementById('s-fastHint').textContent  = '可在斷食卡片開始新週期 🌟';
   }
 
   let warn = '';
-  if (calIn>0 && calIn<1500)  warn += `<div class="warning-box">⚠️ 媽咪今天吃得太少！熱量不足可能讓奶量減少。</div>`;
-  if (waterIn>0 && waterPct<80) warn += `<div class="warning-box" style="margin-top:6px">💧 水分不夠，睡前再補 100ml 溫水！</div>`;
+  if (calIn>0&&calIn<1500) warn += `<div class="warning-box">⚠️ 媽咪今天吃得太少！熱量不足可能讓奶量減少。</div>`;
+  if (waterIn>0&&waterPct<80) warn += `<div class="warning-box" style="margin-top:6px">💧 水分不夠，睡前再補 100ml 溫水！</div>`;
   document.getElementById('warningBox').innerHTML = warn;
   document.getElementById('summaryOverlay').classList.remove('hidden');
 }
-
 function closeSummary() { document.getElementById('summaryOverlay').classList.add('hidden'); }
 document.getElementById('summaryOverlay').addEventListener('click', function(ev){ if(ev.target===this) closeSummary(); });
-
 function scheduleAutoSummary() {
-  const now = new Date(), midnight = new Date();
-  midnight.setHours(24,0,0,0);
-  setTimeout(showSummary, midnight - now);
+  const now=new Date(), midnight=new Date(); midnight.setHours(24,0,0,0);
+  setTimeout(showSummary, midnight-now);
 }
 
 // ══════════════════════════════════
@@ -1376,366 +1399,361 @@ function loadHistoryDay() {
   const data  = getDayData(dateStr);
   const card  = document.getElementById('historyDayCard');
   const empty = document.getElementById('historyDayEmpty');
-
-  if (!data || !data.entries) { card.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+  if (!data||!data.entries) { card.classList.add('hidden'); empty.classList.remove('hidden'); return; }
   card.classList.remove('hidden'); empty.classList.add('hidden');
+  historyEditDate = dateStr;
 
-  const w=data.weight||70.5, h=data.height||162;
-  const bmr=getMifflinBMR(w,h), tdee=Math.round(bmr*1.2);
-  const calIn   =data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
-  const milkTot =data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
-  const waterIn =data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
-  const exBurn  =data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
-  const milkBurn=Math.round(milkTot*0.8);
-  const totalBurn=tdee+milkBurn+exBurn;
-  const waterGoal=Math.round(w*35+milkTot);
-  const waterPct =Math.round(waterIn/Math.max(waterGoal,1)*100);
-  const deficit  =calIn-totalBurn;
-
-  // Fasting hours: use fast-end entry if present, else fast entry estimate
-  const fastEndEntry = data.entries.find(e=>e.type==='fast-end');
-  const fastStartEntry = data.entries.find(e=>e.type==='fast');
-  let fastHrs = '—';
-  if (fastEndEntry) {
-    fastHrs = fastEndEntry.value.toFixed(1) + 'h';
-  } else if (fastStartEntry) {
-    const [sh,sm] = fastStartEntry.time.split(':').map(Number);
-    fastHrs = ((24*60 - sh*60 - sm)/60).toFixed(1) + 'h';
-  }
-
-  document.getElementById('h-calIn').textContent  = calIn ? calIn.toLocaleString() : '—';
-  document.getElementById('h-burn').textContent   = totalBurn.toLocaleString();
-  document.getElementById('h-water').textContent  = waterIn ? waterIn.toLocaleString() : '—';
-  document.getElementById('h-milk').textContent   = milkTot ? milkTot.toLocaleString() : '—';
-  document.getElementById('h-exburn').textContent = exBurn ? exBurn.toLocaleString() : '—';
-  document.getElementById('h-weight').textContent = w;
-
-  const goodCal=deficit<=0&&deficit>=-600&&calIn>=1500, goodWater=waterPct>=80;
-  const [verdict,bg] = goodCal&&goodWater ? ['😊 表現優秀！完美的一天','#C8F0E8']
-    : goodCal||goodWater ? ['😐 繼續努力！快到目標了','#FFF0C8']
-    : ['😢 不用氣餒！明天繼續加油','#FFD6E0'];
-  const vEl=document.getElementById('h-verdict');
-  vEl.textContent=verdict; vEl.style.background=bg;
-
-  const tl = document.getElementById('historyDayTimeline');
-  historyEditDate = dateStr;   // remember which date we're viewing
-  if (!data.entries.length) { tl.innerHTML='<div style="font-size:0.8rem;color:var(--text-light);text-align:center;padding:8px">無記錄</div>'; return; }
-  tl.innerHTML = data.entries.map(e => {
-    const isFastEnd = e.type === 'fast-end';
-    const val = e.type==='fast' ? '斷食開始 🌙'
-      : isFastEnd ? `${e.value} hr${e.note ? ' · '+e.note : ''}`
-      : `${e.value} ${e.unit}${e.note?' · '+e.note:''}`;
-    const canEdit = !['fast','fast-end'].includes(e.type);
-    return `<div class="hist-tl-item">
-      <div class="hist-tl-time">${e.time}</div>
-      <div class="hist-tl-icon tl-dot ${e.type}">${e.icon}</div>
-      <div style="flex:1;color:var(--text-mid)">${e.label}：${val}</div>
-      <div class="tl-actions">
-        ${canEdit ? `<button class="tl-edit" onclick="openHistEdit(${e.id})" title="修改">✏️</button>` : ''}
-        <button class="tl-delete" onclick="deleteHistEntry(${e.id})" title="刪除">🗑️</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderHistory() {
-  renderEmojiCalendar();
-  renderWeightChart();
-  renderMilkFastStats();
-}
-
-// ── HISTORY EDIT / DELETE ──
-function deleteHistEntry(id) {
-  showDeleteConfirm(id, 'history');
-}
-
-function _doDeleteHistEntry(id) {
-  if (!historyEditDate) return;
-  const data = getDayData(historyEditDate);
-  if (!data) return;
-  data.entries = data.entries.filter(e => e.id !== id);
-  saveDayData(historyEditDate, data);
-  if (historyEditDate === currentDay) {
-    todayData = data;
-    renderTimeline(); recalculate(); updateDashboard();
-  }
-  loadHistoryDay();
-  showToast('🗑️ 已刪除');
-}
-
-function openHistEdit(id) {
-  if (!historyEditDate) return;
-  const data = getDayData(historyEditDate);
-  if (!data) return;
-  const e = data.entries.find(x => x.id === id);
-  if (!e) return;
-
-  // Reuse the same edit overlay, but tag it as history edit
-  document.getElementById('editEntryId').value = id;
-  document.getElementById('editEntryId').dataset.histDate = historyEditDate;
-  document.getElementById('editTime').value = e.time;
-
-  const vRow = document.getElementById('editValueRow');
-  const nRow = document.getElementById('editNoteRow');
-  const vLbl = document.getElementById('editValueLabel');
-  vRow.classList.remove('hidden');
-  document.getElementById('editValue').value = e.value;
-  const labelMap = { eat:'🔥 熱量 (kcal)', exercise:'🔥 消耗熱量 (kcal)', milk:'🍼 奶量 (ml)', water:'💧 水量 (ml)' };
-  vLbl.textContent = labelMap[e.type] || '數值';
-  if (e.type === 'eat' || e.type === 'exercise') {
-    nRow.classList.remove('hidden');
-    document.getElementById('editNote').value = e.note || '';
-  } else {
-    nRow.classList.add('hidden');
-  }
-  document.getElementById('editOverlay').classList.remove('hidden');
-}
-
-function getDayScore(data) {
-  if (!data||!data.entries||!data.entries.length) return null;
   const w=data.weight||70.5, h=data.height||162;
   const bmr=getMifflinBMR(w,h), tdee=Math.round(bmr*1.2);
   const calIn  =data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
   const milkTot=data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
   const waterIn=data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
   const exBurn =data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
-  const deficit=calIn-(tdee+Math.round(milkTot*0.8)+exBurn);
-  const wGoal  =Math.round(w*35+milkTot);
-  const goodCal  =deficit<=0&&deficit>=-600&&calIn>=1500;
-  const goodWater=Math.round(waterIn/Math.max(wGoal,1)*100)>=80;
-  return { goodCal, goodWater };
-}
+  const milkBurn=Math.round(milkTot*0.8);
+  const totalBurn=tdee+milkBurn+exBurn;
+  const waterGoal=Math.round(w*35+milkTot);
+  const waterPct =Math.round(waterIn/Math.max(waterGoal,1)*100);
+  const deficit  =calIn-totalBurn;
 
-function renderEmojiCalendar() {
-  const dates = getAllDates();
-  const cal   = document.getElementById('emojiCalendar');
-  if (!dates.length) { cal.innerHTML='<div style="font-size:0.8rem;color:var(--text-light);padding:10px">還沒有歷史記錄 🌱</div>'; return; }
-  cal.innerHTML = dates.map(d => {
-    const score = getDayScore(getDayData(d));
-    const emoji = !score ? '⬜'
-      : score.goodCal && score.goodWater ? '😊'
-      : score.goodCal || score.goodWater ? '😐' : '😢';
-    return `<div class="emoji-day" title="${d}" onclick="jumpToDate('${d}')">${emoji}<div class="emoji-day-label">${d.slice(5)}</div></div>`;
+  document.getElementById('h-calIn').textContent  = calIn?calIn.toLocaleString():'—';
+  document.getElementById('h-burn').textContent   = totalBurn.toLocaleString();
+  document.getElementById('h-water').textContent  = waterIn?waterIn.toLocaleString():'—';
+  document.getElementById('h-milk').textContent   = milkTot?milkTot.toLocaleString():'—';
+  document.getElementById('h-exburn').textContent = exBurn?exBurn.toLocaleString():'—';
+  document.getElementById('h-weight').textContent = w;
+
+  const goodCal=deficit<=0&&deficit>=-600&&calIn>=1500, goodWater=waterPct>=80;
+  const [verdict,bg] = goodCal&&goodWater?['😊 表現優秀！完美的一天','#C8F0E8']:goodCal||goodWater?['😐 繼續努力！快到目標了','#FFF0C8']:['😢 不用氣餒！明天繼續加油','#FFD6E0'];
+  const vEl=document.getElementById('h-verdict'); vEl.textContent=verdict; vEl.style.background=bg;
+
+  const tl = document.getElementById('historyDayTimeline');
+  if (!data.entries.length) { tl.innerHTML='<div style="font-size:0.8rem;color:var(--text-light);text-align:center;padding:8px">無記錄</div>'; return; }
+  tl.innerHTML = data.entries.map(e => {
+    const val = `${e.value} ${e.unit}${e.note?' · '+e.note:''}`;
+    return `<div class="hist-tl-item">
+      <div class="hist-tl-time">${e.time}</div>
+      <div class="hist-tl-icon tl-dot ${e.type}">${e.icon}</div>
+      <div style="flex:1;color:var(--text-mid)">${e.label}：${val}</div>
+    </div>`;
   }).join('');
 }
 
+function renderHistory() {
+  renderEmojiCalendar();
+  renderWeightDotChart();
+  renderFastingCycles();
+  renderMilkFastStats();
+}
+
+function getDayScore(data) {
+  if (!data||!data.entries||!data.entries.length) return null;
+  const w=data.weight||70.5,h=data.height||162;
+  const bmr=getMifflinBMR(w,h),tdee=Math.round(bmr*1.2);
+  const calIn =data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
+  const milkTot=data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
+  const waterIn=data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
+  const exBurn=data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
+  const deficit=calIn-(tdee+Math.round(milkTot*0.8)+exBurn);
+  const wGoal=Math.round(w*35+milkTot);
+  return { goodCal:deficit<=0&&deficit>=-600&&calIn>=1500, goodWater:Math.round(waterIn/Math.max(wGoal,1)*100)>=80 };
+}
+
+function renderEmojiCalendar() {
+  const dates=getAllDates(), cal=document.getElementById('emojiCalendar');
+  if (!dates.length) { cal.innerHTML='<div style="font-size:0.8rem;color:var(--text-light);padding:10px">還沒有歷史記錄 🌱</div>'; return; }
+  cal.innerHTML = dates.map(d => {
+    const s=getDayScore(getDayData(d));
+    const emoji=!s?'⬜':s.goodCal&&s.goodWater?'😊':s.goodCal||s.goodWater?'😐':'😢';
+    return `<div class="emoji-day" title="${d}" onclick="jumpToDate('${d}')">${emoji}<div class="emoji-day-label">${d.slice(5)}</div></div>`;
+  }).join('');
+}
 function jumpToDate(d) {
   document.getElementById('historyDatePicker').value = d;
   loadHistoryDay();
-  // Scroll to the date card
-  document.getElementById('historyDayCard').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
-function renderWeightChart() {
+// ── WEIGHT DOT CHART (SVG) ──
+function renderWeightDotChart() {
   const dates   = getAllDates();
-  const weights = dates.map(d=>({d, w:(getDayData(d)||{}).weight||null})).filter(x=>x.w);
+  const weights = dates.map(d=>{ const data=getDayData(d); return data&&data.weight?{d,w:data.weight}:null; }).filter(Boolean);
   const noData  = document.getElementById('noWeightData');
-  const canvas  = document.getElementById('weightChart');
-  if (weights.length < 2) { noData.classList.remove('hidden'); canvas.classList.add('hidden'); return; }
-  noData.classList.add('hidden'); canvas.classList.remove('hidden');
+  const el      = document.getElementById('weightDotChart');
 
-  const ctx = canvas.getContext('2d');
-  const W   = canvas.offsetWidth || 300;
-  canvas.width = W; canvas.height = 160;
+  if (!weights.length) { noData.classList.remove('hidden'); el.innerHTML=''; return; }
+  noData.classList.add('hidden');
+
   const vals = weights.map(x=>x.w);
-  const minW = Math.min(...vals)-1, maxW = Math.max(...vals)+1;
-  const n    = weights.length;
-  ctx.clearRect(0,0,W,160);
+  const minW = Math.min(...vals), maxW = Math.max(...vals);
+  const goal = 55;
+  const latest= weights[weights.length-1].w;
+  const first = weights[0].w;
+  const diff  = (latest-first).toFixed(1);
 
-  // Goal line at 55 kg
-  if (55 >= minW && 55 <= maxW) {
-    const gy = 20+((maxW-55)/(maxW-minW))*120;
-    ctx.setLineDash([4,4]); ctx.strokeStyle='#3DBFA0'; ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.moveTo(30,gy); ctx.lineTo(W-10,gy); ctx.stroke();
-    ctx.setLineDash([]); ctx.fillStyle='#3DBFA0'; ctx.font='bold 10px Nunito';
-    ctx.fillText('目標55kg', W-70, gy-3);
-  }
-  // Grid
-  ctx.strokeStyle='#EEE'; ctx.lineWidth=1;
-  for (let i=0; i<=4; i++) {
-    const y = 20+(i/4)*120;
-    ctx.beginPath(); ctx.moveTo(30,y); ctx.lineTo(W-10,y); ctx.stroke();
-    ctx.fillStyle='#B8A0AA'; ctx.font='10px Nunito';
-    ctx.fillText((maxW-(i/4)*(maxW-minW)).toFixed(1), 2, y+4);
-  }
-  // Line
-  ctx.beginPath(); ctx.strokeStyle='#E05C7A'; ctx.lineWidth=2.5; ctx.lineJoin='round';
-  weights.forEach((pt,i)=>{
-    const x=30+(i/(n-1))*(W-40), y=20+((maxW-pt.w)/(maxW-minW))*120;
-    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-  }); ctx.stroke();
-  // Dots + labels
-  weights.forEach((pt,i)=>{
-    const x=30+(i/(n-1))*(W-40), y=20+((maxW-pt.w)/(maxW-minW))*120;
-    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fillStyle='#E05C7A'; ctx.fill();
-    ctx.fillStyle='#E05C7A'; ctx.font='bold 9px Nunito'; ctx.fillText(pt.w, x-6, y-8);
-    ctx.fillStyle='#B8A0AA'; ctx.font='8px Nunito'; ctx.fillText(pt.d.slice(5), x-9, 155);
+  // Summary chips
+  const summaryHtml = `<div class="weight-summary">
+    <div class="ws-item"><div class="ws-val">${first} kg</div><div class="ws-lbl">起始</div></div>
+    <div class="ws-item"><div class="ws-val" style="color:var(--rose-deep)">${latest} kg</div><div class="ws-lbl">最新</div></div>
+    <div class="ws-item"><div class="ws-val" style="color:${diff<=0?'#3DBFA0':'#E05C7A'}">${diff>0?'+':''}${diff} kg</div><div class="ws-lbl">變化</div></div>
+    <div class="ws-item"><div class="ws-val" style="color:#3DBFA0">${goal} kg</div><div class="ws-lbl">目標</div></div>
+  </div>`;
+
+  // SVG dot chart
+  const recent = weights.slice(-14);  // max 14 points
+  const n = recent.length;
+  const W = 300, H = 110, PL = 36, PR = 10, PT = 14, PB = 22;
+  const chartW = W - PL - PR, chartH = H - PT - PB;
+  const range  = maxW - minW || 1;
+  // pad Y so dots don't hit edges
+  const yPad   = range * 0.2;
+  const yMin   = minW - yPad, yMax = maxW + yPad;
+
+  const cx = i => PL + (n===1 ? chartW/2 : i/(n-1)*chartW);
+  const cy = w => PT + (1 - (w-yMin)/(yMax-yMin)) * chartH;
+
+  // Y axis labels (3 levels)
+  const yLabels = [minW, (minW+maxW)/2, maxW].map(v => v.toFixed(1));
+  const yLabelPositions = [cy(minW), cy((minW+maxW)/2), cy(maxW)];
+
+  // Build SVG path
+  const linePts = recent.map((pt,i) => `${cx(i).toFixed(1)},${cy(pt.w).toFixed(1)}`).join(' ');
+
+  // Goal line Y
+  const goalY = cy(goal);
+  const showGoal = goal >= yMin && goal <= yMax;
+
+  let svgContent = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
+    <!-- grid lines -->
+    <line x1="${PL}" y1="${PT}" x2="${W-PR}" y2="${PT}" stroke="#F0E8EC" stroke-width="1"/>
+    <line x1="${PL}" y1="${PT+chartH/2}" x2="${W-PR}" y2="${PT+chartH/2}" stroke="#F0E8EC" stroke-width="1"/>
+    <line x1="${PL}" y1="${PT+chartH}" x2="${W-PR}" y2="${PT+chartH}" stroke="#F0E8EC" stroke-width="1"/>`;
+
+  // Y labels
+  [0,1,2].forEach((i, _) => {
+    const y = [cy(maxW), cy((minW+maxW)/2), cy(minW)][i];
+    const lbl = [maxW, (minW+maxW)/2, minW][i].toFixed(1);
+    svgContent += `<text x="${PL-4}" y="${y+4}" text-anchor="end" font-size="8" fill="#B8A0AA" font-family="Nunito">${lbl}</text>`;
   });
+
+  // Goal line
+  if (showGoal) {
+    svgContent += `<line x1="${PL}" y1="${goalY.toFixed(1)}" x2="${W-PR}" y2="${goalY.toFixed(1)}" stroke="#3DBFA0" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <text x="${W-PR-2}" y="${(goalY-3).toFixed(1)}" text-anchor="end" font-size="7.5" fill="#3DBFA0" font-family="Nunito">目標</text>`;
+  }
+
+  // Line connecting dots
+  if (n > 1) {
+    svgContent += `<polyline points="${linePts}" fill="none" stroke="#FFB3C6" stroke-width="1.8" stroke-linejoin="round"/>`;
+  }
+
+  // Dots + date labels
+  recent.forEach((pt, i) => {
+    const x = cx(i).toFixed(1), y = cy(pt.w).toFixed(1);
+    const color = pt.w <= goal ? '#3DBFA0' : '#E05C7A';
+    svgContent += `<circle cx="${x}" cy="${y}" r="5" fill="${color}" stroke="white" stroke-width="1.5"/>`;
+    // Show weight value above dot for first, last, and local extremes
+    if (i===0 || i===n-1 || i===vals.indexOf(Math.min(...vals)) || i===vals.indexOf(Math.max(...vals))) {
+      svgContent += `<text x="${x}" y="${(parseFloat(y)-8).toFixed(1)}" text-anchor="middle" font-size="8" fill="${color}" font-family="Nunito" font-weight="bold">${pt.w}</text>`;
+    }
+    // Date label every 2-3 dots to avoid crowding
+    if (n<=7 || i===0 || i===n-1 || i%Math.ceil(n/5)===0) {
+      svgContent += `<text x="${x}" y="${H-4}" text-anchor="middle" font-size="7.5" fill="#B8A0AA" font-family="Nunito">${pt.d.slice(5)}</text>`;
+    }
+  });
+
+  svgContent += `</svg>`;
+  el.innerHTML = summaryHtml + svgContent;
+}
+
+// ── FASTING CYCLES (history) ──
+function renderFastingCycles() {
+  const cycles = getFastCycles().filter(c => c.endISO).reverse();  // completed only, newest first
+  const el = document.getElementById('fastingCycleList');
+
+  if (!cycles.length) {
+    el.innerHTML = '<div class="empty-timeline"><span class="big-emoji">⏱️</span>還沒有完成的斷食週期</div>';
+    return;
+  }
+
+  el.innerHTML = cycles.map(c => {
+    const start = new Date(c.startISO);
+    const end   = new Date(c.endISO);
+    const hrs   = (end - start) / 3600000;
+    const color = hrs>=16?'#9B72D4':hrs>=12?'#3DBFA0':'var(--text-mid)';
+    // Cross-day indicator
+    const isCross = start.toLocaleDateString() !== end.toLocaleDateString();
+    const crossTag = isCross ? `<span class="cross-day-tag">跨日</span>` : '';
+    return `<div class="fast-cycle-row">
+      <div class="fast-cycle-dates">
+        <div class="fast-cycle-time">${fmtFullDT(start)}</div>
+        <div class="fast-cycle-arrow">↓</div>
+        <div class="fast-cycle-time">${fmtFullDT(end)} ${crossTag}</div>
+      </div>
+      <div class="fast-cycle-hrs" style="color:${color}">${hrs.toFixed(1)}<span class="fast-cycle-unit">hr</span></div>
+    </div>`;
+  }).join('');
 }
 
 function renderMilkFastStats() {
-  const dates = getAllDates();
-  let totalMilk=0, totalSessions=0, totalFastHrs=0, fastDays=0;
-  dates.forEach(d => {
-    const data = getDayData(d); if (!data) return;
-    const milkEntries = data.entries.filter(e=>e.type==='milk');
-    totalMilk     += milkEntries.reduce((s,e)=>s+e.value, 0);
-    totalSessions += milkEntries.length;
-    // Use fast-end entry value (accurate) if present
-    const fastEnd = data.entries.find(e=>e.type==='fast-end');
-    if (fastEnd) { totalFastHrs += fastEnd.value; fastDays++; }
-    else {
-      const fastStart = data.entries.find(e=>e.type==='fast');
-      if (fastStart) {
-        const [sh,sm]=fastStart.time.split(':').map(Number);
-        totalFastHrs += (24*60-sh*60-sm)/60; fastDays++;
-      }
-    }
+  const dates=getAllDates();
+  let totalMilk=0,totalSessions=0;
+  dates.forEach(d=>{ const data=getDayData(d); if(!data) return;
+    const me=data.entries.filter(e=>e.type==='milk');
+    totalMilk+=me.reduce((s,e)=>s+e.value,0); totalSessions+=me.length;
   });
+  const cycles = getFastCycles().filter(c=>c.endISO);
+  const totalFastHrs = cycles.reduce((s,c)=>(new Date(c.endISO)-new Date(c.startISO))/3600000+s, 0);
   document.getElementById('totalMilkAll').textContent      = totalMilk.toLocaleString();
   document.getElementById('totalMilkSessions').textContent = totalSessions;
   document.getElementById('totalFastHrs').textContent      = totalFastHrs.toFixed(1);
-  document.getElementById('avgFastHrs').textContent        = fastDays>0 ? (totalFastHrs/fastDays).toFixed(1) : '—';
+  document.getElementById('avgFastHrs').textContent        = cycles.length?(totalFastHrs/cycles.length).toFixed(1):'—';
 }
 
 // ══════════════════════════════════
 //  SYNC
 // ══════════════════════════════════
 function updateSyncStats() {
-  const dates = getAllDates();
-  const total = dates.reduce((s,d)=>{ const data=getDayData(d); return s+(data?data.entries.length:0); }, 0);
+  const dates=getAllDates();
+  const total=dates.reduce((s,d)=>{const data=getDayData(d);return s+(data?data.entries.length:0);},0);
   document.getElementById('syncDayCount').textContent   = dates.length;
   document.getElementById('syncEntryCount').textContent = total;
-  document.getElementById('syncLastDate').textContent   = dates.length ? dates[dates.length-1].slice(5) : '—';
+  document.getElementById('syncLastDate').textContent   = dates.length?dates[dates.length-1].slice(5):'—';
 }
 
 function downloadBackup() {
-  const obj = {};
-  getAllDates().forEach(d=>{ obj[d]=getDayData(d); });
-  // Also include fasting state if active
-  const fs = getFastState();
-  const payload = { version:2, exportedAt:new Date().toISOString(), appName:'媽咪能量日誌', fastingState:fs||null, data:obj };
-  const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href=url; a.download=`媽咪日誌備份_${currentDay}.json`; a.click();  URL.revokeObjectURL(url);
+  const obj={}; getAllDates().forEach(d=>{obj[d]=getDayData(d);});
+  const payload={version:3,exportedAt:new Date().toISOString(),appName:'媽咪能量日誌',fastCycles:getFastCycles(),data:obj};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=`媽咪日誌備份_${currentDay}.json`; a.click();
+  URL.revokeObjectURL(url);
   showToast('📥 備份已下載！');
 }
 
 function uploadBackup(event) {
-  const file = event.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
     try {
-      const payload  = JSON.parse(ev.target.result);
-      const incoming = payload.data || payload;
-      let merged=0, skipped=0;
-      Object.entries(incoming).forEach(([d, dayData]) => {
-        if (!DATE_RE.test(d)) return;
-        const existing = getDayData(d);
-        if (!existing) { saveDayData(d, dayData); merged++; }
+      const payload=JSON.parse(ev.target.result);
+      const incoming=payload.data||payload;
+      let merged=0,skipped=0;
+      Object.entries(incoming).forEach(([d,dayData])=>{
+        if(!DATE_RE.test(d)) return;
+        const existing=getDayData(d);
+        if(!existing){saveDayData(d,dayData);merged++;}
         else {
-          const existIds = new Set(existing.entries.map(e=>e.id));
-          const newE = (dayData.entries||[]).filter(e=>!existIds.has(e.id));
-          if (newE.length>0) {
-            existing.entries = [...existing.entries,...newE].sort((a,b)=>a.time.localeCompare(b.time));
-            saveDayData(d, existing); merged++;
-          } else skipped++;
+          const existIds=new Set(existing.entries.map(e=>e.id));
+          const newE=(dayData.entries||[]).filter(e=>!existIds.has(e.id));
+          if(newE.length>0){existing.entries=[...existing.entries,...newE].sort((a,b)=>a.time.localeCompare(b.time));saveDayData(d,existing);merged++;}
+          else skipped++;
         }
       });
-      // Restore fasting state if present in backup
-      if (payload.fastingState) saveFastState(payload.fastingState);
-      todayData = getDayData(currentDay) || {entries:[],weight:70.5,height:162};
-      recalculate(); renderTimeline(); updateDashboard(); updateSyncStats(); restoreFastState();
+      // Merge fasting cycles
+      if (payload.fastCycles && Array.isArray(payload.fastCycles)) {
+        const existing = getFastCycles();
+        const existStarts = new Set(existing.map(c=>c.startISO));
+        const newCycles = payload.fastCycles.filter(c=>!existStarts.has(c.startISO));
+        saveFastCycles([...existing, ...newCycles].sort((a,b)=>a.startISO.localeCompare(b.startISO)));
+      }
+      todayData=getDayData(logDay)||{entries:[],weight:70.5,height:162};
+      recalculate(); renderTimeline(); updateDashboard(); updateSyncStats(); initFastingCard();
       showToast(`✅ 合併完成！新增 ${merged} 天，略過 ${skipped} 天`);
-    } catch(err) { showToast('❌ 檔案格式錯誤'); }
+    } catch(err){showToast('❌ 檔案格式錯誤');}
   };
-  reader.readAsText(file);
-  event.target.value = '';
+  reader.readAsText(file); event.target.value='';
 }
 
 function clearAllData() { document.getElementById('confirmOverlay').classList.remove('hidden'); }
 function confirmClear() {
-  getAllDates().forEach(d => localStorage.removeItem('mama_'+d));
-  saveFastState(null);
-  todayData = {entries:[], weight:70.5, height:162};
-  saveDayData(currentDay, todayData);
-  if (fastTimerInterval) { clearInterval(fastTimerInterval); fastTimerInterval=null; }
-  setFastingUI(false);
-  recalculate(); renderTimeline(); updateDashboard(); updateSyncStats();
+  getAllDates().forEach(d=>localStorage.removeItem('mama_'+d));
+  localStorage.removeItem('mama_fast_cycles');
+  todayData={entries:[],weight:70.5,height:162};
+  saveDayData(logDay,todayData);
+  if(fastTimerInterval){clearInterval(fastTimerInterval);fastTimerInterval=null;}
+  recalculate(); renderTimeline(); updateDashboard(); updateSyncStats(); initFastingCard();
   document.getElementById('confirmOverlay').classList.add('hidden');
   showToast('🗑️ 資料已清除');
 }
-document.getElementById('confirmOverlay').addEventListener('click', function(ev){ if(ev.target===this) this.classList.add('hidden'); });
+document.getElementById('confirmOverlay').addEventListener('click',function(ev){if(ev.target===this)this.classList.add('hidden');});
 
-// ── EXCEL ──
 function exportExcel() {
-  const from = document.getElementById('excelFrom').value;
-  const to   = document.getElementById('excelTo').value;
-  let dates  = getAllDates();
-  if (from) dates = dates.filter(d=>d>=from);
-  if (to)   dates = dates.filter(d=>d<=to);
-  if (!dates.length) { showToast('⚠️ 無資料'); return; }
+  const from=document.getElementById('excelFrom').value, to=document.getElementById('excelTo').value;
+  let dates=getAllDates();
+  if(from) dates=dates.filter(d=>d>=from);
+  if(to)   dates=dates.filter(d=>d<=to);
+  if(!dates.length){showToast('⚠️ 無資料');return;}
 
-  const summaryRows = [['日期','體重(kg)','攝取kcal','總消耗kcal','赤字kcal','飲水ml','水目標ml','水分%','奶量ml','奶量消耗kcal','運動消耗kcal','斷食時數h','表現']];
-  const detailRows  = [['日期','時間','類型','數值','單位','備註','自動消耗kcal']];
+  const summaryRows=[['日期','體重(kg)','攝取kcal','總消耗kcal','赤字kcal','飲水ml','水目標ml','水分%','奶量ml','奶量消耗kcal','運動消耗kcal','表現']];
+  const detailRows=[['日期','時間','類型','數值','單位','備註']];
+  const fastRows=[['開始時間','結束時間','持續時數','跨日']];
 
-  dates.forEach(d => {
-    const data = getDayData(d); if (!data) return;
-    const w=data.weight||70.5, h=data.height||162;
-    const bmr=getMifflinBMR(w,h), tdee=Math.round(bmr*1.2);
-    const calIn  =data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
+  dates.forEach(d=>{
+    const data=getDayData(d); if(!data) return;
+    const w=data.weight||70.5,h=data.height||162;
+    const bmr=getMifflinBMR(w,h),tdee=Math.round(bmr*1.2);
+    const calIn=data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
     const milkTot=data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
     const waterIn=data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
-    const exBurn =data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
+    const exBurn=data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
     const milkBurn=Math.round(milkTot*0.8);
     const totalBurn=tdee+milkBurn+exBurn;
     const waterGoal=Math.round(w*35+milkTot);
-    const waterPct =Math.round(waterIn/Math.max(waterGoal,1)*100);
-    const deficit  =calIn-totalBurn;
-    const fastEnd  =data.entries.find(e=>e.type==='fast-end');
-    const fastStart=data.entries.find(e=>e.type==='fast');
-    let fastHrs='—';
-    if (fastEnd) fastHrs=fastEnd.value;
-    else if (fastStart) { const [sh,sm]=fastStart.time.split(':').map(Number); fastHrs=((24*60-sh*60-sm)/60).toFixed(1); }
-    const score=getDayScore(data);
-    const emoji=!score?'—':score.goodCal&&score.goodWater?'😊':score.goodCal||score.goodWater?'😐':'😢';
-    summaryRows.push([d,w,calIn,totalBurn,deficit,waterIn,waterGoal,waterPct+'%',milkTot,milkBurn,exBurn,fastHrs,emoji]);
-    data.entries.forEach(e=>{
-      const auto = e.type==='milk' ? Math.round(e.value*0.8) : '';
-      detailRows.push([d, e.time, e.label, e.value, e.unit||'', e.note||'', auto]);
-    });
+    const waterPct=Math.round(waterIn/Math.max(waterGoal,1)*100);
+    const deficit=calIn-totalBurn;
+    const s=getDayScore(data);
+    const emoji=!s?'—':s.goodCal&&s.goodWater?'😊':s.goodCal||s.goodWater?'😐':'😢';
+    summaryRows.push([d,w,calIn,totalBurn,deficit,waterIn,waterGoal,waterPct+'%',milkTot,milkBurn,exBurn,emoji]);
+    data.entries.forEach(e=>detailRows.push([d,e.time,e.label,e.value,e.unit||'',e.note||'']));
+  });
+  getFastCycles().filter(c=>c.endISO).forEach(c=>{
+    const s=new Date(c.startISO),e=new Date(c.endISO);
+    const hrs=(e-s)/3600000;
+    const cross=s.toLocaleDateString()!==e.toLocaleDateString()?'是':'否';
+    fastRows.push([fmtFullDT(s),fmtFullDT(e),hrs.toFixed(1),cross]);
   });
 
-  loadSheetJS(() => {
-    const wb  = XLSX.utils.book_new();
-    const ws1 = XLSX.utils.aoa_to_sheet(summaryRows);
-    const ws2 = XLSX.utils.aoa_to_sheet(detailRows);
-    ws1['!cols'] = [12,8,10,10,10,8,10,8,8,10,10,8,8].map(w=>({wch:w}));
-    ws2['!cols'] = [12,8,8,8,6,16,12].map(w=>({wch:w}));
-    XLSX.utils.book_append_sheet(wb, ws1, '每日摘要');
-    XLSX.utils.book_append_sheet(wb, ws2, '詳細紀錄');
-    XLSX.writeFile(wb, `媽咪日誌_${currentDay}.xlsx`);
+  loadSheetJS(()=>{
+    const wb=XLSX.utils.book_new();
+    const ws1=XLSX.utils.aoa_to_sheet(summaryRows);
+    const ws2=XLSX.utils.aoa_to_sheet(detailRows);
+    const ws3=XLSX.utils.aoa_to_sheet(fastRows);
+    ws1['!cols']=[12,8,10,10,10,8,10,8,8,10,10,8].map(w=>({wch:w}));
+    ws2['!cols']=[12,8,8,8,6,16].map(w=>({wch:w}));
+    ws3['!cols']=[18,18,10,6].map(w=>({wch:w}));
+    XLSX.utils.book_append_sheet(wb,ws1,'每日摘要');
+    XLSX.utils.book_append_sheet(wb,ws2,'詳細紀錄');
+    XLSX.utils.book_append_sheet(wb,ws3,'斷食週期');
+    XLSX.writeFile(wb,`媽咪日誌_${currentDay}.xlsx`);
     showToast('📊 Excel 已下載！');
   });
 }
-
 function loadSheetJS(cb) {
-  if (typeof XLSX !== 'undefined') { cb(); return; }
-  const s = document.createElement('script');
-  s.src     = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-  s.onload  = cb;
-  s.onerror = () => showToast('❌ 無法載入 Excel 函式庫，請確認網路連線');
+  if(typeof XLSX!=='undefined'){cb();return;}
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload=cb; s.onerror=()=>showToast('❌ 無法載入 Excel 函式庫');
   document.head.appendChild(s);
+}
+
+// ── HELPERS ──
+function fmtHHMM(date) {
+  return `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+}
+function fmtFullDT(date) {
+  return `${date.getMonth()+1}/${date.getDate()} ${fmtHHMM(date)}`;
+}
+function toLocalDatetimeInput(date) {
+  const pad = n => String(n).padStart(2,'0');
+  return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
 // ── TOAST ──
 let toastTimeout;
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.remove('hidden');
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.remove('hidden');
   clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => t.classList.add('hidden'), 2800);
+  toastTimeout=setTimeout(()=>t.classList.add('hidden'),2800);
 }
 
 </script>
