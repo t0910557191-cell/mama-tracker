@@ -74,11 +74,61 @@ body {
 .header-emoji { font-size: 2.4rem; display: block; margin-bottom: 4px; }
 .header h1 { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.45rem; color: var(--rose-deep); }
 .header-sub { font-size: 0.78rem; color: var(--text-mid); margin-top: 2px; }
+.date-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+.date-nav-btn {
+  background: var(--blush);
+  border: none;
+  color: var(--rose-deep);
+  font-size: 1.3rem;
+  font-weight: 900;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+  line-height: 1;
+  padding: 0;
+}
+.date-nav-btn:hover  { background: var(--rose); color: white; }
+.date-nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+.not-today-banner {
+  margin-top: 8px;
+  background: var(--butter);
+  border: 1.5px solid var(--amber);
+  border-radius: 12px;
+  padding: 7px 12px;
+  font-size: 0.78rem;
+  color: #8B5E00;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.not-today-banner button {
+  background: var(--amber);
+  border: none;
+  border-radius: 8px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: white;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
 .date-badge {
   display: inline-block;
   background: var(--blush); color: var(--rose-deep);
   font-size: 0.75rem; font-weight: 700;
-  padding: 3px 12px; border-radius: 20px; margin-top: 6px;
+  padding: 3px 12px; border-radius: 20px;
 }
 
 /* ── CARDS ── */
@@ -439,7 +489,14 @@ body {
     <span class="header-emoji">🍼</span>
     <h1>媽咪能量日誌</h1>
     <p class="header-sub">哺乳期熱量 · 水分 · 斷食全追蹤</p>
-    <div class="date-badge" id="dateBadge">📅 載入中...</div>
+    <div class="date-nav">
+      <button class="date-nav-btn" onclick="shiftLogDay(-1)" title="前一天">‹</button>
+      <div class="date-badge" id="dateBadge">📅 載入中...</div>
+      <button class="date-nav-btn" onclick="shiftLogDay(1)" id="dateNavNext" title="後一天">›</button>
+    </div>
+    <div id="notTodayBanner" class="not-today-banner hidden">
+      ⚠️ 目前正在補記 <span id="notTodayLabel"></span>　<button onclick="goToToday()">回今天</button>
+    </div>
   </div>
 
   <div class="card">
@@ -761,16 +818,18 @@ let currentType = 'eat';
 let activeFilter = 'all';
 let fastTimerInterval = null;
 let dayCheckInterval  = null;
-let currentDay = '';
-let historyEditDate = '';   // which date is being viewed in history
+let currentDay = '';   // always today's real date
+let logDay     = '';   // the date currently shown in the today-tab (may differ)
+let historyEditDate = '';
 
 // ── INIT ──
 window.onload = () => {
   currentDay = todayKey();
-  todayData  = getDayData(currentDay) || { entries: [], weight: 70.5, height: 162 };
+  logDay     = currentDay;
+  todayData  = getDayData(logDay) || { entries: [], weight: 70.5, height: 162 };
 
   updateDateBadge();
-  setDefaultTime();
+  setDefaultTimeForDay(logDay);
   document.getElementById('weightInput').value = todayData.weight || 70.5;
   document.getElementById('heightInput').value = todayData.height || 162;
   recalculate();
@@ -789,16 +848,10 @@ function startDayWatcher() {
     const newDay = todayKey();
     if (newDay === currentDay) return;
     currentDay = newDay;
-    todayData  = getDayData(currentDay) || { entries: [], weight: todayData.weight || 70.5, height: todayData.height || 162 };
-    if (fastTimerInterval) { clearInterval(fastTimerInterval); fastTimerInterval = null; }
-    updateDateBadge();
-    setDefaultTime();
-    document.getElementById('weightInput').value = todayData.weight;
-    document.getElementById('heightInput').value = todayData.height;
-    recalculate();
-    renderTimeline();
-    updateDashboard();
-    // If fasting is still running (started yesterday), keep the timer going
+    // If user is viewing today, advance the log view too
+    if (logDay < currentDay) {
+      loadLogDay(currentDay);
+    }
     restoreFastState();
     showToast('🌅 新的一天開始了！加油媽咪 💪');
   }, 30000);
@@ -814,19 +867,68 @@ function switchTab(tab) {
   if (tab === 'sync')    updateSyncStats();
 }
 
-// ── DATE / TIME ──
-function updateDateBadge() {
-  const now = new Date();
-  const days = ['日','一','二','三','四','五','六'];
-  document.getElementById('dateBadge').textContent =
-    `📅 ${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（週${days[now.getDay()]}）`;
-  const sd = document.getElementById('summaryDate');
-  if (sd) sd.textContent = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
+// ── DATE NAVIGATION (today tab) ──
+function shiftLogDay(delta) {
+  const [y, m, d] = logDay.split('-').map(Number);
+  const date = new Date(y, m - 1, d + delta);  // local time, no UTC conversion
+  const newDay = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  if (newDay > currentDay) return;
+  loadLogDay(newDay);
 }
 
-function setDefaultTime() {
-  const now = new Date();
-  const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+function goToToday() {
+  loadLogDay(currentDay);
+}
+
+function loadLogDay(day) {
+  logDay    = day;
+  todayData = getDayData(logDay) || { entries: [], weight: parseFloat(document.getElementById('weightInput').value)||70.5, height: parseFloat(document.getElementById('heightInput').value)||162 };
+  document.getElementById('weightInput').value = todayData.weight || 70.5;
+  document.getElementById('heightInput').value = todayData.height || 162;
+  updateDateBadge();
+  setDefaultTimeForDay(day);
+  recalculate();
+  renderTimeline();
+  updateDashboard();
+  // Restore fasting only for today
+  if (logDay === currentDay) restoreFastState();
+}
+
+function updateDateBadge() {
+  const [y, m, day] = logDay.split('-').map(Number);
+  const d    = new Date(y, m - 1, day);  // local time
+  const days = ['日','一','二','三','四','五','六'];
+  const label = `📅 ${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（週${days[d.getDay()]}）`;
+  document.getElementById('dateBadge').textContent = label;
+
+  // Next arrow disabled if already on today
+  const nextBtn = document.getElementById('dateNavNext');
+  if (nextBtn) nextBtn.disabled = (logDay >= currentDay);
+
+  // Banner when not on today
+  const banner   = document.getElementById('notTodayBanner');
+  const bannerLbl= document.getElementById('notTodayLabel');
+  if (logDay !== currentDay) {
+    bannerLbl.textContent = `${d.getMonth()+1}/${d.getDate()}`;
+    banner.classList.remove('hidden');
+  } else {
+    banner.classList.add('hidden');
+  }
+
+  // Also update summary date label
+  const sd = document.getElementById('summaryDate');
+  if (sd) sd.textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+}
+
+function setDefaultTimeForDay(day) {
+  // For today: use current time. For past days: use 12:00 as default
+  let t;
+  if (day === currentDay) {
+    const now = new Date();
+    t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  } else {
+    t = '12:00';
+  }
   ['eat','exercise','milk','water','fast'].forEach(type => {
     const el = document.getElementById(`timeInput-${type}`);
     if (el) el.value = t;
@@ -838,14 +940,14 @@ function getMifflinBMR(w, h, age = 30) { return Math.round(10*w + 6.25*h - 5*age
 
 function onWeightChange() {
   todayData.weight = parseFloat(document.getElementById('weightInput').value) || 70.5;
-  saveDayData(currentDay, todayData);
+  saveDayData(logDay, todayData);
   recalculate();
 }
 
 function recalculate() {
   const w = parseFloat(document.getElementById('weightInput').value) || 70.5;
   const h = parseFloat(document.getElementById('heightInput').value) || 162;
-  todayData.height = h;
+  if (todayData) todayData.height = h;
   const bmr  = getMifflinBMR(w, h);
   const tdee = Math.round(bmr * 1.2);
   const milkTotal = todayData.entries.filter(e => e.type==='milk').reduce((s,e)=>s+e.value,0);
@@ -933,9 +1035,10 @@ function addEntry() {
   todayData.entries.push({ id: Date.now(), type: currentType, time, value, note,
     label: labels[currentType], icon: icons[currentType], unit: units[currentType] });
   todayData.entries.sort((a,b) => a.time.localeCompare(b.time));
-  saveDayData(currentDay, todayData);
+  saveDayData(logDay, todayData);
 
-  if (currentType === 'fast') startFasting(time);
+  // Fasting timer only makes sense for today
+  if (currentType === 'fast' && logDay === currentDay) startFasting(time);
   if (currentType !== 'fast') document.getElementById(`valInput-${currentType}`).value = '';
   if (currentType === 'eat' || currentType === 'exercise') document.getElementById(`noteInput-${currentType}`).value = '';
 
@@ -1127,11 +1230,11 @@ function _doDeleteEntry(id) {
     if (fastTimerInterval) { clearInterval(fastTimerInterval); fastTimerInterval = null; }
     setFastingUI(false);
   }
-  saveDayData(currentDay, todayData);
+  saveDayData(logDay, todayData);
   renderTimeline(); recalculate(); updateDashboard();
-  // Sync history view if it's showing today
+  // Sync history view if it's showing the same day
   const histPicker = document.getElementById('historyDatePicker');
-  if (histPicker && histPicker.value === currentDay) loadHistoryDay();
+  if (histPicker && histPicker.value === logDay) loadHistoryDay();
   showToast('🗑️ 已刪除');
 }
 
@@ -1176,15 +1279,14 @@ function saveEdit() {
   e.value = newVal;
   if (e.type === 'eat' || e.type === 'exercise') e.note = document.getElementById('editNote').value.trim();
   data.entries.sort((a,b) => a.time.localeCompare(b.time));
-  saveDayData(isHist ? histDate : currentDay, data);
+  saveDayData(isHist ? histDate : logDay, data);
 
   // Keep todayData in sync
   if (!isHist) { todayData = data; renderTimeline(); recalculate(); updateDashboard(); }
-  // Always refresh history view — covers both: editing from history page, and editing
-  // today's data while history tab is showing today's date
+  // Always refresh history view if it's showing the edited date
   const histPicker = document.getElementById('historyDatePicker');
   const shownDate  = histPicker ? histPicker.value : '';
-  const editedDate = isHist ? histDate : currentDay;
+  const editedDate = isHist ? histDate : logDay;
   if (shownDate === editedDate) loadHistoryDay();
 
   // Clear the hist date tag
@@ -1516,8 +1618,7 @@ function downloadBackup() {
   const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href=url; a.download=`媽咪日誌備份_${currentDay}.json`; a.click();
-  URL.revokeObjectURL(url);
+  a.href=url; a.download=`媽咪日誌備份_${currentDay}.json`; a.click();  URL.revokeObjectURL(url);
   showToast('📥 備份已下載！');
 }
 
