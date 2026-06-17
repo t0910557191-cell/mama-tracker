@@ -240,8 +240,9 @@ body {
 .timeline-item {
   display: flex; gap: 10px; align-items: flex-start;
   padding: 10px 0; border-bottom: 1px dashed rgba(0,0,0,0.07);
+  position: relative;
 }
-.timeline-item:last-child { border-bottom: none; }
+.timeline-item:last-child { border-bottom: none; padding-bottom: 4px; }
 .tl-time { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.75rem; color: var(--text-light); min-width: 38px; padding-top: 4px; }
 .tl-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
 .tl-dot.eat      { background: var(--blush); }
@@ -255,9 +256,12 @@ body {
 .tl-actions { display: flex; gap: 2px; flex-shrink: 0; align-items: center; }
 .tl-edit, .tl-delete {
   background: none; border: none; cursor: pointer;
-  font-size: 0.85rem; padding: 5px 6px; border-radius: 8px; transition: all 0.2s; line-height: 1;
+  font-size: 0.9rem; padding: 7px 8px; border-radius: 10px;
+  transition: all 0.2s; line-height: 1;
+  min-width: 34px; min-height: 34px;  /* bigger touch target */
+  display: flex; align-items: center; justify-content: center;
 }
-.tl-edit:hover  { background: var(--lavender); }
+.tl-edit:hover   { background: var(--lavender); }
 .tl-delete:hover { background: #FFE0E0; }
 .empty-timeline { text-align: center; padding: 20px; color: var(--text-light); font-size: 0.85rem; }
 .big-emoji { font-size: 2rem; display: block; margin-bottom: 6px; }
@@ -332,9 +336,13 @@ body {
 .big-stat-sub { font-size: 0.7rem; color: var(--text-mid); text-align: center; margin-bottom: 8px; }
 
 /* History detail timeline */
-.hist-tl-item { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; border-bottom: 1px dashed rgba(0,0,0,0.06); font-size: 0.78rem; }
+.hist-tl-item {
+  display: flex; gap: 8px; align-items: center;
+  padding: 7px 0; border-bottom: 1px dashed rgba(0,0,0,0.06);
+  font-size: 0.78rem;
+}
 .hist-tl-item:last-child { border-bottom: none; }
-.hist-tl-time { min-width: 38px; color: var(--text-light); font-weight: 700; font-family: 'Nunito', sans-serif; padding-top:2px; }
+.hist-tl-time { min-width: 38px; color: var(--text-light); font-weight: 700; font-family: 'Nunito', sans-serif; flex-shrink: 0; }
 .hist-tl-icon { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; flex-shrink: 0; }
 
 /* ── SYNC TAB ── */
@@ -696,6 +704,18 @@ body {
   </div>
 </div>
 
+<div class="overlay hidden" id="deleteConfirmOverlay">
+  <div class="overlay-card" style="max-width:300px;text-align:center">
+    <div style="font-size:2rem;margin-bottom:8px">🗑️</div>
+    <h2 style="font-size:1rem;margin-bottom:8px">確定要刪除？</h2>
+    <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:20px">這個動作無法復原</p>
+    <div style="display:flex;gap:8px">
+      <button class="close-btn" onclick="cancelDelete()" style="flex:1;background:var(--text-light);margin-top:0">取消</button>
+      <button class="close-btn" onclick="confirmDelete()" style="flex:1;background:linear-gradient(135deg,#E74C3C,#C0392B);margin-top:0">刪除</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="confirmOverlay">
   <div class="overlay-card" style="max-width:320px">
     <h2 style="color:#C0392B">⚠️ 確認清除</h2>
@@ -708,32 +728,46 @@ body {
 <div class="toast hidden" id="toast"></div>
 <script>
 // ════════════════════════════════
-//  媽咪能量日誌 — app.js  v4.0
+//  媽咪能量日誌 — app.js  v5.0
 // ════════════════════════════════
 
 // ── STORAGE ──
 const todayKey = () => {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
 };
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;  // guard against 'fasting' key
 
 function getDayData(d)        { return JSON.parse(localStorage.getItem('mama_' + d) || 'null'); }
 function saveDayData(d, data) { localStorage.setItem('mama_' + d, JSON.stringify(data)); }
-function getAllDates()         { return Object.keys(localStorage).filter(k => k.startsWith('mama_')).map(k => k.replace('mama_','')).sort(); }
+function getAllDates() {
+  return Object.keys(localStorage)
+    .filter(k => k.startsWith('mama_') && DATE_RE.test(k.slice(5)))  // ← exclude 'mama_fasting'
+    .map(k => k.slice(5))
+    .sort();
+}
+
+// Fasting state stored separately (full ISO timestamps for cross-midnight)
+function getFastState()       { return JSON.parse(localStorage.getItem('mama_fasting') || 'null'); }
+function saveFastState(state) {
+  if (state) localStorage.setItem('mama_fasting', JSON.stringify(state));
+  else       localStorage.removeItem('mama_fasting');
+}
 
 // ── STATE ──
 let todayData = null;
 let currentType = 'eat';
 let activeFilter = 'all';
-let fastingStartTime = null;
 let fastTimerInterval = null;
-let dayCheckInterval = null;
+let dayCheckInterval  = null;
 let currentDay = '';
+let historyEditDate = '';   // which date is being viewed in history
 
 // ── INIT ──
 window.onload = () => {
   currentDay = todayKey();
-  todayData = getDayData(currentDay) || { entries: [], weight: 70.5, height: 162 };
+  todayData  = getDayData(currentDay) || { entries: [], weight: 70.5, height: 162 };
 
   updateDateBadge();
   setDefaultTime();
@@ -742,42 +776,35 @@ window.onload = () => {
   recalculate();
   renderTimeline();
   updateDashboard();
-
-  restoreFastingState();   // cross-midnight aware restore
-
+  restoreFastState();
   scheduleAutoSummary();
-  startDayChangeWatcher();
+  startDayWatcher();
   loadHistoryDefault();
   updateSyncStats();
 };
 
-// ── DAY CHANGE WATCHER — fixes "still showing yesterday after midnight" ──
-function startDayChangeWatcher() {
-  // Check every 30 seconds if the date has changed
+// ── DAY CHANGE WATCHER ──
+function startDayWatcher() {
   dayCheckInterval = setInterval(() => {
     const newDay = todayKey();
-    if (newDay !== currentDay) {
-      currentDay = newDay;
-      // Reset for new day
-      todayData = getDayData(currentDay) || { entries: [], weight: todayData.weight || 70.5, height: todayData.height || 162 };
-      // Clear fasting timer from old day
-      fastingStartTime = null;
-      if (fastTimerInterval) { clearInterval(fastTimerInterval); fastTimerInterval = null; }
-      document.getElementById('fastingBanner').classList.add('hidden');
-
-      updateDateBadge();
-      setDefaultTime();
-      document.getElementById('weightInput').value = todayData.weight;
-      document.getElementById('heightInput').value = todayData.height;
-      recalculate();
-      renderTimeline();
-      updateDashboard();
-      showToast('🌅 新的一天開始了！加油媽咪 💪');
-    }
+    if (newDay === currentDay) return;
+    currentDay = newDay;
+    todayData  = getDayData(currentDay) || { entries: [], weight: todayData.weight || 70.5, height: todayData.height || 162 };
+    if (fastTimerInterval) { clearInterval(fastTimerInterval); fastTimerInterval = null; }
+    updateDateBadge();
+    setDefaultTime();
+    document.getElementById('weightInput').value = todayData.weight;
+    document.getElementById('heightInput').value = todayData.height;
+    recalculate();
+    renderTimeline();
+    updateDashboard();
+    // If fasting is still running (started yesterday), keep the timer going
+    restoreFastState();
+    showToast('🌅 新的一天開始了！加油媽咪 💪');
   }, 30000);
 }
 
-// ── TAB ──
+// ── TABS ──
 function switchTab(tab) {
   ['today','history','sync'].forEach(t => {
     document.getElementById('tab-'+t).classList.toggle('hidden', t !== tab);
@@ -819,15 +846,14 @@ function recalculate() {
   const w = parseFloat(document.getElementById('weightInput').value) || 70.5;
   const h = parseFloat(document.getElementById('heightInput').value) || 162;
   todayData.height = h;
-  const bmr = getMifflinBMR(w, h);
+  const bmr  = getMifflinBMR(w, h);
   const tdee = Math.round(bmr * 1.2);
-  const milkTotal = todayData.entries.filter(e => e.type==='milk').reduce((s,e) => s+e.value, 0);
+  const milkTotal = todayData.entries.filter(e => e.type==='milk').reduce((s,e)=>s+e.value,0);
   const waterGoal = Math.round(w * 35 + milkTotal);
-
-  document.getElementById('bmrVal').textContent      = bmr + ' kcal';
-  document.getElementById('tdeeVal').textContent     = tdee + ' kcal';
-  document.getElementById('waterGoalVal').textContent= waterGoal + ' ml';
-  document.getElementById('goalDiff').textContent    = Math.max(0, w-55).toFixed(1);
+  document.getElementById('bmrVal').textContent       = bmr + ' kcal';
+  document.getElementById('tdeeVal').textContent      = tdee + ' kcal';
+  document.getElementById('waterGoalVal').textContent = waterGoal + ' ml';
+  document.getElementById('goalDiff').textContent     = Math.max(0, w-55).toFixed(1);
   document.getElementById('waterGoalSmall').textContent = `目標 ${waterGoal} ml`;
   updateDashboard();
 }
@@ -835,13 +861,12 @@ function recalculate() {
 function updateDashboard() {
   const w = parseFloat(document.getElementById('weightInput').value) || 70.5;
   const h = parseFloat(document.getElementById('heightInput').value) || 162;
-  const bmr = getMifflinBMR(w, h);
+  const bmr  = getMifflinBMR(w, h);
   const tdee = Math.round(bmr * 1.2);
-
-  const calIn    = todayData.entries.filter(e => e.type==='eat').reduce((s,e)=>s+e.value,0);
-  const milkTot  = todayData.entries.filter(e => e.type==='milk').reduce((s,e)=>s+e.value,0);
-  const waterIn  = todayData.entries.filter(e => e.type==='water').reduce((s,e)=>s+e.value,0);
-  const exBurn   = todayData.entries.filter(e => e.type==='exercise').reduce((s,e)=>s+e.value,0);
+  const calIn    = todayData.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
+  const milkTot  = todayData.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
+  const waterIn  = todayData.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
+  const exBurn   = todayData.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
   const milkBurn = Math.round(milkTot * 0.8);
   const totalBurn= tdee + milkBurn + exBurn;
   const waterGoal= Math.round(w*35 + milkTot);
@@ -901,16 +926,16 @@ function addEntry() {
     note = document.getElementById(`noteInput-${currentType}`).value.trim();
   }
 
-  const labels  = { eat:'進食', exercise:'運動', milk:'擠奶', water:'喝水', fast:'開始斷食' };
-  const icons   = { eat:'🍽️', exercise:'🏃', milk:'🤱', water:'💧', fast:'⏱️' };
-  const units   = { eat:'kcal', exercise:'kcal', milk:'ml', water:'ml', fast:'' };
+  const labels = { eat:'進食', exercise:'運動', milk:'擠奶', water:'喝水', fast:'開始斷食' };
+  const icons  = { eat:'🍽️', exercise:'🏃', milk:'🤱', water:'💧', fast:'⏱️' };
+  const units  = { eat:'kcal', exercise:'kcal', milk:'ml', water:'ml', fast:'' };
 
   todayData.entries.push({ id: Date.now(), type: currentType, time, value, note,
     label: labels[currentType], icon: icons[currentType], unit: units[currentType] });
   todayData.entries.sort((a,b) => a.time.localeCompare(b.time));
   saveDayData(currentDay, todayData);
 
-  if (currentType === 'fast') startFastingFromForm(time);
+  if (currentType === 'fast') startFasting(time);
   if (currentType !== 'fast') document.getElementById(`valInput-${currentType}`).value = '';
   if (currentType === 'eat' || currentType === 'exercise') document.getElementById(`noteInput-${currentType}`).value = '';
 
@@ -926,106 +951,98 @@ function setFilter(type) {
   renderTimeline();
 }
 
-// ── FASTING SYSTEM (cross-midnight aware) ──
-//
-// Storage format in localStorage:
-//   'mama_fasting' = { startISO: "2026-06-17T20:00:00", endISO: null | "2026-06-18T09:00:00" }
-//
-// We store full ISO timestamps so midnight never breaks the calc.
+// ══════════════════════════════════
+//  FASTING — cross-midnight aware
+//  Stored as full ISO timestamps in 'mama_fasting'
+//  separate from daily 'mama_YYYY-MM-DD' keys
+// ══════════════════════════════════
 
-function getFastingState() {
-  return JSON.parse(localStorage.getItem('mama_fasting') || 'null');
-}
-function saveFastingState(state) {
-  if (state) localStorage.setItem('mama_fasting', JSON.stringify(state));
-  else localStorage.removeItem('mama_fasting');
-}
-
-function startFastingFromForm(timeStr) {
-  // timeStr is HH:MM from the form (today's date)
+function startFasting(timeStr) {
   const [h, m] = timeStr.split(':').map(Number);
   const startDate = new Date();
   startDate.setHours(h, m, 0, 0);
-  // If chosen time appears to be in the future, assume user means yesterday
+  // If chosen time is in the future (user typed yesterday's time), shift back
   if (startDate > new Date()) startDate.setDate(startDate.getDate() - 1);
 
-  saveFastingState({ startISO: startDate.toISOString(), endISO: null });
-
-  if (fastTimerInterval) clearInterval(fastTimerInterval);
-  fastTimerInterval = setInterval(updateFastTimer, 30000);
-  updateFastTimer();
-  showFastingUI(true);
+  saveFastState({ startISO: startDate.toISOString(), endISO: null });
+  launchFastTimer();
+  setFastingUI(true);
 }
 
 function stopFasting() {
-  const state = getFastingState();
-  if (!state || state.endISO) return;
+  const state = getFastState();
+  if (!state || state.endISO) { showToast('⚠️ 目前沒有進行中的斷食'); return; }
 
   const endDate = new Date();
-  state.endISO = endDate.toISOString();
-  saveFastingState(state);
+  state.endISO  = endDate.toISOString();
+  saveFastState(state);
 
   if (fastTimerInterval) { clearInterval(fastTimerInterval); fastTimerInterval = null; }
 
-  const dur = calcFastDuration(state);
+  const dur      = fastDuration(state);                    // hours
+  const endTime  = fmtHHMM(endDate);
+  const startDate = new Date(state.startISO);
+  const startTime = fmtHHMM(startDate);
+  const startDay  = state.startISO.slice(0,10);
+  const crossNote = startDay !== currentDay
+    ? `從 ${startDay.slice(5)} ${startTime} 開始（跨日）` : `從 ${startTime} 開始`;
 
-  // Build timeline entry for today's log
-  const endTime  = `${String(endDate.getHours()).padStart(2,'0')}:${String(endDate.getMinutes()).padStart(2,'0')}`;
-  const sd       = new Date(state.startISO);
-  const startTime= `${String(sd.getHours()).padStart(2,'0')}:${String(sd.getMinutes()).padStart(2,'0')}`;
-  const startDay = sd.toISOString().slice(0,10);
-  const crossNote= startDay !== currentDay
-    ? `從 ${startDay.slice(5)} ${startTime} 開始（跨日）`
-    : `從 ${startTime} 開始`;
-
+  // Record the end in today's log
   todayData.entries.push({
     id: Date.now(), type: 'fast-end', time: endTime,
-    value: Math.round(dur * 10) / 10, note: crossNote, unit: 'hr',
-    label: '斷食結束', icon: '✅'
+    value: Math.round(dur * 10) / 10, unit: 'hr',
+    note: crossNote, label: '斷食結束', icon: '✅'
   });
-  todayData.entries.sort((a, b) => a.time.localeCompare(b.time));
+  todayData.entries.sort((a,b) => a.time.localeCompare(b.time));
   saveDayData(currentDay, todayData);
 
-  showFastingUI(false, dur);
+  setFastingUI(false, dur);
   renderTimeline(); recalculate(); updateDashboard();
   showToast(`✅ 斷食完成！累計 ${dur.toFixed(1)} 小時 🎉`);
 }
 
-function calcFastDuration(state) {
-  if (!state) return 0;
-  const start = new Date(state.startISO);
-  const end   = state.endISO ? new Date(state.endISO) : new Date();
-  return (end - start) / 3600000; // hours
+function restoreFastState() {
+  const state = getFastState();
+  if (!state) { setFastingUI(false); return; }
+  if (state.endISO) {
+    setFastingUI(false, fastDuration(state));
+  } else {
+    launchFastTimer();
+    setFastingUI(true);
+  }
 }
 
-function updateFastTimer() {
-  const state = getFastingState();
-  if (!state || state.endISO) return; // already ended
+function launchFastTimer() {
+  if (fastTimerInterval) clearInterval(fastTimerInterval);
+  tickFastTimer();
+  fastTimerInterval = setInterval(tickFastTimer, 30000);
+}
 
-  const dur = calcFastDuration(state);
+function tickFastTimer() {
+  const state = getFastState();
+  if (!state || state.endISO) return;
+  const dur   = fastDuration(state);
   const hours = Math.floor(dur);
   const mins  = Math.round((dur - hours) * 60);
-  const display = `${hours}h ${mins}m`;
-
-  document.getElementById('fastHours').textContent        = hours + 'h';
-  document.getElementById('fastTimerDisplay').textContent = display;
-
-  const startDate = new Date(state.startISO);
-  const startTime = `${String(startDate.getHours()).padStart(2,'0')}:${String(startDate.getMinutes()).padStart(2,'0')}`;
-
-  // Show date if started on a different day
-  const startDay = startDate.toISOString().slice(0,10);
-  const label = startDay !== currentDay
-    ? `從 ${startDay.slice(5)} ${startTime} 開始`
-    : `從 ${startTime} 開始`;
-  document.getElementById('fastStart').textContent = label;
+  document.getElementById('fastHours').textContent      = `${hours}h ${mins}m`;
+  document.getElementById('fastTimerDisplay').textContent = `${hours}h ${mins}m`;
+  const sd  = new Date(state.startISO);
+  const day = state.startISO.slice(0,10);
+  const lbl = day !== currentDay
+    ? `從 ${day.slice(5)} ${fmtHHMM(sd)} 開始（跨日）` : `從 ${fmtHHMM(sd)} 開始`;
+  document.getElementById('fastStart').textContent = lbl;
 }
 
-function showFastingUI(isActive, completedHrs) {
+function fastDuration(state) {
+  const start = new Date(state.startISO);
+  const end   = state.endISO ? new Date(state.endISO) : new Date();
+  return (end - start) / 3600000;
+}
+
+function setFastingUI(isActive, completedHrs) {
   document.getElementById('fastingBanner').classList.toggle('hidden', !isActive);
   const stopBtn = document.getElementById('stopFastBtn');
   if (stopBtn) stopBtn.classList.toggle('hidden', !isActive);
-
   if (!isActive) {
     if (completedHrs !== undefined) {
       document.getElementById('fastHours').textContent = completedHrs.toFixed(1) + 'h ✅';
@@ -1034,24 +1051,12 @@ function showFastingUI(isActive, completedHrs) {
       document.getElementById('fastHours').textContent = '—';
       document.getElementById('fastStart').textContent = '尚未開始';
     }
+    document.getElementById('fastTimerDisplay').textContent = '—';
   }
 }
 
-// Restore fasting state on load
-function restoreFastingState() {
-  const state = getFastingState();
-  if (!state) { showFastingUI(false); return; }
-
-  if (state.endISO) {
-    // Already ended — show completed duration
-    showFastingUI(false, calcFastDuration(state));
-  } else {
-    // Still running — resume timer
-    if (fastTimerInterval) clearInterval(fastTimerInterval);
-    fastTimerInterval = setInterval(updateFastTimer, 30000);
-    updateFastTimer();
-    showFastingUI(true);
-  }
+function fmtHHMM(date) {
+  return `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
 }
 
 // ── TIMELINE ──
@@ -1061,47 +1066,72 @@ function renderTimeline() {
   if (activeFilter !== 'all') entries = entries.filter(e => e.type === activeFilter);
 
   if (!entries.length) {
-    tl.innerHTML = `<div class="empty-timeline"><span class="big-emoji">${activeFilter === 'all' ? '🌸' : '🔍'}</span>${activeFilter === 'all' ? '開始記錄你的美好一天吧！' : '這個類型目前沒有紀錄'}</div>`;
+    tl.innerHTML = `<div class="empty-timeline"><span class="big-emoji">${activeFilter==='all'?'🌸':'🔍'}</span>${activeFilter==='all'?'開始記錄你的美好一天吧！':'這個類型目前沒有紀錄'}</div>`;
     return;
   }
   tl.innerHTML = entries.map(e => {
     const isFastEnd = e.type === 'fast-end';
-    const val = e.type==='fast'    ? '斷食開始 🌙' :
-                isFastEnd          ? `${e.value} hr${e.note ? ` · ${e.note}` : ''}` :
+    const val = e.type==='fast'   ? '斷食開始 🌙' :
+                isFastEnd         ? `${e.value} hr${e.note ? ` · ${e.note}` : ''}` :
                 `${e.value.toLocaleString()} ${e.unit}${e.note ? ` · ${e.note}` : ''}`;
     const sub = e.type==='milk'     ? `（消耗 ${Math.round(e.value*0.8)} kcal）` :
                 e.type==='exercise' ? `（燃燒 ${e.value} kcal 🔥）` : '';
-    // fast and fast-end can't be edited (no value to change meaningfully)
-    const actions = (e.type==='fast'||isFastEnd) ? '' :
-      `<div class="tl-actions">
-        <button class="tl-edit"   onclick="openEdit(${e.id})" title="修改">✏️</button>
-        <button class="tl-delete" onclick="deleteEntry(${e.id})" title="刪除">🗑️</button>
-      </div>`;
-    const deleteOnly = (e.type==='fast'||isFastEnd) ?
-      `<div class="tl-actions"><button class="tl-delete" onclick="deleteEntry(${e.id})" title="刪除">🗑️</button></div>` : '';
+    const canEdit   = !['fast','fast-end'].includes(e.type);
+    const actionBtns = `<div class="tl-actions">
+      ${canEdit ? `<button class="tl-edit" onclick="openEdit(${e.id})" title="修改">✏️</button>` : ''}
+      <button class="tl-delete" onclick="deleteEntry(${e.id})" title="刪除">🗑️</button>
+    </div>`;
     return `<div class="timeline-item">
       <div class="tl-time">${e.time}</div>
       <div class="tl-dot ${e.type}">${e.icon}</div>
       <div class="tl-desc"><div class="tl-title">${e.label}</div><div class="tl-value">${val}${sub}</div></div>
-      ${actions || deleteOnly}
+      ${actionBtns}
     </div>`;
   }).join('');
 }
 
 function deleteEntry(id) {
-  if (!confirm('確定要刪除這筆紀錄嗎？')) return;
+  showDeleteConfirm(id, 'today');
+}
+
+let _pendingDeleteId    = null;
+let _pendingDeleteScope = '';
+
+function showDeleteConfirm(id, scope) {
+  _pendingDeleteId    = id;
+  _pendingDeleteScope = scope;
+  document.getElementById('deleteConfirmOverlay').classList.remove('hidden');
+}
+function cancelDelete() {
+  _pendingDeleteId    = null;
+  _pendingDeleteScope = '';
+  document.getElementById('deleteConfirmOverlay').classList.add('hidden');
+}
+function confirmDelete() {
+  document.getElementById('deleteConfirmOverlay').classList.add('hidden');
+  if (_pendingDeleteScope === 'history') {
+    _doDeleteHistEntry(_pendingDeleteId);
+  } else {
+    _doDeleteEntry(_pendingDeleteId);
+  }
+  _pendingDeleteId    = null;
+  _pendingDeleteScope = '';
+}
+document.getElementById('deleteConfirmOverlay').addEventListener('click', function(ev){ if(ev.target===this) cancelDelete(); });
+
+function _doDeleteEntry(id) {
   const entry = todayData.entries.find(e => e.id === id);
   todayData.entries = todayData.entries.filter(e => e.id !== id);
-
-  // If deleting a fasting start or end, also clear the global fasting state
   if (entry && (entry.type === 'fast' || entry.type === 'fast-end')) {
-    saveFastingState(null);
+    saveFastState(null);
     if (fastTimerInterval) { clearInterval(fastTimerInterval); fastTimerInterval = null; }
-    showFastingUI(false);
+    setFastingUI(false);
   }
-
   saveDayData(currentDay, todayData);
   renderTimeline(); recalculate(); updateDashboard();
+  // Sync history view if it's showing today
+  const histPicker = document.getElementById('historyDatePicker');
+  if (histPicker && histPicker.value === currentDay) loadHistoryDay();
   showToast('🗑️ 已刪除');
 }
 
@@ -1110,91 +1140,103 @@ function openEdit(id) {
   const e = todayData.entries.find(x => x.id === id);
   if (!e) return;
   document.getElementById('editEntryId').value = id;
-  document.getElementById('editTime').value = e.time;
-
-  const vRow  = document.getElementById('editValueRow');
-  const nRow  = document.getElementById('editNoteRow');
-  const vLbl  = document.getElementById('editValueLabel');
-
-  if (e.type === 'fast') {
-    vRow.classList.add('hidden'); nRow.classList.add('hidden');
+  document.getElementById('editEntryId').dataset.histDate = '';  // not a history edit
+  document.getElementById('editTime').value    = e.time;
+  const vRow = document.getElementById('editValueRow');
+  const nRow = document.getElementById('editNoteRow');
+  const vLbl = document.getElementById('editValueLabel');
+  vRow.classList.remove('hidden');
+  document.getElementById('editValue').value = e.value;
+  const labelMap = { eat:'🔥 熱量 (kcal)', exercise:'🔥 消耗熱量 (kcal)', milk:'🍼 奶量 (ml)', water:'💧 水量 (ml)' };
+  vLbl.textContent = labelMap[e.type] || '數值';
+  if (e.type === 'eat' || e.type === 'exercise') {
+    nRow.classList.remove('hidden');
+    document.getElementById('editNote').value = e.note || '';
   } else {
-    vRow.classList.remove('hidden');
-    document.getElementById('editValue').value = e.value;
-    const labelMap = { eat:'🔥 熱量 (kcal)', exercise:'🔥 消耗熱量 (kcal)', milk:'🍼 奶量 (ml)', water:'💧 水量 (ml)' };
-    vLbl.textContent = labelMap[e.type] || '數值';
-    if (e.type === 'eat' || e.type === 'exercise') {
-      nRow.classList.remove('hidden');
-      document.getElementById('editNote').value = e.note || '';
-    } else {
-      nRow.classList.add('hidden');
-    }
+    nRow.classList.add('hidden');
   }
   document.getElementById('editOverlay').classList.remove('hidden');
 }
 
 function saveEdit() {
-  const id = parseInt(document.getElementById('editEntryId').value);
-  const e  = todayData.entries.find(x => x.id === id);
+  const id      = parseInt(document.getElementById('editEntryId').value);
+  const histDate = document.getElementById('editEntryId').dataset.histDate || '';
+  // Determine which dataset to edit
+  const isHist  = histDate && histDate !== currentDay;
+  const data    = isHist ? getDayData(histDate) : todayData;
+  if (!data) return;
+
+  const e = data.entries.find(x => x.id === id);
   if (!e) return;
   const newTime = document.getElementById('editTime').value;
   if (!newTime) { showToast('⚠️ 請填寫時間'); return; }
   e.time = newTime;
-  if (e.type !== 'fast') {
-    const newVal = parseFloat(document.getElementById('editValue').value);
-    if (!newVal || newVal <= 0) { showToast('⚠️ 請填寫正確數值'); return; }
-    e.value = newVal;
-    if (e.type === 'eat' || e.type === 'exercise') e.note = document.getElementById('editNote').value.trim();
-  }
-  todayData.entries.sort((a,b) => a.time.localeCompare(b.time));
-  saveDayData(currentDay, todayData);
+  const newVal = parseFloat(document.getElementById('editValue').value);
+  if (!newVal || newVal <= 0) { showToast('⚠️ 請填寫正確數值'); return; }
+  e.value = newVal;
+  if (e.type === 'eat' || e.type === 'exercise') e.note = document.getElementById('editNote').value.trim();
+  data.entries.sort((a,b) => a.time.localeCompare(b.time));
+  saveDayData(isHist ? histDate : currentDay, data);
+
+  // Keep todayData in sync
+  if (!isHist) { todayData = data; renderTimeline(); recalculate(); updateDashboard(); }
+  // Always refresh history view — covers both: editing from history page, and editing
+  // today's data while history tab is showing today's date
+  const histPicker = document.getElementById('historyDatePicker');
+  const shownDate  = histPicker ? histPicker.value : '';
+  const editedDate = isHist ? histDate : currentDay;
+  if (shownDate === editedDate) loadHistoryDay();
+
+  // Clear the hist date tag
+  document.getElementById('editEntryId').dataset.histDate = '';
   closeEdit();
-  renderTimeline(); recalculate(); updateDashboard();
   showToast('✅ 已儲存修改！');
 }
 
 function closeEdit() { document.getElementById('editOverlay').classList.add('hidden'); }
-document.getElementById('editOverlay').addEventListener('click', function(e) { if (e.target===this) closeEdit(); });
+document.getElementById('editOverlay').addEventListener('click', function(ev) { if (ev.target===this) closeEdit(); });
 
 // ── SUMMARY ──
 function showSummary() {
-  const w = parseFloat(document.getElementById('weightInput').value)||70.5;
-  const h = parseFloat(document.getElementById('heightInput').value)||162;
+  const w = parseFloat(document.getElementById('weightInput').value) || 70.5;
+  const h = parseFloat(document.getElementById('heightInput').value) || 162;
   const bmr = getMifflinBMR(w,h), tdee = Math.round(bmr*1.2);
-  const calIn   = todayData.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
-  const milkTot = todayData.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
-  const waterIn = todayData.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
-  const exBurn  = todayData.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
-  const milkBurn= Math.round(milkTot*0.8);
-  const totalBurn=tdee+milkBurn+exBurn;
-  const waterGoal=Math.round(w*35+milkTot);
-  const deficit =calIn-totalBurn;
-  const waterPct=Math.round(waterIn/Math.max(waterGoal,1)*100);
+  const calIn    = todayData.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
+  const milkTot  = todayData.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
+  const waterIn  = todayData.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
+  const exBurn   = todayData.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
+  const milkBurn = Math.round(milkTot*0.8);
+  const totalBurn= tdee + milkBurn + exBurn;
+  const waterGoal= Math.round(w*35 + milkTot);
+  const deficit  = calIn - totalBurn;
+  const waterPct = Math.round(waterIn / Math.max(waterGoal,1) * 100);
 
-  document.getElementById('s-calIn').textContent    = `${calIn.toLocaleString()} kcal`;
-  document.getElementById('s-bmr').textContent      = `${tdee.toLocaleString()} kcal`;
-  document.getElementById('s-milkBurn').textContent = `${milkBurn} kcal`;
-  document.getElementById('s-exBurn').textContent   = `${exBurn} kcal`;
-  document.getElementById('s-totalBurn').textContent= `${totalBurn.toLocaleString()} kcal`;
-  document.getElementById('s-waterGoal').textContent= `${waterGoal.toLocaleString()} ml`;
-  document.getElementById('s-waterIn').textContent  = `${waterIn.toLocaleString()} ml`;
+  document.getElementById('s-calIn').textContent     = `${calIn.toLocaleString()} kcal`;
+  document.getElementById('s-bmr').textContent       = `${tdee.toLocaleString()} kcal`;
+  document.getElementById('s-milkBurn').textContent  = `${milkBurn} kcal`;
+  document.getElementById('s-exBurn').textContent    = `${exBurn} kcal`;
+  document.getElementById('s-totalBurn').textContent = `${totalBurn.toLocaleString()} kcal`;
+  document.getElementById('s-waterGoal').textContent = `${waterGoal.toLocaleString()} ml`;
+  document.getElementById('s-waterIn').textContent   = `${waterIn.toLocaleString()} ml`;
 
-  document.getElementById('s-calResult').textContent = deficit<0 ? `👉 熱量赤字 ${deficit} kcal` : `👉 熱量盈餘 +${deficit} kcal`;
-  document.getElementById('s-calHint').textContent   = deficit<0
+  document.getElementById('s-calResult').textContent = deficit<0
+    ? `👉 熱量赤字 ${deficit} kcal` : `👉 熱量盈餘 +${deficit} kcal`;
+  document.getElementById('s-calHint').textContent = deficit<0
     ? (Math.abs(deficit)<=500 ? '完美的健康減脂區間！穩定瘦身中 💪' : '赤字偏大，記得補充蛋白質 🤍')
     : '今天熱量充足，有足夠能量產奶 🍼';
 
   document.getElementById('s-waterResult').textContent = waterPct>=100 ? '💧 水分達標 🎉' : `💧 達成 ${waterPct}%`;
-  document.getElementById('s-waterHint').textContent   = waterPct>=100 ? '充足水分對明天的奶量很有幫助 🌟'
+  document.getElementById('s-waterHint').textContent   = waterPct>=100
+    ? '充足水分對明天的奶量很有幫助 🌟'
     : (waterPct<80 ? `睡前再補 ${Math.round((waterGoal-waterIn)/100)*100} ml 溫水！` : '睡前一杯水就達標 🥛');
 
-  const lastFast = todayData.entries.filter(e=>e.type==='fast').pop();
-  if (lastFast) {
-    const [sh,sm]=lastFast.time.split(':').map(Number);
-    const start=new Date(); start.setHours(sh,sm,0,0);
-    const end=new Date(); end.setHours(23,59,0,0);
-    document.getElementById('s-fastStart').textContent = lastFast.time;
-    document.getElementById('s-fastDur').textContent   = `${((end-start)/3600000).toFixed(1)} 小時`;
+  // Fasting summary: use the stored state for accuracy
+  const fastState = getFastState();
+  if (fastState) {
+    const dur = fastDuration(fastState);
+    const sd  = new Date(fastState.startISO);
+    document.getElementById('s-fastStart').textContent = fmtHHMM(sd);
+    document.getElementById('s-fastDur').textContent   = `${dur.toFixed(1)} 小時${fastState.endISO ? '' : '（進行中）'}`;
     document.getElementById('s-fastHint').textContent  = '睡眠時間也是燃脂黃金期！🌙';
   } else {
     document.getElementById('s-fastStart').textContent = '今日尚未斷食';
@@ -1203,21 +1245,23 @@ function showSummary() {
   }
 
   let warn = '';
-  if (calIn>0&&calIn<1500) warn += `<div class="warning-box">⚠️ 媽咪今天吃得太少！熱量不足可能讓奶量減少。</div>`;
-  if (waterIn>0&&waterPct<80) warn += `<div class="warning-box" style="margin-top:6px">💧 水分不夠，睡前再補 100ml 溫水！</div>`;
+  if (calIn>0 && calIn<1500)  warn += `<div class="warning-box">⚠️ 媽咪今天吃得太少！熱量不足可能讓奶量減少。</div>`;
+  if (waterIn>0 && waterPct<80) warn += `<div class="warning-box" style="margin-top:6px">💧 水分不夠，睡前再補 100ml 溫水！</div>`;
   document.getElementById('warningBox').innerHTML = warn;
   document.getElementById('summaryOverlay').classList.remove('hidden');
 }
+
 function closeSummary() { document.getElementById('summaryOverlay').classList.add('hidden'); }
-document.getElementById('summaryOverlay').addEventListener('click', function(e){ if(e.target===this) closeSummary(); });
+document.getElementById('summaryOverlay').addEventListener('click', function(ev){ if(ev.target===this) closeSummary(); });
 
 function scheduleAutoSummary() {
-  const now=new Date(), midnight=new Date(); midnight.setHours(24,0,0,0);
-  setTimeout(showSummary, midnight-now);
+  const now = new Date(), midnight = new Date();
+  midnight.setHours(24,0,0,0);
+  setTimeout(showSummary, midnight - now);
 }
 
 // ══════════════════════════════════
-//  HISTORY TAB
+//  HISTORY
 // ══════════════════════════════════
 function loadHistoryDefault() {
   const dp = document.getElementById('historyDatePicker');
@@ -1227,29 +1271,34 @@ function loadHistoryDefault() {
 function loadHistoryDay() {
   const dateStr = document.getElementById('historyDatePicker').value;
   if (!dateStr) return;
-  const data = getDayData(dateStr);
+  const data  = getDayData(dateStr);
   const card  = document.getElementById('historyDayCard');
   const empty = document.getElementById('historyDayEmpty');
 
-  if (!data||!data.entries) { card.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+  if (!data || !data.entries) { card.classList.add('hidden'); empty.classList.remove('hidden'); return; }
   card.classList.remove('hidden'); empty.classList.add('hidden');
 
   const w=data.weight||70.5, h=data.height||162;
   const bmr=getMifflinBMR(w,h), tdee=Math.round(bmr*1.2);
-  const calIn   = data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
-  const milkTot = data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
-  const waterIn = data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
-  const exBurn  = data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
-  const milkBurn= Math.round(milkTot*0.8);
+  const calIn   =data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
+  const milkTot =data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
+  const waterIn =data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
+  const exBurn  =data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
+  const milkBurn=Math.round(milkTot*0.8);
   const totalBurn=tdee+milkBurn+exBurn;
   const waterGoal=Math.round(w*35+milkTot);
   const waterPct =Math.round(waterIn/Math.max(waterGoal,1)*100);
   const deficit  =calIn-totalBurn;
-  const fastEntry=data.entries.filter(e=>e.type==='fast').pop();
-  let fastHrs='—';
-  if (fastEntry) {
-    const [sh,sm]=fastEntry.time.split(':').map(Number);
-    fastHrs=((24*60-sh*60-sm)/60).toFixed(1)+'h';
+
+  // Fasting hours: use fast-end entry if present, else fast entry estimate
+  const fastEndEntry = data.entries.find(e=>e.type==='fast-end');
+  const fastStartEntry = data.entries.find(e=>e.type==='fast');
+  let fastHrs = '—';
+  if (fastEndEntry) {
+    fastHrs = fastEndEntry.value.toFixed(1) + 'h';
+  } else if (fastStartEntry) {
+    const [sh,sm] = fastStartEntry.time.split(':').map(Number);
+    fastHrs = ((24*60 - sh*60 - sm)/60).toFixed(1) + 'h';
   }
 
   document.getElementById('h-calIn').textContent  = calIn ? calIn.toLocaleString() : '—';
@@ -1266,15 +1315,23 @@ function loadHistoryDay() {
   const vEl=document.getElementById('h-verdict');
   vEl.textContent=verdict; vEl.style.background=bg;
 
-  // Day detail timeline
   const tl = document.getElementById('historyDayTimeline');
+  historyEditDate = dateStr;   // remember which date we're viewing
   if (!data.entries.length) { tl.innerHTML='<div style="font-size:0.8rem;color:var(--text-light);text-align:center;padding:8px">無記錄</div>'; return; }
   tl.innerHTML = data.entries.map(e => {
-    const val = e.type==='fast' ? '斷食開始 🌙' : `${e.value} ${e.unit}${e.note?' · '+e.note:''}`;
+    const isFastEnd = e.type === 'fast-end';
+    const val = e.type==='fast' ? '斷食開始 🌙'
+      : isFastEnd ? `${e.value} hr${e.note ? ' · '+e.note : ''}`
+      : `${e.value} ${e.unit}${e.note?' · '+e.note:''}`;
+    const canEdit = !['fast','fast-end'].includes(e.type);
     return `<div class="hist-tl-item">
       <div class="hist-tl-time">${e.time}</div>
       <div class="hist-tl-icon tl-dot ${e.type}">${e.icon}</div>
       <div style="flex:1;color:var(--text-mid)">${e.label}：${val}</div>
+      <div class="tl-actions">
+        ${canEdit ? `<button class="tl-edit" onclick="openHistEdit(${e.id})" title="修改">✏️</button>` : ''}
+        <button class="tl-delete" onclick="deleteHistEntry(${e.id})" title="刪除">🗑️</button>
+      </div>
     </div>`;
   }).join('');
 }
@@ -1285,30 +1342,77 @@ function renderHistory() {
   renderMilkFastStats();
 }
 
-function getDayEmoji(data) {
-  if (!data||!data.entries||!data.entries.length) return '⬜';
+// ── HISTORY EDIT / DELETE ──
+function deleteHistEntry(id) {
+  showDeleteConfirm(id, 'history');
+}
+
+function _doDeleteHistEntry(id) {
+  if (!historyEditDate) return;
+  const data = getDayData(historyEditDate);
+  if (!data) return;
+  data.entries = data.entries.filter(e => e.id !== id);
+  saveDayData(historyEditDate, data);
+  if (historyEditDate === currentDay) {
+    todayData = data;
+    renderTimeline(); recalculate(); updateDashboard();
+  }
+  loadHistoryDay();
+  showToast('🗑️ 已刪除');
+}
+
+function openHistEdit(id) {
+  if (!historyEditDate) return;
+  const data = getDayData(historyEditDate);
+  if (!data) return;
+  const e = data.entries.find(x => x.id === id);
+  if (!e) return;
+
+  // Reuse the same edit overlay, but tag it as history edit
+  document.getElementById('editEntryId').value = id;
+  document.getElementById('editEntryId').dataset.histDate = historyEditDate;
+  document.getElementById('editTime').value = e.time;
+
+  const vRow = document.getElementById('editValueRow');
+  const nRow = document.getElementById('editNoteRow');
+  const vLbl = document.getElementById('editValueLabel');
+  vRow.classList.remove('hidden');
+  document.getElementById('editValue').value = e.value;
+  const labelMap = { eat:'🔥 熱量 (kcal)', exercise:'🔥 消耗熱量 (kcal)', milk:'🍼 奶量 (ml)', water:'💧 水量 (ml)' };
+  vLbl.textContent = labelMap[e.type] || '數值';
+  if (e.type === 'eat' || e.type === 'exercise') {
+    nRow.classList.remove('hidden');
+    document.getElementById('editNote').value = e.note || '';
+  } else {
+    nRow.classList.add('hidden');
+  }
+  document.getElementById('editOverlay').classList.remove('hidden');
+}
+
+function getDayScore(data) {
+  if (!data||!data.entries||!data.entries.length) return null;
   const w=data.weight||70.5, h=data.height||162;
   const bmr=getMifflinBMR(w,h), tdee=Math.round(bmr*1.2);
-  const calIn   =data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
-  const milkTot =data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
-  const waterIn =data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
-  const exBurn  =data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
-  const totalBurn=tdee+Math.round(milkTot*0.8)+exBurn;
-  const waterGoal=Math.round(w*35+milkTot);
-  const deficit=calIn-totalBurn;
-  const goodCal=deficit<=0&&deficit>=-600&&calIn>=1500;
-  const goodWater=Math.round(waterIn/Math.max(waterGoal,1)*100)>=80;
-  if (goodCal&&goodWater) return '😊';
-  if (goodCal||goodWater) return '😐';
-  return '😢';
+  const calIn  =data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
+  const milkTot=data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
+  const waterIn=data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
+  const exBurn =data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
+  const deficit=calIn-(tdee+Math.round(milkTot*0.8)+exBurn);
+  const wGoal  =Math.round(w*35+milkTot);
+  const goodCal  =deficit<=0&&deficit>=-600&&calIn>=1500;
+  const goodWater=Math.round(waterIn/Math.max(wGoal,1)*100)>=80;
+  return { goodCal, goodWater };
 }
 
 function renderEmojiCalendar() {
-  const dates=getAllDates();
-  const cal=document.getElementById('emojiCalendar');
+  const dates = getAllDates();
+  const cal   = document.getElementById('emojiCalendar');
   if (!dates.length) { cal.innerHTML='<div style="font-size:0.8rem;color:var(--text-light);padding:10px">還沒有歷史記錄 🌱</div>'; return; }
   cal.innerHTML = dates.map(d => {
-    const emoji=getDayEmoji(getDayData(d));
+    const score = getDayScore(getDayData(d));
+    const emoji = !score ? '⬜'
+      : score.goodCal && score.goodWater ? '😊'
+      : score.goodCal || score.goodWater ? '😐' : '😢';
     return `<div class="emoji-day" title="${d}" onclick="jumpToDate('${d}')">${emoji}<div class="emoji-day-label">${d.slice(5)}</div></div>`;
   }).join('');
 }
@@ -1316,150 +1420,169 @@ function renderEmojiCalendar() {
 function jumpToDate(d) {
   document.getElementById('historyDatePicker').value = d;
   loadHistoryDay();
+  // Scroll to the date card
+  document.getElementById('historyDayCard').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
 function renderWeightChart() {
-  const dates=getAllDates();
-  const weights=dates.map(d=>({d,w:(getDayData(d)||{}).weight||null})).filter(x=>x.w);
-  const noData=document.getElementById('noWeightData');
-  const canvas=document.getElementById('weightChart');
-  if (weights.length<2) { noData.classList.remove('hidden'); canvas.classList.add('hidden'); return; }
+  const dates   = getAllDates();
+  const weights = dates.map(d=>({d, w:(getDayData(d)||{}).weight||null})).filter(x=>x.w);
+  const noData  = document.getElementById('noWeightData');
+  const canvas  = document.getElementById('weightChart');
+  if (weights.length < 2) { noData.classList.remove('hidden'); canvas.classList.add('hidden'); return; }
   noData.classList.add('hidden'); canvas.classList.remove('hidden');
 
-  const ctx=canvas.getContext('2d');
-  const W=canvas.offsetWidth||300; canvas.width=W; canvas.height=160;
-  const vals=weights.map(x=>x.w);
-  const minW=Math.min(...vals)-1, maxW=Math.max(...vals)+1;
-  const n=weights.length; ctx.clearRect(0,0,W,160);
+  const ctx = canvas.getContext('2d');
+  const W   = canvas.offsetWidth || 300;
+  canvas.width = W; canvas.height = 160;
+  const vals = weights.map(x=>x.w);
+  const minW = Math.min(...vals)-1, maxW = Math.max(...vals)+1;
+  const n    = weights.length;
+  ctx.clearRect(0,0,W,160);
 
-  // Goal line
-  if (55>=minW&&55<=maxW) {
-    const gy=20+((maxW-55)/(maxW-minW))*120;
+  // Goal line at 55 kg
+  if (55 >= minW && 55 <= maxW) {
+    const gy = 20+((maxW-55)/(maxW-minW))*120;
     ctx.setLineDash([4,4]); ctx.strokeStyle='#3DBFA0'; ctx.lineWidth=1.5;
     ctx.beginPath(); ctx.moveTo(30,gy); ctx.lineTo(W-10,gy); ctx.stroke();
     ctx.setLineDash([]); ctx.fillStyle='#3DBFA0'; ctx.font='bold 10px Nunito';
-    ctx.fillText('目標55kg',W-70,gy-3);
+    ctx.fillText('目標55kg', W-70, gy-3);
   }
-
   // Grid
   ctx.strokeStyle='#EEE'; ctx.lineWidth=1;
-  for(let i=0;i<=4;i++){
-    const y=20+(i/4)*120;
+  for (let i=0; i<=4; i++) {
+    const y = 20+(i/4)*120;
     ctx.beginPath(); ctx.moveTo(30,y); ctx.lineTo(W-10,y); ctx.stroke();
     ctx.fillStyle='#B8A0AA'; ctx.font='10px Nunito';
-    ctx.fillText((maxW-(i/4)*(maxW-minW)).toFixed(1),2,y+4);
+    ctx.fillText((maxW-(i/4)*(maxW-minW)).toFixed(1), 2, y+4);
   }
-
   // Line
   ctx.beginPath(); ctx.strokeStyle='#E05C7A'; ctx.lineWidth=2.5; ctx.lineJoin='round';
   weights.forEach((pt,i)=>{
     const x=30+(i/(n-1))*(W-40), y=20+((maxW-pt.w)/(maxW-minW))*120;
-    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
   }); ctx.stroke();
-
-  // Dots
+  // Dots + labels
   weights.forEach((pt,i)=>{
     const x=30+(i/(n-1))*(W-40), y=20+((maxW-pt.w)/(maxW-minW))*120;
     ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fillStyle='#E05C7A'; ctx.fill();
-    ctx.fillStyle='#E05C7A'; ctx.font='bold 9px Nunito'; ctx.fillText(pt.w,x-6,y-8);
-    ctx.fillStyle='#B8A0AA'; ctx.font='8px Nunito'; ctx.fillText(pt.d.slice(5),x-9,155);
+    ctx.fillStyle='#E05C7A'; ctx.font='bold 9px Nunito'; ctx.fillText(pt.w, x-6, y-8);
+    ctx.fillStyle='#B8A0AA'; ctx.font='8px Nunito'; ctx.fillText(pt.d.slice(5), x-9, 155);
   });
 }
 
 function renderMilkFastStats() {
-  const dates=getAllDates();
-  let totalMilk=0,totalSessions=0,totalFastMins=0,fastDays=0;
-  dates.forEach(d=>{
-    const data=getDayData(d); if(!data) return;
-    const milkEntries=data.entries.filter(e=>e.type==='milk');
-    totalMilk+=milkEntries.reduce((s,e)=>s+e.value,0);
-    totalSessions+=milkEntries.length;
-    const lf=data.entries.filter(e=>e.type==='fast').pop();
-    if(lf){const [sh,sm]=lf.time.split(':').map(Number);totalFastMins+=(24*60-sh*60-sm);fastDays++;}
+  const dates = getAllDates();
+  let totalMilk=0, totalSessions=0, totalFastHrs=0, fastDays=0;
+  dates.forEach(d => {
+    const data = getDayData(d); if (!data) return;
+    const milkEntries = data.entries.filter(e=>e.type==='milk');
+    totalMilk     += milkEntries.reduce((s,e)=>s+e.value, 0);
+    totalSessions += milkEntries.length;
+    // Use fast-end entry value (accurate) if present
+    const fastEnd = data.entries.find(e=>e.type==='fast-end');
+    if (fastEnd) { totalFastHrs += fastEnd.value; fastDays++; }
+    else {
+      const fastStart = data.entries.find(e=>e.type==='fast');
+      if (fastStart) {
+        const [sh,sm]=fastStart.time.split(':').map(Number);
+        totalFastHrs += (24*60-sh*60-sm)/60; fastDays++;
+      }
+    }
   });
-  document.getElementById('totalMilkAll').textContent     = totalMilk.toLocaleString();
-  document.getElementById('totalMilkSessions').textContent= totalSessions;
-  document.getElementById('totalFastHrs').textContent     = (totalFastMins/60).toFixed(1);
-  document.getElementById('avgFastHrs').textContent       = fastDays>0?(totalFastMins/fastDays/60).toFixed(1):'—';
+  document.getElementById('totalMilkAll').textContent      = totalMilk.toLocaleString();
+  document.getElementById('totalMilkSessions').textContent = totalSessions;
+  document.getElementById('totalFastHrs').textContent      = totalFastHrs.toFixed(1);
+  document.getElementById('avgFastHrs').textContent        = fastDays>0 ? (totalFastHrs/fastDays).toFixed(1) : '—';
 }
 
 // ══════════════════════════════════
-//  SYNC TAB
+//  SYNC
 // ══════════════════════════════════
 function updateSyncStats() {
-  const dates=getAllDates();
-  const total=dates.reduce((s,d)=>{const data=getDayData(d);return s+(data?data.entries.length:0);},0);
-  document.getElementById('syncDayCount').textContent  = dates.length;
-  document.getElementById('syncEntryCount').textContent= total;
-  document.getElementById('syncLastDate').textContent  = dates.length?dates[dates.length-1].slice(5):'—';
+  const dates = getAllDates();
+  const total = dates.reduce((s,d)=>{ const data=getDayData(d); return s+(data?data.entries.length:0); }, 0);
+  document.getElementById('syncDayCount').textContent   = dates.length;
+  document.getElementById('syncEntryCount').textContent = total;
+  document.getElementById('syncLastDate').textContent   = dates.length ? dates[dates.length-1].slice(5) : '—';
 }
 
 function downloadBackup() {
-  const obj={};
-  getAllDates().forEach(d=>{obj[d]=getDayData(d);});
-  const payload={version:1,exportedAt:new Date().toISOString(),appName:'媽咪能量日誌',data:obj};
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download=`媽咪日誌備份_${currentDay}.json`; a.click();
+  const obj = {};
+  getAllDates().forEach(d=>{ obj[d]=getDayData(d); });
+  // Also include fasting state if active
+  const fs = getFastState();
+  const payload = { version:2, exportedAt:new Date().toISOString(), appName:'媽咪能量日誌', fastingState:fs||null, data:obj };
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download=`媽咪日誌備份_${currentDay}.json`; a.click();
   URL.revokeObjectURL(url);
   showToast('📥 備份已下載！');
 }
 
 function uploadBackup(event) {
-  const file=event.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
     try {
-      const payload=JSON.parse(e.target.result);
-      const incoming=payload.data||payload;
-      let merged=0,skipped=0;
-      Object.entries(incoming).forEach(([d,dayData])=>{
-        if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
-        const existing=getDayData(d);
-        if(!existing){ saveDayData(d,dayData); merged++; }
+      const payload  = JSON.parse(ev.target.result);
+      const incoming = payload.data || payload;
+      let merged=0, skipped=0;
+      Object.entries(incoming).forEach(([d, dayData]) => {
+        if (!DATE_RE.test(d)) return;
+        const existing = getDayData(d);
+        if (!existing) { saveDayData(d, dayData); merged++; }
         else {
-          const existIds=new Set(existing.entries.map(e=>e.id));
-          const newE=(dayData.entries||[]).filter(e=>!existIds.has(e.id));
-          if(newE.length>0){existing.entries=[...existing.entries,...newE].sort((a,b)=>a.time.localeCompare(b.time));saveDayData(d,existing);merged++;}
-          else skipped++;
+          const existIds = new Set(existing.entries.map(e=>e.id));
+          const newE = (dayData.entries||[]).filter(e=>!existIds.has(e.id));
+          if (newE.length>0) {
+            existing.entries = [...existing.entries,...newE].sort((a,b)=>a.time.localeCompare(b.time));
+            saveDayData(d, existing); merged++;
+          } else skipped++;
         }
       });
-      todayData=getDayData(currentDay)||{entries:[],weight:70.5,height:162};
-      recalculate(); renderTimeline(); updateDashboard(); updateSyncStats();
-      showToast(`✅ 合併完成！新增 ${merged} 天`);
-    } catch(err){ showToast('❌ 檔案格式錯誤'); }
+      // Restore fasting state if present in backup
+      if (payload.fastingState) saveFastState(payload.fastingState);
+      todayData = getDayData(currentDay) || {entries:[],weight:70.5,height:162};
+      recalculate(); renderTimeline(); updateDashboard(); updateSyncStats(); restoreFastState();
+      showToast(`✅ 合併完成！新增 ${merged} 天，略過 ${skipped} 天`);
+    } catch(err) { showToast('❌ 檔案格式錯誤'); }
   };
   reader.readAsText(file);
-  event.target.value='';
+  event.target.value = '';
 }
 
 function clearAllData() { document.getElementById('confirmOverlay').classList.remove('hidden'); }
 function confirmClear() {
-  getAllDates().forEach(d=>localStorage.removeItem('mama_'+d));
-  todayData={entries:[],weight:70.5,height:162};
-  saveDayData(currentDay,todayData);
+  getAllDates().forEach(d => localStorage.removeItem('mama_'+d));
+  saveFastState(null);
+  todayData = {entries:[], weight:70.5, height:162};
+  saveDayData(currentDay, todayData);
+  if (fastTimerInterval) { clearInterval(fastTimerInterval); fastTimerInterval=null; }
+  setFastingUI(false);
   recalculate(); renderTimeline(); updateDashboard(); updateSyncStats();
   document.getElementById('confirmOverlay').classList.add('hidden');
   showToast('🗑️ 資料已清除');
 }
-document.getElementById('confirmOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.add('hidden');});
+document.getElementById('confirmOverlay').addEventListener('click', function(ev){ if(ev.target===this) this.classList.add('hidden'); });
 
 // ── EXCEL ──
 function exportExcel() {
-  const from=document.getElementById('excelFrom').value;
-  const to  =document.getElementById('excelTo').value;
-  let dates=getAllDates();
-  if(from) dates=dates.filter(d=>d>=from);
-  if(to)   dates=dates.filter(d=>d<=to);
-  if(!dates.length){showToast('⚠️ 無資料');return;}
+  const from = document.getElementById('excelFrom').value;
+  const to   = document.getElementById('excelTo').value;
+  let dates  = getAllDates();
+  if (from) dates = dates.filter(d=>d>=from);
+  if (to)   dates = dates.filter(d=>d<=to);
+  if (!dates.length) { showToast('⚠️ 無資料'); return; }
 
-  const summaryRows=[['日期','體重(kg)','攝取kcal','總消耗kcal','赤字kcal','飲水ml','水目標ml','水分%','奶量ml','奶量消耗','運動消耗kcal','斷食開始','表現']];
-  const detailRows =[['日期','時間','類型','數值','單位','備註','自動消耗kcal']];
+  const summaryRows = [['日期','體重(kg)','攝取kcal','總消耗kcal','赤字kcal','飲水ml','水目標ml','水分%','奶量ml','奶量消耗kcal','運動消耗kcal','斷食時數h','表現']];
+  const detailRows  = [['日期','時間','類型','數值','單位','備註','自動消耗kcal']];
 
-  dates.forEach(d=>{
-    const data=getDayData(d); if(!data) return;
-    const w=data.weight||70.5,h=data.height||162;
-    const bmr=getMifflinBMR(w,h),tdee=Math.round(bmr*1.2);
+  dates.forEach(d => {
+    const data = getDayData(d); if (!data) return;
+    const w=data.weight||70.5, h=data.height||162;
+    const bmr=getMifflinBMR(w,h), tdee=Math.round(bmr*1.2);
     const calIn  =data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
     const milkTot=data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
     const waterIn=data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
@@ -1467,47 +1590,51 @@ function exportExcel() {
     const milkBurn=Math.round(milkTot*0.8);
     const totalBurn=tdee+milkBurn+exBurn;
     const waterGoal=Math.round(w*35+milkTot);
-    const waterPct=Math.round(waterIn/Math.max(waterGoal,1)*100);
-    const deficit=calIn-totalBurn;
-    const fastEntry=data.entries.filter(e=>e.type==='fast').pop();
-    const goodCal=deficit<=0&&deficit>=-600&&calIn>=1500;
-    const goodWater=waterPct>=80;
-    const emoji=goodCal&&goodWater?'😊':goodCal||goodWater?'😐':'😢';
-    summaryRows.push([d,w,calIn,totalBurn,deficit,waterIn,waterGoal,waterPct+'%',milkTot,milkBurn,exBurn,fastEntry?fastEntry.time:'—',emoji]);
+    const waterPct =Math.round(waterIn/Math.max(waterGoal,1)*100);
+    const deficit  =calIn-totalBurn;
+    const fastEnd  =data.entries.find(e=>e.type==='fast-end');
+    const fastStart=data.entries.find(e=>e.type==='fast');
+    let fastHrs='—';
+    if (fastEnd) fastHrs=fastEnd.value;
+    else if (fastStart) { const [sh,sm]=fastStart.time.split(':').map(Number); fastHrs=((24*60-sh*60-sm)/60).toFixed(1); }
+    const score=getDayScore(data);
+    const emoji=!score?'—':score.goodCal&&score.goodWater?'😊':score.goodCal||score.goodWater?'😐':'😢';
+    summaryRows.push([d,w,calIn,totalBurn,deficit,waterIn,waterGoal,waterPct+'%',milkTot,milkBurn,exBurn,fastHrs,emoji]);
     data.entries.forEach(e=>{
-      const auto=e.type==='milk'?Math.round(e.value*0.8):'';
-      detailRows.push([d,e.time,e.label,e.value,e.unit,e.note||'',auto]);
+      const auto = e.type==='milk' ? Math.round(e.value*0.8) : '';
+      detailRows.push([d, e.time, e.label, e.value, e.unit||'', e.note||'', auto]);
     });
   });
 
-  loadSheetJS(()=>{
-    const wb=XLSX.utils.book_new();
-    const ws1=XLSX.utils.aoa_to_sheet(summaryRows);
-    const ws2=XLSX.utils.aoa_to_sheet(detailRows);
-    ws1['!cols']=[12,8,10,10,10,8,10,8,8,10,10,12,8].map(w=>({wch:w}));
-    ws2['!cols']=[12,8,8,8,6,16,12].map(w=>({wch:w}));
-    XLSX.utils.book_append_sheet(wb,ws1,'每日摘要');
-    XLSX.utils.book_append_sheet(wb,ws2,'詳細紀錄');
-    XLSX.writeFile(wb,`媽咪日誌_${currentDay}.xlsx`);
+  loadSheetJS(() => {
+    const wb  = XLSX.utils.book_new();
+    const ws1 = XLSX.utils.aoa_to_sheet(summaryRows);
+    const ws2 = XLSX.utils.aoa_to_sheet(detailRows);
+    ws1['!cols'] = [12,8,10,10,10,8,10,8,8,10,10,8,8].map(w=>({wch:w}));
+    ws2['!cols'] = [12,8,8,8,6,16,12].map(w=>({wch:w}));
+    XLSX.utils.book_append_sheet(wb, ws1, '每日摘要');
+    XLSX.utils.book_append_sheet(wb, ws2, '詳細紀錄');
+    XLSX.writeFile(wb, `媽咪日誌_${currentDay}.xlsx`);
     showToast('📊 Excel 已下載！');
   });
 }
 
 function loadSheetJS(cb) {
-  if(typeof XLSX!=='undefined'){cb();return;}
-  const s=document.createElement('script');
-  s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-  s.onload=cb; s.onerror=()=>showToast('❌ 無法載入 Excel 函式庫');
+  if (typeof XLSX !== 'undefined') { cb(); return; }
+  const s = document.createElement('script');
+  s.src     = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload  = cb;
+  s.onerror = () => showToast('❌ 無法載入 Excel 函式庫，請確認網路連線');
   document.head.appendChild(s);
 }
 
 // ── TOAST ──
 let toastTimeout;
 function showToast(msg) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.remove('hidden');
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.remove('hidden');
   clearTimeout(toastTimeout);
-  toastTimeout=setTimeout(()=>t.classList.add('hidden'),2800);
+  toastTimeout = setTimeout(() => t.classList.add('hidden'), 2800);
 }
 
 </script>
