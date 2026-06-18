@@ -112,38 +112,50 @@ body::before, body::after { display: none; }
 .header-sub {
   font-size: var(--fs-sm); color: var(--text-mid); margin-top: 3px;
 }
+.date-nav {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; margin-top: 6px;
+}
 .date-badge {
-  display: inline-block;
+  display: inline-block; text-align: center;
   background: var(--blush); color: var(--rose-deep);
   font-size: var(--fs-sm); font-weight: 700;
   padding: 3px 12px; border-radius: 20px;
   border: 1.5px solid var(--rose); margin-top: 6px;
 }
-
-/* ── DATE NAV ── */
+  gap: 6px; margin-top: 6px;
+}
 .date-nav {
   display: flex; align-items: center; justify-content: center;
   gap: 6px; margin-top: 6px;
 }
+.date-badge {
+  display: inline-block; text-align: center;
+  background: var(--blush); color: var(--rose-deep);
+  font-size: var(--fs-sm); font-weight: 700;
+  padding: 6px 18px; border-radius: 25px;
+  border: 1.5px solid var(--rose);
+}
 .date-nav-btn {
   background: var(--blush); border: 1.5px solid var(--rose);
   color: var(--rose-deep); font-size: 1.2rem; font-weight: 900;
-  width: 30px; height: 30px; border-radius: 50%;
+  width: 36px; height: 36px; border-radius: 50%;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s; padding: 0;
+  transition: all 0.15s; padding: 0; flex-shrink: 0;
 }
 .date-nav-btn:hover  { background: var(--rose); color: white; }
 .date-nav-btn:disabled { opacity: 0.25; cursor: default; }
 .not-today-banner {
-  margin-top: 8px;
+  margin-top: 6px;
   background: var(--butter); border: 1.5px solid var(--amber);
-  border-radius: 12px; padding: 6px 12px;
+  border-radius: 25px; padding: 6px 18px;
   font-size: var(--fs-sm); color: #8B5E00; font-weight: 600;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
+  display: inline-flex; align-items: center; gap: 10px;
+  /* center it: header is text-align:center so inline-flex centres automatically */
 }
 .not-today-banner button {
   background: var(--amber); border: none; border-radius: 8px;
-  padding: 2px 10px; font-size: var(--fs-xs); font-weight: 800;
+  padding: 3px 10px; font-size: var(--fs-xs); font-weight: 800;
   color: white; cursor: pointer; font-family: 'Nunito', sans-serif;
 }
 
@@ -602,6 +614,17 @@ body::before, body::after { display: none; }
 }
 .delete-day-btn:hover { background: #FFF5F5; border-style: solid; }
 
+.emoji-day-today {
+  border: 2px solid var(--rose) !important;
+  background: var(--blush) !important;
+}
+
+.legend-dot {
+  display: inline-block; width: 12px; height: 12px;
+  border-radius: 4px; margin-right: 4px;
+  border: 1px solid rgba(0,0,0,0.08); vertical-align: middle;
+}
+
 </style>
 </head>
 <body>
@@ -647,7 +670,7 @@ body::before, body::after { display: none; }
   <div class="dashboard-grid">
     <div class="stat-card calories"><div class="stat-emoji">🍽️</div><div class="stat-value" id="totalCalIn">0</div><div class="stat-label">攝取 kcal</div><div class="stat-sub">目標≥1500</div></div>
     <div class="stat-card water"><div class="stat-emoji">💧</div><div class="stat-value" id="totalWater">0</div><div class="stat-label">飲水 ml</div><div class="stat-sub" id="waterGoalSmall">—</div></div>
-    <div class="stat-card milk"><div class="stat-emoji">🤱</div><div class="stat-value" id="totalMilk">0</div><div class="stat-label">奶量 ml</div><div class="stat-sub" id="milkBurnSub">—</div></div>
+    <div class="stat-card milk"><div class="stat-emoji">🍼</div><div class="stat-value" id="totalMilk">0</div><div class="stat-label">奶量 ml</div><div class="stat-sub" id="milkBurnSub">—</div></div>
     <div class="stat-card exercise"><div class="stat-emoji">🏃</div><div class="stat-value" id="totalExBurn">0</div><div class="stat-label">運動消耗 kcal</div><div class="stat-sub">已燃燒</div></div>
   </div>
 
@@ -716,7 +739,7 @@ body::before, body::after { display: none; }
     <div class="type-selector">
       <button class="type-btn active-eat"      onclick="selectType('eat')"      id="btn-eat"><span class="t-emoji">🍽️</span>進食</button>
       <button class="type-btn"                 onclick="selectType('exercise')" id="btn-exercise"><span class="t-emoji">🏃</span>運動</button>
-      <button class="type-btn"                 onclick="selectType('milk')"     id="btn-milk"><span class="t-emoji">🤱</span>擠奶</button>
+      <button class="type-btn"                 onclick="selectType('milk')"     id="btn-milk"><span class="t-emoji">🍼</span>擠奶</button>
       <button class="type-btn"                 onclick="selectType('water')"    id="btn-water"><span class="t-emoji">💧</span>喝水</button>
     </div>
     <div id="fields-eat">
@@ -748,7 +771,7 @@ body::before, body::after { display: none; }
         <button class="chip chip-active" onclick="setFilter('all')"      id="chip-all">全部</button>
         <button class="chip"             onclick="setFilter('eat')"      id="chip-eat">🍽️進食</button>
         <button class="chip"             onclick="setFilter('exercise')" id="chip-exercise">🏃運動</button>
-        <button class="chip"             onclick="setFilter('milk')"     id="chip-milk">🤱擠奶</button>
+        <button class="chip"             onclick="setFilter('milk')"     id="chip-milk">🍼擠奶</button>
         <button class="chip"             onclick="setFilter('water')"    id="chip-water">💧喝水</button>
       </div>
     </div>
@@ -797,7 +820,9 @@ body::before, body::after { display: none; }
 
   <div class="card">
     <div class="card-title">🌟 整體表現趨勢</div>
-    <div class="trend-legend"><span>😊 完美</span><span>😐 普通</span><span>😢 加油</span></div>
+    <div class="trend-legend">
+      <span>🥳 完美</span><span>🤩 不錯</span><span>🫪 加油</span><span>⬜ 無記錄</span>
+    </div>
     <div class="emoji-calendar" id="emojiCalendar"></div>
   </div>
 
@@ -826,7 +851,7 @@ body::before, body::after { display: none; }
 
   <div class="two-col-cards">
     <div class="card">
-      <div class="card-title">🤱 當日擠奶</div>
+      <div class="card-title">🍼 當日擠奶</div>
       <div class="big-stat" id="totalMilkAll">—</div><div class="big-stat-sub">奶量 ml</div>
       <div class="big-stat" id="totalMilkSessions">—</div><div class="big-stat-sub">次數</div>
     </div>
@@ -977,8 +1002,21 @@ function saveFastCycles(arr)   { localStorage.setItem('mama_fast_cycles', JSON.s
 function getActiveCycle()      { const c = getFastCycles(); return c.find(x => !x.endISO) || null; }
 
 // Poop log: stored as array of {id, dateKey, time, note}
-function getPoopLog()          { return JSON.parse(localStorage.getItem('mama_poop_log') || '[]'); }
-function savePoopLog(arr)      { localStorage.setItem('mama_poop_log', JSON.stringify(arr)); }
+function getPoopLog()     { return JSON.parse(localStorage.getItem('mama_poop_log') || '[]'); }
+function savePoopLog(arr) { localStorage.setItem('mama_poop_log', JSON.stringify(arr)); }
+
+const ICONS = { eat:'🍽️', exercise:'🏃', milk:'🍼', water:'💧', poop:'💩' };
+function getIcon(type) { return ICONS[type] || '•'; }
+
+function getLastKnownProfile(beforeDate) {
+  // Find the most recent day before 'beforeDate' that has weight/height recorded
+  const dates = getAllDates().filter(d => d < beforeDate).reverse();
+  for (const d of dates) {
+    const data = getDayData(d);
+    if (data && data.weight) return { weight: data.weight, height: data.height || 162 };
+  }
+  return { weight: 70.5, height: 162 };  // fallback
+}
 
 // ── STATE ──
 let todayData   = null;
@@ -994,7 +1032,8 @@ let historyEditDate = '';
 window.onload = () => {
   currentDay = todayKey();
   logDay     = currentDay;
-  todayData  = getDayData(logDay) || { entries: [], weight: 70.5, height: 162 };
+  const profile  = getDayData(logDay) ? {} : getLastKnownProfile(logDay);
+  todayData  = getDayData(logDay) || { entries: [], weight: profile.weight || 70.5, height: profile.height || 162 };
 
   updateDateBadge();
   setDefaultTimeForDay(logDay);
@@ -1045,7 +1084,13 @@ function goToToday() { loadLogDay(currentDay); }
 
 function loadLogDay(day) {
   logDay    = day;
-  todayData = getDayData(logDay) || { entries: [], weight: parseFloat(document.getElementById('weightInput').value)||70.5, height: parseFloat(document.getElementById('heightInput').value)||162 };
+  const existing = getDayData(logDay);
+  if (!existing) {
+    const profile = getLastKnownProfile(logDay);
+    todayData = { entries: [], weight: profile.weight, height: profile.height };
+  } else {
+    todayData = existing;
+  }
   document.getElementById('weightInput').value = todayData.weight || 70.5;
   document.getElementById('heightInput').value = todayData.height || 162;
   updateDateBadge();
@@ -1071,7 +1116,7 @@ function updateDateBadge() {
   const d    = new Date(y, m-1, day);
   const days = ['日','一','二','三','四','五','六'];
   document.getElementById('dateBadge').textContent =
-    `📅 ${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（週${days[d.getDay()]}）`;
+    `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（週${days[d.getDay()]}）`;
   document.getElementById('dateNavNext').disabled = (logDay >= currentDay);
   const banner = document.getElementById('notTodayBanner');
   const lbl    = document.getElementById('notTodayLabel');
@@ -1348,7 +1393,7 @@ function addEntry() {
   if (!time) { showToast('⚠️ 請填寫時間！'); return; }
 
   const labels = { eat:'進食', exercise:'運動', milk:'擠奶', water:'喝水', poop:'便便' };
-  const icons  = { eat:'🍽️', exercise:'🏃', milk:'🤱', water:'💧', poop:'💩' };
+  const icons  = { eat:'🍽️', exercise:'🏃', milk:'🍼', water:'💧', poop:'💩' };
   const units  = { eat:'kcal', exercise:'kcal', milk:'ml', water:'ml', poop:'' };
 
   let value = 0, note = '';
@@ -1398,7 +1443,7 @@ function renderTimeline() {
                 e.type==='exercise' ? `（燃燒 ${e.value} kcal 🔥）` : '';
     return `<div class="timeline-item">
       <div class="tl-time">${e.time}</div>
-      <div class="tl-dot ${e.type}">${e.icon}</div>
+      <div class="tl-dot ${e.type}">${getIcon(e.type)}</div>
       <div class="tl-desc"><div class="tl-title">${e.label}</div><div class="tl-value">${val}${sub}</div></div>
       <div class="tl-actions">
         <button class="tl-edit"   onclick="openEdit(${e.id})">✏️</button>
@@ -1591,18 +1636,17 @@ function loadHistoryDay() {
   document.getElementById('h-exburn').textContent = exBurn?exBurn.toLocaleString():'—';
   document.getElementById('h-weight').textContent = w;
 
-  const goodCal=deficit<=0&&deficit>=-600&&calIn>=1500, goodWater=waterPct>=80;
+  const goodCal=deficit<=0 && calIn>=(totalBurn*0.7), goodWater=waterPct>=50;
   const isToday = dateStr === currentDay;
   let verdict, bg;
   if (isToday) {
-    verdict = '📝 今天還沒結束，繼續加油！';
-    bg = '#FFF8F5';
+    verdict = '📝 今天還沒結束，繼續加油！'; bg = '#FFF8F5';
   } else if (goodCal && goodWater) {
-    verdict = '😊 表現優秀！完美的一天';  bg = '#C8F0E8';
+    verdict = '🥳 完美！今天超棒的！'; bg = '#C8F0E8';
   } else if (goodCal || goodWater) {
-    verdict = '😐 繼續努力！快到目標了';   bg = '#FFF0C8';
+    verdict = '🤩 不錯喔！繼續保持！'; bg = '#FFF0C8';
   } else {
-    verdict = '😢 不用氣餒！明天繼續加油'; bg = '#FFD6E0';
+    verdict = '🫪 明天繼續努力！'; bg = '#FFD6E0';
   }
   const vEl=document.getElementById('h-verdict'); vEl.textContent=verdict; vEl.style.background=bg;
 
@@ -1622,7 +1666,7 @@ function loadHistoryDay() {
     const val = `${e.value} ${e.unit}${e.note?' · '+e.note:''}`;
     return `<div class="hist-tl-item">
       <div class="hist-tl-time">${e.time}</div>
-      <div class="hist-tl-icon tl-dot ${e.type}">${e.icon}</div>
+      <div class="hist-tl-icon tl-dot ${e.type}">${getIcon(e.type)}</div>
       <div style="flex:1;color:var(--text-mid)">${e.label}：${val}</div>
     </div>`;
   }).join('');
@@ -1645,21 +1689,48 @@ function getDayScore(data) {
   const exBurn =data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
   const deficit=calIn-(tdee+Math.round(milkTot*0.8)+exBurn);
   const wGoal  =Math.round(w*35+milkTot);
-  // 70% threshold: waterPct >= 70 counts as good, cal deficit within range and >= 1500*0.7
-  const goodCal   = deficit<=0 && deficit>=-600 && calIn>=1050;  // 1500*0.7
-  const goodWater = Math.round(waterIn/Math.max(wGoal,1)*100) >= 70;
+  // Water >= 50%, cal deficit and intake >= 70% of total burn
+  const goodCal   = deficit<=0 && calIn>=(totalBurn*0.7);
+  const goodWater = Math.round(waterIn/Math.max(wGoal,1)*100) >= 50;
   return { goodCal, goodWater };
 }
 
 function renderEmojiCalendar() {
-  const dates=getAllDates(), cal=document.getElementById('emojiCalendar');
-  if (!dates.length) { cal.innerHTML='<div style="font-size:0.8rem;color:var(--text-light);padding:10px">還沒有歷史記錄 🌱</div>'; return; }
-  cal.innerHTML = dates.map(d => {
-    const s=getDayScore(getDayData(d));
-    const emoji = !s ? '⬜' : s.goodCal && s.goodWater ? '😊' : s.goodCal || s.goodWater ? '😐' : '😢';
-    return `<div class="emoji-day" title="${d}" onclick="jumpToDate('${d}')">
-      <span style="font-size:1.3rem;line-height:1;display:block">${emoji}</span>
-      <span class="emoji-day-label">${d.slice(5)}</span>
+  const cal = document.getElementById('emojiCalendar');
+  const recorded = getAllDates();
+  if (!recorded.length) {
+    cal.innerHTML = '<div style="font-size:0.8rem;color:var(--text-light);padding:10px">還沒有歷史記錄 🌱</div>';
+    return;
+  }
+
+  // Build full range: first recorded date → today
+  const firstDate = recorded[0];
+  const allDates  = [];
+  const [fy,fm,fd] = firstDate.split('-').map(Number);
+  const start = new Date(fy, fm-1, fd);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  for (let d = new Date(start); d <= today; d.setDate(d.getDate()+1)) {
+    allDates.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
+  }
+
+  const isToday = d => d === currentDay;
+  cal.innerHTML = allDates.map(d => {
+    const data = getDayData(d);
+    const s    = getDayScore(data);
+    let bg, textColor, emoji;
+    if (!s) {
+      bg = 'var(--cream)'; textColor = 'var(--text-light)'; emoji = '';
+    } else if (s.goodCal && s.goodWater) {
+      bg = '#C8F0E8'; textColor = '#1A6B55'; emoji = '🥳';
+    } else if (s.goodCal || s.goodWater) {
+      bg = '#FFF0C8'; textColor = '#8B5E00'; emoji = '🤩';
+    } else {
+      bg = '#FFD6E0'; textColor = 'var(--rose-deep)'; emoji = '🫪';
+    }
+    return `<div class="emoji-day${isToday(d)?' emoji-day-today':''}" title="${d}" onclick="jumpToDate('${d}')" style="background:${bg}">
+      ${emoji ? `<span style="font-size:1.1rem;line-height:1;display:block">${emoji}</span>` : ''}
+      <span class="emoji-day-label" style="color:${textColor}">${d.slice(5)}</span>
     </div>`;
   }).join('');
 }
@@ -1869,7 +1940,13 @@ function uploadBackup(event) {
         const newPoops = payload.poopLog.filter(p=>!existIds.has(p.id));
         savePoopLog([...existing, ...newPoops]);
       }
-      todayData=getDayData(logDay)||{entries:[],weight:70.5,height:162};
+      const existingToday = getDayData(logDay);
+      if (!existingToday) {
+        const profile = getLastKnownProfile(logDay);
+        todayData = { entries: [], weight: profile.weight, height: profile.height };
+      } else {
+        todayData = existingToday;
+      }
       recalculate(); renderTimeline(); updateDashboard(); updateSyncStats(); initFastingCard();
       showToast(`✅ 合併完成！新增 ${merged} 天，略過 ${skipped} 天`);
     } catch(err){showToast('❌ 檔案格式錯誤');}
