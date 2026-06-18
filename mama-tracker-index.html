@@ -625,6 +625,101 @@ body::before, body::after { display: none; }
   border: 1px solid rgba(0,0,0,0.08); vertical-align: middle;
 }
 
+/* ── BMI ROW ── */
+.bmi-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--cream); border-radius: 12px;
+  border: 1.5px solid rgba(224,92,122,0.12);
+  flex-wrap: wrap;
+}
+.bmi-label {
+  font-family: 'Nunito', sans-serif; font-weight: 800;
+  font-size: var(--fs-xs); color: var(--text-light);
+  text-transform: uppercase; letter-spacing: 0.4px;
+}
+.bmi-value {
+  font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-num);
+  color: var(--text-dark); line-height: 1;
+}
+.bmi-tag {
+  font-family: 'Nunito', sans-serif; font-weight: 800;
+  font-size: var(--fs-sm); padding: 2px 8px;
+  border-radius: 10px; background: rgba(0,0,0,0.05);
+}
+.bmi-suggest {
+  font-size: var(--fs-xs); color: var(--text-mid);
+  margin-left: auto;
+}
+.bmi-suggest strong { color: var(--text-dark); font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-body); }
+
+/* ── BMI SUGGEST BOX (beside goal input) ── */
+.bmi-suggest-box {
+  background: var(--cream); border-radius: 12px;
+  padding: 9px 12px; border: 2px solid #EEE;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.05);
+  display: flex; flex-direction: column; gap: 2px;
+  min-height: 44px; justify-content: center;
+}
+.bmi-suggest-range {
+  font-size: var(--fs-xs); color: var(--text-mid);
+}
+.bmi-suggest-range strong {
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: var(--fs-body); color: var(--text-dark);
+}
+
+/* ── GOAL + BMI UNIFIED ROW ── */
+.goal-bmi-row {
+  display: flex; align-items: center; gap: 0;
+  margin-top: 10px;
+  background: var(--cream); border-radius: 14px;
+  border: 2px solid #EEE;
+  overflow: hidden;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.05);
+}
+.goal-bmi-left {
+  flex: 1; padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.form-label-sm {
+  font-size: var(--fs-xs); color: var(--text-mid);
+  font-weight: 700; font-family: 'Nunito', sans-serif;
+  text-transform: uppercase; letter-spacing: 0.4px;
+}
+.goal-input {
+  width: 100%; border: none; background: transparent;
+  font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-num);
+  color: var(--text-dark); outline: none; padding: 0;
+}
+.goal-bmi-divider {
+  width: 1.5px; background: #EEE; align-self: stretch;
+}
+.goal-bmi-right {
+  flex: 1; padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.goal-bmi-bmi {
+  display: flex; align-items: baseline; gap: 6px;
+}
+.goal-bmi-num {
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: var(--fs-num); color: var(--text-dark); line-height: 1;
+}
+.goal-bmi-tag {
+  font-family: 'Nunito', sans-serif; font-weight: 800;
+  font-size: var(--fs-sm); padding: 1px 7px;
+  border-radius: 8px; background: rgba(0,0,0,0.05);
+}
+.goal-bmi-hint {
+  font-size: var(--fs-xs); color: var(--text-mid);
+  font-family: 'Nunito', sans-serif;
+}
+.goal-bmi-hint strong {
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: var(--fs-body); color: var(--text-dark);
+}
+
 </style>
 </head>
 <body>
@@ -654,16 +749,37 @@ body::before, body::after { display: none; }
   <!-- PROFILE -->
   <div class="card">
     <div class="card-title">👤 我的資料</div>
-    <div class="profile-grid">
-      <div class="input-group"><label>體重 (kg)</label><input type="number" id="weightInput" value="70.5" step="0.1" oninput="onWeightChange()"></div>
-      <div class="input-group"><label>身高 (cm)</label><input type="number" id="heightInput" value="162" step="1" oninput="recalculate()"></div>
+    <div class="goal-bmi-row">
+      <div class="goal-bmi-left">
+        <label class="form-label-sm">體重 (kg)</label>
+        <input type="number" id="weightInput" value="70.5" step="0.1" oninput="onWeightChange()" class="goal-input">
+      </div>
+      <div class="goal-bmi-divider"></div>
+      <div class="goal-bmi-right">
+        <label class="form-label-sm">身高 (cm)</label>
+        <input type="number" id="heightInput" value="162" step="1" oninput="recalculate()" class="goal-input">
+      </div>
+    </div>
+    <div class="goal-bmi-row">
+      <div class="goal-bmi-left">
+        <label class="form-label-sm">目標體重 (kg)</label>
+        <input type="number" id="goalInput" value="55" step="0.1" oninput="onGoalChange()" class="goal-input">
+      </div>
+      <div class="goal-bmi-divider"></div>
+      <div class="goal-bmi-right">
+        <div class="goal-bmi-bmi">
+          <span class="goal-bmi-num" id="bmiVal">—</span>
+          <span class="goal-bmi-tag" id="bmiTag">—</span>
+        </div>
+        <div class="goal-bmi-hint">建議 <strong id="bmiSuggest">—</strong> kg</div>
+      </div>
     </div>
     <div class="bmr-display">
       <div class="bmr-item"><div class="bmr-value" id="bmrVal">—</div><div class="bmr-label">BMR</div></div>
       <div class="bmr-item"><div class="bmr-value" id="tdeeVal">—</div><div class="bmr-label">TDEE</div></div>
       <div class="bmr-item"><div class="bmr-value" id="waterGoalVal">—</div><div class="bmr-label">水目標</div></div>
     </div>
-    <div class="goal-chip">🎯 目標 55 kg｜還差 <span id="goalDiff">—</span> kg</div>
+    <div class="goal-chip">🎯 目標 <span id="goalDisplay">55</span> kg｜還差 <span id="goalDiff">—</span> kg</div>
   </div>
 
   <!-- STATS -->
@@ -1005,6 +1121,9 @@ function getActiveCycle()      { const c = getFastCycles(); return c.find(x => !
 function getPoopLog()     { return JSON.parse(localStorage.getItem('mama_poop_log') || '[]'); }
 function savePoopLog(arr) { localStorage.setItem('mama_poop_log', JSON.stringify(arr)); }
 
+function getGoalWeight()      { return parseFloat(localStorage.getItem('mama_goal') || '55'); }
+function saveGoalWeight(v)    { localStorage.setItem('mama_goal', String(v)); }
+
 const ICONS = { eat:'🍽️', exercise:'🏃', milk:'🍼', water:'💧', poop:'💩' };
 function getIcon(type) { return ICONS[type] || '•'; }
 
@@ -1039,6 +1158,7 @@ window.onload = () => {
   setDefaultTimeForDay(logDay);
   document.getElementById('weightInput').value = todayData.weight || 70.5;
   document.getElementById('heightInput').value = todayData.height || 162;
+  document.getElementById('goalInput').value   = getGoalWeight();
   recalculate();
   renderTimeline();
   updateDashboard();
@@ -1147,6 +1267,14 @@ function setDefaultTimeForDay(day) {
 // ── CALC ──
 function getMifflinBMR(w, h, age=30) { return Math.round(10*w + 6.25*h - 5*age - 161); }
 
+function onGoalChange() {
+  const g = parseFloat(document.getElementById('goalInput').value);
+  if (g > 0) {
+    saveGoalWeight(g);
+    recalculate();
+  }
+}
+
 function onWeightChange() {
   todayData.weight = parseFloat(document.getElementById('weightInput').value) || 70.5;
   saveDayData(logDay, todayData);
@@ -1164,7 +1292,29 @@ function recalculate() {
   document.getElementById('bmrVal').textContent       = bmr + ' kcal';
   document.getElementById('tdeeVal').textContent      = tdee + ' kcal';
   document.getElementById('waterGoalVal').textContent = waterGoal + ' ml';
-  document.getElementById('goalDiff').textContent     = Math.max(0, w-55).toFixed(1);
+  document.getElementById('goalDiff').textContent     = Math.max(0, w - getGoalWeight()).toFixed(1);
+  const gd = document.getElementById('goalDisplay');
+  if (gd) gd.textContent = getGoalWeight();
+
+  // BMI
+  const hm   = h / 100;
+  const bmi  = w / (hm * hm);
+  const bmiEl  = document.getElementById('bmiVal');
+  const tagEl  = document.getElementById('bmiTag');
+  const sugEl  = document.getElementById('bmiSuggest');
+  if (bmiEl) {
+    bmiEl.textContent = bmi.toFixed(1);
+    let tag, tagColor, suggestMin, suggestMax;
+    if      (bmi < 18.5) { tag='過輕'; tagColor='#4EA8DE'; suggestMin=18.5; suggestMax=23.9; }
+    else if (bmi < 24)   { tag='正常 ✓'; tagColor='#3DBFA0'; suggestMin=18.5; suggestMax=23.9; }
+    else if (bmi < 27)   { tag='過重'; tagColor='#FFB347'; suggestMin=18.5; suggestMax=23.9; }
+    else                 { tag='肥胖'; tagColor='#E05C7A'; suggestMin=18.5; suggestMax=23.9; }
+    tagEl.textContent  = tag;
+    tagEl.style.color  = tagColor;
+    const sMin = (suggestMin * hm * hm).toFixed(1);
+    const sMax = (suggestMax * hm * hm).toFixed(1);
+    sugEl.textContent  = `${sMin}–${sMax}`;
+  }
   document.getElementById('waterGoalSmall').textContent = `目標 ${waterGoal} ml`;
   updateDashboard();
 }
@@ -1703,37 +1853,32 @@ function renderEmojiCalendar() {
     return;
   }
 
-  // Build full range: first recorded date → today
-  const firstDate = recorded[0];
-  const allDates  = [];
-  const [fy,fm,fd] = firstDate.split('-').map(Number);
-  const start = new Date(fy, fm-1, fd);
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  for (let d = new Date(start); d <= today; d.setDate(d.getDate()+1)) {
-    allDates.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
+  // Build full date range from first recorded day to today (safe loop)
+  const allDates = [];
+  const [fy,fm,fd] = recorded[0].split('-').map(Number);
+  let cur = new Date(fy, fm-1, fd);
+  const todayDate = new Date();
+  todayDate.setHours(0,0,0,0);
+  while (cur <= todayDate) {
+    allDates.push(`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`);
+    cur = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate()+1); // safe: create new Date each time
   }
 
-  const isToday = d => d === currentDay;
   cal.innerHTML = allDates.map(d => {
-    const data = getDayData(d);
-    const s    = getDayScore(data);
+    const s = getDayScore(getDayData(d));
     let bg, textColor, emoji;
-    if (!s) {
-      bg = 'var(--cream)'; textColor = 'var(--text-light)'; emoji = '';
-    } else if (s.goodCal && s.goodWater) {
-      bg = '#C8F0E8'; textColor = '#1A6B55'; emoji = '🥳';
-    } else if (s.goodCal || s.goodWater) {
-      bg = '#FFF0C8'; textColor = '#8B5E00'; emoji = '🤩';
-    } else {
-      bg = '#FFD6E0'; textColor = 'var(--rose-deep)'; emoji = '🫪';
-    }
-    return `<div class="emoji-day${isToday(d)?' emoji-day-today':''}" title="${d}" onclick="jumpToDate('${d}')" style="background:${bg}">
+    if (!s)                         { bg='var(--cream)'; textColor='var(--text-light)'; emoji=''; }
+    else if (s.goodCal&&s.goodWater){ bg='#C8F0E8'; textColor='#1A6B55'; emoji='🥳'; }
+    else if (s.goodCal||s.goodWater){ bg='#FFF0C8'; textColor='#8B5E00'; emoji='🤩'; }
+    else                            { bg='#FFD6E0'; textColor='var(--rose-deep)'; emoji='🫪'; }
+    const isNow = d === currentDay;
+    return `<div class="emoji-day${isNow?' emoji-day-today':''}" title="${d}" onclick="jumpToDate('${d}')" style="background:${bg}">
       ${emoji ? `<span style="font-size:1.1rem;line-height:1;display:block">${emoji}</span>` : ''}
       <span class="emoji-day-label" style="color:${textColor}">${d.slice(5)}</span>
     </div>`;
   }).join('');
 }
+
 function jumpToDate(d) {
   document.getElementById('historyDatePicker').value = d;
   loadHistoryDay();
@@ -1746,41 +1891,38 @@ function deleteDayData() {
 }
 
 function _doDeleteDay(dateStr) {
-  // Remove daily entries
   localStorage.removeItem('mama_' + dateStr);
-  // Remove poop entries for this day
   savePoopLog(getPoopLog().filter(p => p.dateKey !== dateStr));
-  // If it was today, reset todayData
   if (dateStr === logDay) {
     todayData = { entries: [], weight: todayData.weight || 70.5, height: todayData.height || 162 };
     saveDayData(logDay, todayData);
     renderTimeline(); recalculate(); updateDashboard(); renderPoopToday();
   }
-  // Refresh history view
   document.getElementById('historyDayCard').classList.add('hidden');
   document.getElementById('historyDayEmpty').classList.remove('hidden');
   renderHistory();
   showToast(`🗑️ 已刪除 ${dateStr} 的所有紀錄`);
 }
 
-// ── WEIGHT DOT CHART (SVG) ──
+// ── WEIGHT DOT CHART ──
 function renderWeightDotChart() {
   const dates   = getAllDates();
-  const weights = dates.map(d=>{ const data=getDayData(d); return data&&data.weight?{d,w:data.weight}:null; }).filter(Boolean);
-  const noData  = document.getElementById('noWeightData');
-  const el      = document.getElementById('weightDotChart');
+  const weights = dates
+    .map(d => { const data = getDayData(d); return data && data.weight ? { d, w: data.weight } : null; })
+    .filter(Boolean);
+  const noData = document.getElementById('noWeightData');
+  const el     = document.getElementById('weightDotChart');
 
-  if (!weights.length) { noData.classList.remove('hidden'); el.innerHTML=''; return; }
+  if (!weights.length) { noData.classList.remove('hidden'); el.innerHTML = ''; return; }
   noData.classList.add('hidden');
 
-  const vals = weights.map(x=>x.w);
-  const minW = Math.min(...vals), maxW = Math.max(...vals);
-  const goal = 55;
-  const latest= weights[weights.length-1].w;
+  const allW  = weights.map(x => x.w);
+  const minW  = Math.min(...allW), maxW = Math.max(...allW);
+  const goal  = getGoalWeight();
   const first = weights[0].w;
-  const diff  = (latest-first).toFixed(1);
+  const latest= weights[weights.length-1].w;
+  const diff  = (latest - first).toFixed(1);
 
-  // Summary chips
   const summaryHtml = `<div class="weight-summary">
     <div class="ws-item"><div class="ws-val">${first} kg</div><div class="ws-lbl">起始</div></div>
     <div class="ws-item"><div class="ws-val" style="color:var(--rose-deep)">${latest} kg</div><div class="ws-lbl">最新</div></div>
@@ -1788,61 +1930,59 @@ function renderWeightDotChart() {
     <div class="ws-item"><div class="ws-val" style="color:#3DBFA0">${goal} kg</div><div class="ws-lbl">目標</div></div>
   </div>`;
 
-  // SVG dot chart
-  const recent = weights.slice(-14);  // max 14 points
-  const n = recent.length;
-  const W = 300, H = 110, PL = 8, PR = 10, PT = 14, PB = 22;
-  const chartW = W - PL - PR, chartH = H - PT - PB;
-  const range  = maxW - minW || 1;
-  const yPad   = range * 0.2;
-  const yMin   = minW - yPad, yMax = maxW + yPad;
+  const recent = weights.slice(-14);
+  const n      = recent.length;
+  const W=300, H=110, PL=8, PR=10, PT=14, PB=22;
+  const chartW = W-PL-PR, chartH = H-PT-PB;
+  // Use recent's own min/max for Y scale
+  const rVals = recent.map(x=>x.w);
+  const rMin  = Math.min(...rVals), rMax = Math.max(...rVals);
+  const range = rMax - rMin || 1;
+  const yPad  = range * 0.25;
+  const yMin  = rMin - yPad, yMax = rMax + yPad;
 
   const cx = i => PL + (n===1 ? chartW/2 : i/(n-1)*chartW);
   const cy = w => PT + (1 - (w-yMin)/(yMax-yMin)) * chartH;
 
-  const showGoal = goal >= yMin && goal <= yMax;
-
-  let svgContent = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
-    <!-- grid lines -->
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
     <line x1="${PL}" y1="${PT}" x2="${W-PR}" y2="${PT}" stroke="#F0E8EC" stroke-width="1"/>
     <line x1="${PL}" y1="${PT+chartH/2}" x2="${W-PR}" y2="${PT+chartH/2}" stroke="#F0E8EC" stroke-width="1"/>
     <line x1="${PL}" y1="${PT+chartH}" x2="${W-PR}" y2="${PT+chartH}" stroke="#F0E8EC" stroke-width="1"/>`;
 
-  // Goal line
-  if (showGoal) {
-    const goalY = cy(goal);
-    svgContent += `<line x1="${PL}" y1="${goalY.toFixed(1)}" x2="${W-PR}" y2="${goalY.toFixed(1)}" stroke="#3DBFA0" stroke-width="1.2" stroke-dasharray="4 3"/>
-    <text x="${W-PR-2}" y="${(goalY-3).toFixed(1)}" text-anchor="end" font-size="7.5" fill="#3DBFA0" font-family="Nunito">目標</text>`;
+  if (goal >= yMin && goal <= yMax) {
+    const gy = cy(goal).toFixed(1);
+    svg += `<line x1="${PL}" y1="${gy}" x2="${W-PR}" y2="${gy}" stroke="#3DBFA0" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <text x="${W-PR-2}" y="${(cy(goal)-3).toFixed(1)}" text-anchor="end" font-size="7.5" fill="#3DBFA0" font-family="Nunito">目標</text>`;
   }
 
-  // Line connecting dots
-  const linePts = recent.map((pt,i) => `${cx(i).toFixed(1)},${cy(pt.w).toFixed(1)}`).join(' ');
   if (n > 1) {
-    svgContent += `<polyline points="${linePts}" fill="none" stroke="#FFB3C6" stroke-width="1.8" stroke-linejoin="round"/>`;
+    const pts = recent.map((pt,i) => `${cx(i).toFixed(1)},${cy(pt.w).toFixed(1)}`).join(' ');
+    svg += `<polyline points="${pts}" fill="none" stroke="#FFB3C6" stroke-width="1.8" stroke-linejoin="round"/>`;
   }
 
-  // Dots + date labels
+  // Find min/max indices within recent
+  const rMinIdx = rVals.indexOf(Math.min(...rVals));
+  const rMaxIdx = rVals.indexOf(Math.max(...rVals));
+
   recent.forEach((pt, i) => {
     const x = cx(i).toFixed(1), y = cy(pt.w).toFixed(1);
     const color = pt.w <= goal ? '#3DBFA0' : '#E05C7A';
-    svgContent += `<circle cx="${x}" cy="${y}" r="5" fill="${color}" stroke="white" stroke-width="1.5"/>`;
-    // Show weight value above dot for first, last, and local extremes
-    if (i===0 || i===n-1 || i===vals.indexOf(Math.min(...vals)) || i===vals.indexOf(Math.max(...vals))) {
-      svgContent += `<text x="${x}" y="${(parseFloat(y)-8).toFixed(1)}" text-anchor="middle" font-size="8" fill="${color}" font-family="Nunito" font-weight="bold">${pt.w}</text>`;
+    svg += `<circle cx="${x}" cy="${y}" r="5" fill="${color}" stroke="white" stroke-width="1.5"/>`;
+    if (i===0 || i===n-1 || i===rMinIdx || i===rMaxIdx) {
+      svg += `<text x="${x}" y="${(parseFloat(y)-8).toFixed(1)}" text-anchor="middle" font-size="8" fill="${color}" font-family="Nunito" font-weight="bold">${pt.w}</text>`;
     }
-    // Date label every 2-3 dots to avoid crowding
     if (n<=7 || i===0 || i===n-1 || i%Math.ceil(n/5)===0) {
-      svgContent += `<text x="${x}" y="${H-4}" text-anchor="middle" font-size="7.5" fill="#B8A0AA" font-family="Nunito">${pt.d.slice(5)}</text>`;
+      svg += `<text x="${x}" y="${H-4}" text-anchor="middle" font-size="7.5" fill="#B8A0AA" font-family="Nunito">${pt.d.slice(5)}</text>`;
     }
   });
 
-  svgContent += `</svg>`;
-  el.innerHTML = summaryHtml + svgContent;
+  svg += `</svg>`;
+  el.innerHTML = summaryHtml + svg;
 }
 
-// ── FASTING CYCLES (history) ──
+// ── FASTING CYCLES ──
 function renderFastingCycles() {
-  const cycles = getFastCycles().filter(c => c.endISO).reverse();  // completed only, newest first
+  const cycles = getFastCycles().filter(c => c.endISO).reverse();
   const el = document.getElementById('fastingCycleList');
 
   if (!cycles.length) {
@@ -1959,6 +2099,7 @@ function confirmClear() {
   getAllDates().forEach(d=>localStorage.removeItem('mama_'+d));
   localStorage.removeItem('mama_fast_cycles');
   localStorage.removeItem('mama_poop_log');
+  // Keep goal weight — user preference, not data
   todayData={entries:[],weight:70.5,height:162};
   saveDayData(logDay,todayData);
   if(fastTimerInterval){clearInterval(fastTimerInterval);fastTimerInterval=null;}
