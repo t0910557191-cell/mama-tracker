@@ -1318,17 +1318,17 @@ function recalculate() {
   const sugEl  = document.getElementById('bmiSuggest');
   if (bmiEl) {
     bmiEl.textContent = bmi.toFixed(1);
-    let tag, tagColor, suggestMin, suggestMax;
-    if      (bmi < 18.5) { tag='過輕'; tagColor='#4EA8DE'; }
+    let tag, tagColor;
+    if      (bmi < 18.5) { tag='過輕';   tagColor='#4EA8DE'; }
     else if (bmi < 24)   { tag='正常 ✓'; tagColor='#3DBFA0'; }
-    else if (bmi < 27)   { tag='過重'; tagColor='#FFB347'; }
-    else                 { tag='肥胖'; tagColor='#E05C7A'; }
-    bmiEl.style.color  = tagColor;
-    tagEl.textContent  = tag;
-    tagEl.style.color  = tagColor;
-    const sMin = (suggestMin * hm * hm).toFixed(1);
-    const sMax = (suggestMax * hm * hm).toFixed(1);
-    sugEl.textContent  = `${sMin}–${sMax}`;
+    else if (bmi < 27)   { tag='過重';   tagColor='#FFB347'; }
+    else                 { tag='肥胖';   tagColor='#E05C7A'; }
+    bmiEl.style.color = tagColor;
+    tagEl.textContent = tag;
+    tagEl.style.color = tagColor;
+    const sMin = (18.5 * hm * hm).toFixed(1);
+    const sMax = (23.9 * hm * hm).toFixed(1);
+    sugEl.textContent = `${sMin}–${sMax}`;
   }
   document.getElementById('waterGoalSmall').textContent = `目標 ${waterGoal} ml`;
   updateDashboard();
