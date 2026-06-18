@@ -671,21 +671,22 @@ body::before, body::after { display: none; }
 
 /* ── GOAL + BMI UNIFIED ROW ── */
 .goal-bmi-row {
-  display: flex; align-items: center; gap: 0;
+  display: flex; align-items: stretch; gap: 0;
   margin-top: 10px;
   background: var(--cream); border-radius: 14px;
   border: 2px solid #EEE;
-  overflow: hidden;
   box-shadow: 2px 2px 0 rgba(0,0,0,0.05);
 }
 .goal-bmi-left {
   flex: 1; padding: 10px 12px;
   display: flex; flex-direction: column; gap: 4px;
+  min-width: 0;
 }
 .form-label-sm {
   font-size: var(--fs-xs); color: var(--text-mid);
   font-weight: 700; font-family: 'Nunito', sans-serif;
   text-transform: uppercase; letter-spacing: 0.4px;
+  white-space: nowrap;
 }
 .goal-input {
   width: 100%; border: none; background: transparent;
@@ -693,31 +694,44 @@ body::before, body::after { display: none; }
   color: var(--text-dark); outline: none; padding: 0;
 }
 .goal-bmi-divider {
-  width: 1.5px; background: #EEE; align-self: stretch;
+  width: 1.5px; background: #EEE; flex-shrink: 0;
 }
 .goal-bmi-right {
-  flex: 1; padding: 10px 12px;
-  display: flex; flex-direction: column; gap: 4px;
+  flex: 1; padding: 10px 12px; min-width: 0;
+  display: flex; flex-direction: column; justify-content: center; gap: 3px;
 }
 .goal-bmi-bmi {
-  display: flex; align-items: baseline; gap: 6px;
+  display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap;
 }
 .goal-bmi-num {
   font-family: 'Patrick Hand', sans-serif;
-  font-size: var(--fs-num); color: var(--text-dark); line-height: 1;
+  font-size: var(--fs-num); line-height: 1;
 }
 .goal-bmi-tag {
   font-family: 'Nunito', sans-serif; font-weight: 800;
-  font-size: var(--fs-sm); padding: 1px 7px;
+  font-size: var(--fs-xs); padding: 1px 6px;
   border-radius: 8px; background: rgba(0,0,0,0.05);
 }
 .goal-bmi-hint {
   font-size: var(--fs-xs); color: var(--text-mid);
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Nunito', sans-serif; line-height: 1.4;
+  white-space: normal; word-break: break-word;
 }
 .goal-bmi-hint strong {
   font-family: 'Patrick Hand', sans-serif;
-  font-size: var(--fs-body); color: var(--text-dark);
+  font-size: var(--fs-sm); color: var(--text-dark);
+}
+
+/* ── GOAL DISTANCE — no box ── */
+.goal-dist-plain {
+  margin-top: 8px;
+  font-size: var(--fs-sm); color: var(--text-mid);
+  font-family: 'Nunito', sans-serif; font-weight: 600;
+}
+.goal-dist-num {
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: var(--fs-num); color: var(--rose-deep);
+  line-height: 1;
 }
 
 </style>
@@ -768,6 +782,7 @@ body::before, body::after { display: none; }
       <div class="goal-bmi-divider"></div>
       <div class="goal-bmi-right">
         <div class="goal-bmi-bmi">
+          <span class="form-label-sm">BMI</span>
           <span class="goal-bmi-num" id="bmiVal">—</span>
           <span class="goal-bmi-tag" id="bmiTag">—</span>
         </div>
@@ -779,7 +794,9 @@ body::before, body::after { display: none; }
       <div class="bmr-item"><div class="bmr-value" id="tdeeVal">—</div><div class="bmr-label">TDEE</div></div>
       <div class="bmr-item"><div class="bmr-value" id="waterGoalVal">—</div><div class="bmr-label">水目標</div></div>
     </div>
-    <div class="goal-chip">🎯 目標 <span id="goalDisplay">55</span> kg｜還差 <span id="goalDiff">—</span> kg</div>
+    <div class="goal-dist-plain">
+      距離目標 <span class="goal-dist-num" id="goalDiff">—</span> kg
+    </div>
   </div>
 
   <!-- STATS -->
@@ -907,9 +924,8 @@ body::before, body::after { display: none; }
   </div>
 
   <div class="card">
-    <div class="card-title">📅 查看特定日期</div>
     <div class="history-date-row">
-      <label class="form-label" style="margin-bottom:6px">選擇日期</label>
+      <label class="form-label" style="margin-bottom:6px">📅 選擇日期</label>
       <input type="date" class="history-date-input" id="historyDatePicker" onchange="loadHistoryDay()">
     </div>
     <div id="historyDayCard" class="hidden" style="margin-top:14px">
@@ -1292,9 +1308,7 @@ function recalculate() {
   document.getElementById('bmrVal').textContent       = bmr + ' kcal';
   document.getElementById('tdeeVal').textContent      = tdee + ' kcal';
   document.getElementById('waterGoalVal').textContent = waterGoal + ' ml';
-  document.getElementById('goalDiff').textContent     = Math.max(0, w - getGoalWeight()).toFixed(1);
-  const gd = document.getElementById('goalDisplay');
-  if (gd) gd.textContent = getGoalWeight();
+  document.getElementById('goalDiff').textContent = Math.max(0, w - getGoalWeight()).toFixed(1);
 
   // BMI
   const hm   = h / 100;
@@ -1305,10 +1319,11 @@ function recalculate() {
   if (bmiEl) {
     bmiEl.textContent = bmi.toFixed(1);
     let tag, tagColor, suggestMin, suggestMax;
-    if      (bmi < 18.5) { tag='過輕'; tagColor='#4EA8DE'; suggestMin=18.5; suggestMax=23.9; }
-    else if (bmi < 24)   { tag='正常 ✓'; tagColor='#3DBFA0'; suggestMin=18.5; suggestMax=23.9; }
-    else if (bmi < 27)   { tag='過重'; tagColor='#FFB347'; suggestMin=18.5; suggestMax=23.9; }
-    else                 { tag='肥胖'; tagColor='#E05C7A'; suggestMin=18.5; suggestMax=23.9; }
+    if      (bmi < 18.5) { tag='過輕'; tagColor='#4EA8DE'; }
+    else if (bmi < 24)   { tag='正常 ✓'; tagColor='#3DBFA0'; }
+    else if (bmi < 27)   { tag='過重'; tagColor='#FFB347'; }
+    else                 { tag='肥胖'; tagColor='#E05C7A'; }
+    bmiEl.style.color  = tagColor;
     tagEl.textContent  = tag;
     tagEl.style.color  = tagColor;
     const sMin = (suggestMin * hm * hm).toFixed(1);
@@ -1865,13 +1880,13 @@ function renderEmojiCalendar() {
   }
 
   cal.innerHTML = allDates.map(d => {
-    const s = getDayScore(getDayData(d));
+    const s    = getDayScore(getDayData(d));
+    const isNow = d === currentDay;
     let bg, textColor, emoji;
-    if (!s)                         { bg='var(--cream)'; textColor='var(--text-light)'; emoji=''; }
+    if (isNow || !s)                { bg='var(--cream)'; textColor='var(--text-light)'; emoji=''; }
     else if (s.goodCal&&s.goodWater){ bg='#C8F0E8'; textColor='#1A6B55'; emoji='🥳'; }
     else if (s.goodCal||s.goodWater){ bg='#FFF0C8'; textColor='#8B5E00'; emoji='🤩'; }
     else                            { bg='#FFD6E0'; textColor='var(--rose-deep)'; emoji='🫪'; }
-    const isNow = d === currentDay;
     return `<div class="emoji-day${isNow?' emoji-day-today':''}" title="${d}" onclick="jumpToDate('${d}')" style="background:${bg}">
       ${emoji ? `<span style="font-size:1.1rem;line-height:1;display:block">${emoji}</span>` : ''}
       <span class="emoji-day-label" style="color:${textColor}">${d.slice(5)}</span>
@@ -1981,14 +1996,17 @@ function renderWeightDotChart() {
 }
 
 // ── FASTING CYCLES ──
-function renderFastingCycles() {
-  const cycles = getFastCycles().filter(c => c.endISO).reverse();
+function renderFastingCycles(showAll) {
+  const allCycles = getFastCycles().filter(c => c.endISO).reverse();
   const el = document.getElementById('fastingCycleList');
 
-  if (!cycles.length) {
+  if (!allCycles.length) {
     el.innerHTML = '<div class="empty-timeline"><span class="big-emoji">⏱️</span>還沒有完成的斷食週期</div>';
     return;
   }
+
+  const LIMIT = 5;
+  const cycles = showAll ? allCycles : allCycles.slice(0, LIMIT);
 
   el.innerHTML = cycles.map(c => {
     const start = new Date(c.startISO);
@@ -2007,6 +2025,13 @@ function renderFastingCycles() {
       <div class="fast-cycle-hrs" style="color:${color}">${hrs.toFixed(1)}<span class="fast-cycle-unit">hr</span></div>
     </div>`;
   }).join('');
+
+  if (!showAll && allCycles.length > LIMIT) {
+    el.innerHTML += `<div style="text-align:center;margin-top:10px">
+      <button onclick="renderFastingCycles(true)" style="background:none;border:1.5px solid var(--text-light);border-radius:10px;padding:5px 16px;font-size:var(--fs-xs);color:var(--text-mid);cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700">
+        顯示全部 ${allCycles.length} 筆
+      </button></div>`;
+  }
 }
 
 function renderMilkFastStats() {
