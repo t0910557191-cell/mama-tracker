@@ -1687,9 +1687,9 @@ function getDayScore(data) {
   const milkTot=data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
   const waterIn=data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
   const exBurn =data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
-  const deficit=calIn-(tdee+Math.round(milkTot*0.8)+exBurn);
+  const totalBurn = tdee + Math.round(milkTot*0.8) + exBurn;
+  const deficit=calIn - totalBurn;
   const wGoal  =Math.round(w*35+milkTot);
-  // Water >= 50%, cal deficit and intake >= 70% of total burn
   const goodCal   = deficit<=0 && calIn>=(totalBurn*0.7);
   const goodWater = Math.round(waterIn/Math.max(wGoal,1)*100) >= 50;
   return { goodCal, goodWater };
