@@ -472,21 +472,19 @@ body::before, body::after { display: none; }
 }
 .emoji-calendar { display: flex; flex-wrap: wrap; gap: 7px; }
 .emoji-day {
-  width: 42px; height: 42px; border-radius: 12px;
+  width: 42px; height: 50px; border-radius: 12px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   cursor: pointer; background: var(--cream);
   border: 1.5px solid rgba(224,92,122,0.1);
   transition: all 0.15s;
-  /* Force emoji to render large enough */
-  font-size: 1.3rem;
-  line-height: 1;
+  font-size: 1.3rem; line-height: 1;
+  gap: 3px;
 }
 .emoji-day:hover { transform: scale(1.1); border-color: var(--rose); }
 .emoji-day-label {
   font-size: 0.45rem; color: var(--text-light);
   font-family: 'Nunito', sans-serif; font-weight: 700;
-  line-height: 1; margin-top: 2px;
-  display: block;
+  line-height: 1; display: block;
 }
 
 /* ── WEIGHT CHART ── */
@@ -739,6 +737,14 @@ body::before, body::after { display: none; }
   line-height: 1;
 }
 
+.poop-warning {
+  background: #FFF3E0; border: 1.5px solid #FFB347;
+  border-radius: 10px; padding: 7px 12px;
+  font-size: var(--fs-sm); color: #7B3A10;
+  font-weight: 600; margin-bottom: 8px;
+  font-family: 'Nunito', sans-serif;
+}
+
 </style>
 </head>
 <body>
@@ -815,11 +821,11 @@ body::before, body::after { display: none; }
   <!-- PROGRESS -->
   <div class="card progress-section">
     <div class="card-title">📊 今日進度</div>
-    <div class="progress-label"><span>🔥 熱量攝取</span><span id="calPct">0 kcal</span></div>
+    <div class="progress-label"><span>熱量攝取</span><span id="calPct">0 kcal</span></div>
     <div class="progress-track"><div class="progress-fill calories-bar" id="calBar" style="width:0%"></div></div>
-    <div class="progress-label"><span>💧 水分補給</span><span id="waterPct">0%</span></div>
+    <div class="progress-label"><span>水分補給</span><span id="waterPct">0%</span></div>
     <div class="progress-track"><div class="progress-fill water-bar" id="waterBar" style="width:0%"></div></div>
-    <div class="progress-label"><span>✨ 熱量狀態</span><span id="deficitLabel">—</span></div>
+    <div class="progress-label"><span>熱量狀態</span><span id="deficitLabel">—</span></div>
     <div class="progress-track"><div class="progress-fill deficit-bar" id="deficitBar" style="width:0%"></div></div>
     <div style="font-size:0.72rem;color:var(--text-mid);text-align:right;margin-top:2px" id="deficitText">—</div>
   </div>
@@ -830,7 +836,7 @@ body::before, body::after { display: none; }
     <div id="fastingIdleView">
       <p class="fasting-hint">記錄你的斷食開始和結束時間，自動計算跨日時長</p>
       <div class="field-row" style="margin-bottom:8px">
-        <label class="form-label">⏰ 開始時間（可修改）</label>
+        <label class="form-label">開始時間</label>
         <input type="datetime-local" class="form-input" id="fastStartInput">
       </div>
       <button class="fast-start-btn" onclick="startFastCycle()">🌙 開始斷食</button>
@@ -847,7 +853,7 @@ body::before, body::after { display: none; }
         </div>
       </div>
       <div class="field-row" style="margin-top:10px;margin-bottom:8px">
-        <label class="form-label">⏰ 結束時間（可修改）</label>
+        <label class="form-label">結束時間</label>
         <input type="datetime-local" class="form-input" id="fastEndInput">
       </div>
       <button class="fast-stop-btn" onclick="stopFastCycle()">✅ 結束斷食</button>
@@ -858,11 +864,11 @@ body::before, body::after { display: none; }
   <div class="card poop-card">
     <div class="card-title">💩 便便紀錄</div>
     <div class="field-row">
-      <label class="form-label">⏰ 時間（可修改）</label>
+      <label class="form-label">時間</label>
       <input type="time" class="form-input" id="poopTimeInput">
     </div>
     <div class="field-row">
-      <label class="form-label">📝 備註（選填）</label>
+      <label class="form-label">備註（選填）</label>
       <input type="text" class="form-input" id="poopNoteInput" placeholder="例：正常、偏硬、偏軟">
     </div>
     <button class="poop-add-btn" onclick="addPoopEntry()">💩 記錄便便</button>
@@ -881,22 +887,22 @@ body::before, body::after { display: none; }
       <button class="type-btn"                 onclick="selectType('water')"    id="btn-water"><span class="t-emoji">💧</span>喝水</button>
     </div>
     <div id="fields-eat">
-      <div class="field-row"><label class="form-label">⏰ 時間</label><input type="time" class="form-input" id="timeInput-eat"></div>
-      <div class="field-row"><label class="form-label">🔥 熱量 (kcal)</label><input type="number" class="form-input" id="valInput-eat" placeholder="例：450"></div>
-      <div class="field-row"><label class="form-label">📝 食物備註（選填）</label><input type="text" class="form-input" id="noteInput-eat" placeholder="例：雞腿便當"></div>
+      <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-eat"></div>
+      <div class="field-row"><label class="form-label">熱量 (kcal)</label><input type="number" class="form-input" id="valInput-eat" placeholder="例：450"></div>
+      <div class="field-row"><label class="form-label">食物備註（選填）</label><input type="text" class="form-input" id="noteInput-eat" placeholder="例：雞腿便當"></div>
     </div>
     <div id="fields-exercise" class="hidden">
-      <div class="field-row"><label class="form-label">⏰ 時間</label><input type="time" class="form-input" id="timeInput-exercise"></div>
-      <div class="field-row"><label class="form-label">🔥 消耗熱量 (kcal)</label><input type="number" class="form-input" id="valInput-exercise" placeholder="例：200"></div>
-      <div class="field-row"><label class="form-label">🏃 運動類型（選填）</label><input type="text" class="form-input" id="noteInput-exercise" placeholder="例：慢跑 30 分鐘"></div>
+      <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-exercise"></div>
+      <div class="field-row"><label class="form-label">消耗熱量 (kcal)</label><input type="number" class="form-input" id="valInput-exercise" placeholder="例：200"></div>
+      <div class="field-row"><label class="form-label">運動類型（選填）</label><input type="text" class="form-input" id="noteInput-exercise" placeholder="例：慢跑 30 分鐘"></div>
     </div>
     <div id="fields-milk" class="hidden">
-      <div class="field-row"><label class="form-label">⏰ 時間</label><input type="time" class="form-input" id="timeInput-milk"></div>
-      <div class="field-row"><label class="form-label">🍼 奶量 (ml)</label><input type="number" class="form-input" id="valInput-milk" placeholder="例：180"></div>
+      <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-milk"></div>
+      <div class="field-row"><label class="form-label">奶量 (ml)</label><input type="number" class="form-input" id="valInput-milk" placeholder="例：180"></div>
     </div>
     <div id="fields-water" class="hidden">
-      <div class="field-row"><label class="form-label">⏰ 時間</label><input type="time" class="form-input" id="timeInput-water"></div>
-      <div class="field-row"><label class="form-label">💧 水量 (ml)</label><input type="number" class="form-input" id="valInput-water" placeholder="例：300"></div>
+      <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-water"></div>
+      <div class="field-row"><label class="form-label">水量 (ml)</label><input type="number" class="form-input" id="valInput-water" placeholder="例：300"></div>
     </div>
     <button class="add-btn" onclick="addEntry()">＋ 新增到日誌</button>
   </div>
@@ -1037,8 +1043,8 @@ body::before, body::after { display: none; }
   <div class="card">
     <div class="card-title">📊 匯出 Excel</div>
     <p style="font-size:0.8rem;color:var(--text-mid);margin-bottom:14px;line-height:1.6">匯出為 .xlsx，含每日摘要＋詳細時間軸兩個工作表</p>
-    <div class="field-row"><label class="form-label">📅 起始日期（留空＝全部）</label><input type="date" class="form-input" id="excelFrom"></div>
-    <div class="field-row"><label class="form-label">📅 結束日期（留空＝全部）</label><input type="date" class="form-input" id="excelTo"></div>
+    <div class="field-row"><label class="form-label">起始日期（留空＝全部）</label><input type="date" class="form-input" id="excelFrom"></div>
+    <div class="field-row"><label class="form-label">結束日期（留空＝全部）</label><input type="date" class="form-input" id="excelTo"></div>
     <button class="sync-btn excel" onclick="exportExcel()">📊 匯出 Excel (.xlsx)</button>
   </div>
 </div>
@@ -1080,9 +1086,9 @@ body::before, body::after { display: none; }
   <div class="overlay-card" style="max-width:340px">
     <h2 style="font-size:1rem;margin-bottom:16px">✏️ 修改紀錄</h2>
     <input type="hidden" id="editEntryId">
-    <div class="field-row"><label class="form-label">⏰ 時間</label><input type="time" class="form-input" id="editTime"></div>
+    <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="editTime"></div>
     <div class="field-row" id="editValueRow"><label class="form-label" id="editValueLabel">數值</label><input type="number" class="form-input" id="editValue" min="0"></div>
-    <div class="field-row" id="editNoteRow"><label class="form-label">📝 備註</label><input type="text" class="form-input" id="editNote"></div>
+    <div class="field-row" id="editNoteRow"><label class="form-label">備註</label><input type="text" class="form-input" id="editNote"></div>
     <div style="display:flex;gap:8px;margin-top:4px">
       <button class="add-btn" onclick="saveEdit()" style="flex:1">💾 儲存</button>
       <button class="close-btn" onclick="closeEdit()" style="flex:0.5;margin-top:0;background:var(--text-light)">取消</button>
@@ -1502,13 +1508,29 @@ function addPoopEntry() {
 function renderPoopToday() {
   const el = document.getElementById('poopTodayList');
   if (!el) return;
-  const entries = getPoopLog().filter(p => p.dateKey === logDay)
+
+  // Check last 3 days for any poop
+  const log = getPoopLog();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const threeDaysAgo = new Date(today); threeDaysAgo.setDate(today.getDate()-2);
+  const recentDays = [];
+  for (let i=0; i<3; i++) {
+    const d = new Date(today); d.setDate(today.getDate()-i);
+    recentDays.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
+  }
+  const hasRecentPoop = log.some(p => recentDays.includes(p.dateKey));
+  const warningHtml = !hasRecentPoop
+    ? `<div class="poop-warning">⚠️ 三天內沒有便便紀錄，記得多喝水、補充纖維！</div>`
+    : '';
+
+  const entries = log.filter(p => p.dateKey === logDay)
     .sort((a,b) => a.time.localeCompare(b.time));
+
   if (!entries.length) {
-    el.innerHTML = `<div style="font-size:var(--fs-sm);color:var(--text-light);text-align:center;padding:8px">今天還沒有便便紀錄</div>`;
+    el.innerHTML = warningHtml + `<div style="font-size:var(--fs-sm);color:var(--text-light);text-align:center;padding:8px">今天還沒有便便紀錄</div>`;
     return;
   }
-  el.innerHTML = entries.map(p => `
+  el.innerHTML = warningHtml + entries.map(p => `
     <div class="poop-row">
       <span class="poop-time">${p.time}</span>
       <span class="poop-note">${p.note || '正常'}</span>
@@ -1875,7 +1897,6 @@ function renderEmojiCalendar() {
     return;
   }
 
-  // Build full date range from first recorded day to today (safe loop)
   const allDates = [];
   const [fy,fm,fd] = recorded[0].split('-').map(Number);
   let cur = new Date(fy, fm-1, fd);
@@ -1883,10 +1904,13 @@ function renderEmojiCalendar() {
   todayDate.setHours(0,0,0,0);
   while (cur <= todayDate) {
     allDates.push(`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`);
-    cur = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate()+1); // safe: create new Date each time
+    cur = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate()+1);
   }
 
-  cal.innerHTML = allDates.map(d => {
+  // Only show last 7 days
+  const last7 = allDates.slice(-7);
+
+  cal.innerHTML = last7.map(d => {
     const s    = getDayScore(getDayData(d));
     const isNow = d === currentDay;
     if (!s && !isNow) return '';  // skip days with no data
