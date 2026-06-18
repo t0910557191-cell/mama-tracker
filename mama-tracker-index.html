@@ -151,7 +151,6 @@ body::before, body::after { display: none; }
   border-radius: 25px; padding: 6px 18px;
   font-size: var(--fs-sm); color: #8B5E00; font-weight: 600;
   display: inline-flex; align-items: center; gap: 10px;
-  /* center it: header is text-align:center so inline-flex centres automatically */
 }
 .not-today-banner button {
   background: var(--amber); border: none; border-radius: 8px;
@@ -766,6 +765,7 @@ body::before, body::after { display: none; }
       <div class="date-badge" id="dateBadge">📅 載入中...</div>
       <button class="date-nav-btn" onclick="shiftLogDay(1)" id="dateNavNext">›</button>
     </div>
+    <div style="height:10px"></div>
     <div id="notTodayBanner" class="not-today-banner hidden">
       ⚠️ 補記 <span id="notTodayLabel"></span>　<button onclick="goToToday()">回今天</button>
     </div>
@@ -1985,7 +1985,7 @@ function renderWeightDotChart() {
 
   const recent = weights.slice(-14);
   const n      = recent.length;
-  const W=300, H=110, PL=8, PR=10, PT=14, PB=22;
+  const W=300, H=110, PL=18, PR=14, PT=14, PB=22;
   const chartW = W-PL-PR, chartH = H-PT-PB;
   // Use recent's own min/max for Y scale
   const rVals = recent.map(x=>x.w);
