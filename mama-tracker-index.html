@@ -291,7 +291,7 @@ body::before, body::after { display: none; }
 .type-btn {
   padding: 8px 4px; border: 2px solid #EEE; border-radius: 14px;
   background: white; cursor: pointer; text-align: center;
-  font-size: var(--fs-xs); font-weight: 700; color: var(--text-mid);
+  font-size: var(--fs-sm); font-weight: 700; color: var(--text-mid);
   display: flex; flex-direction: column; align-items: center; gap: 3px;
   font-family: 'Nunito', sans-serif; transition: all 0.15s;
   box-shadow: 2px 2px 0 rgba(0,0,0,0.06);
@@ -307,7 +307,7 @@ body::before, body::after { display: none; }
 /* ── FORM FIELDS ── */
 .field-row { margin-bottom: 10px; }
 .form-label {
-  display: block; font-size: var(--fs-label); color: var(--text-mid);
+  display: block; font-size: var(--fs-sm); color: var(--text-mid);
   font-weight: 700; margin-bottom: 4px;
   font-family: 'Nunito', sans-serif; text-transform: uppercase; letter-spacing: 0.4px;
 }
@@ -934,6 +934,10 @@ body::before, body::after { display: none; }
     <h1>歷史記錄</h1>
   </div>
 
+  <div id="poopWarningBanner" class="poop-warning hidden" style="margin-bottom:12px">
+    💩 三天內沒有便便紀錄，記得多喝水、補充纖維！
+  </div>
+
   <div class="card">
     <div class="history-date-row">
       <label class="form-label" style="margin-bottom:6px">📅 選擇日期</label>
@@ -1509,28 +1513,15 @@ function renderPoopToday() {
   const el = document.getElementById('poopTodayList');
   if (!el) return;
 
-  // Check last 3 days for any poop
   const log = getPoopLog();
-  const today = new Date(); today.setHours(0,0,0,0);
-  const threeDaysAgo = new Date(today); threeDaysAgo.setDate(today.getDate()-2);
-  const recentDays = [];
-  for (let i=0; i<3; i++) {
-    const d = new Date(today); d.setDate(today.getDate()-i);
-    recentDays.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
-  }
-  const hasRecentPoop = log.some(p => recentDays.includes(p.dateKey));
-  const warningHtml = !hasRecentPoop
-    ? `<div class="poop-warning">⚠️ 三天內沒有便便紀錄，記得多喝水、補充纖維！</div>`
-    : '';
-
   const entries = log.filter(p => p.dateKey === logDay)
     .sort((a,b) => a.time.localeCompare(b.time));
 
   if (!entries.length) {
-    el.innerHTML = warningHtml + `<div style="font-size:var(--fs-sm);color:var(--text-light);text-align:center;padding:8px">今天還沒有便便紀錄</div>`;
+    el.innerHTML = `<div style="font-size:var(--fs-sm);color:var(--text-light);text-align:center;padding:8px">今天還沒有便便紀錄</div>`;
     return;
   }
-  el.innerHTML = warningHtml + entries.map(p => `
+  el.innerHTML = entries.map(p => `
     <div class="poop-row">
       <span class="poop-time">${p.time}</span>
       <span class="poop-note">${p.note || '正常'}</span>
@@ -1871,6 +1862,21 @@ function renderHistory() {
   renderWeightDotChart();
   renderFastingCycles();
   renderMilkFastStats();
+  renderPoopWarning();
+}
+
+function renderPoopWarning() {
+  const el = document.getElementById('poopWarningBanner');
+  if (!el) return;
+  const log = getPoopLog();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const recentDays = [];
+  for (let i=0; i<3; i++) {
+    const d = new Date(today); d.setDate(today.getDate()-i);
+    recentDays.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
+  }
+  const hasRecent = log.some(p => recentDays.includes(p.dateKey));
+  el.classList.toggle('hidden', hasRecent);
 }
 
 function getDayScore(data) {
@@ -1955,7 +1961,7 @@ function _doDeleteDay(dateStr) {
 function renderWeightDotChart() {
   const dates   = getAllDates();
   const weights = dates
-    .map(d => { const data = getDayData(d); return data && data.weight ? { d, w: data.weight } : null; })
+    .map(d => { const data = getDayData(d); return data && data.weight && data.entries && data.entries.length ? { d, w: data.weight } : null; })
     .filter(Boolean);
   const noData = document.getElementById('noWeightData');
   const el     = document.getElementById('weightDotChart');
