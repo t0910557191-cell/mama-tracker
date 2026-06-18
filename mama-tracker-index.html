@@ -1169,6 +1169,7 @@ window.onload = () => {
   logDay     = currentDay;
   const profile  = getDayData(logDay) ? {} : getLastKnownProfile(logDay);
   todayData  = getDayData(logDay) || { entries: [], weight: profile.weight || 70.5, height: profile.height || 162 };
+  if (!getDayData(logDay)) saveDayData(logDay, todayData);  // save inherited profile immediately
 
   updateDateBadge();
   setDefaultTimeForDay(logDay);
@@ -1224,6 +1225,7 @@ function loadLogDay(day) {
   if (!existing) {
     const profile = getLastKnownProfile(logDay);
     todayData = { entries: [], weight: profile.weight, height: profile.height };
+    saveDayData(logDay, todayData);  // save immediately so weight input persists
   } else {
     todayData = existing;
   }
