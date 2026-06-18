@@ -456,13 +456,18 @@ body::before, body::after { display: none; }
 .hd-item.weight { background: linear-gradient(135deg,#FFE8D6,#FFD0B0); }
 .hd-val { font-family: 'Patrick Hand', sans-serif; font-size: 1.1rem; color: var(--text-dark); }
 .hd-lbl { font-size: var(--fs-xs); color: var(--text-mid); font-weight: 700; margin-top: 2px; font-family: 'Nunito', sans-serif; text-transform: uppercase; letter-spacing: 0.3px; }
-.hd-verdict { margin-top: 10px; text-align: center; font-size: 1.1rem; padding: 8px; border-radius: 12px; background: var(--cream); }
+.hd-verdict { margin-top: 10px; text-align: center; font-size: var(--fs-label); font-family: 'Nunito', sans-serif; font-weight: 800; padding: 10px; border-radius: 12px; background: var(--cream); }
 .section-label { font-size: var(--fs-label); font-weight: 700; color: var(--text-mid); margin-bottom: 8px; font-family: 'Nunito', sans-serif; text-transform: uppercase; letter-spacing: 0.4px; }
 
 /* ── EMOJI CALENDAR ── */
 .trend-legend {
-  display: flex; justify-content: space-around; flex-wrap: wrap; gap: 4px;
-  font-size: var(--fs-xs); color: var(--text-mid); margin-bottom: 10px;
+  display: flex; justify-content: center; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.trend-legend span {
+  background: var(--cream); border: 1.5px solid rgba(224,92,122,0.12);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: var(--fs-xs); color: var(--text-mid);
   font-family: 'Nunito', sans-serif; font-weight: 700;
 }
 .emoji-calendar { display: flex; flex-wrap: wrap; gap: 7px; }
@@ -1807,7 +1812,7 @@ function loadHistoryDay() {
   const isToday = dateStr === currentDay;
   let verdict, bg;
   if (isToday) {
-    verdict = '📝 今天還沒結束，繼續加油！'; bg = '#FFF8F5';
+    verdict = '📝 今天還沒結束，繼續加油！'; bg = '#FFF0C8';
   } else if (goodCal && goodWater) {
     verdict = '🥳 完美！今天超棒的！'; bg = '#C8F0E8';
   } else if (goodCal || goodWater) {
