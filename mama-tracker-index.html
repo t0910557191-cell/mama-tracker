@@ -1884,6 +1884,7 @@ function renderEmojiCalendar() {
   cal.innerHTML = allDates.map(d => {
     const s    = getDayScore(getDayData(d));
     const isNow = d === currentDay;
+    if (!s && !isNow) return '';  // skip days with no data
     let bg, textColor, emoji;
     if (isNow || !s)                { bg='var(--cream)'; textColor='var(--text-light)'; emoji=''; }
     else if (s.goodCal&&s.goodWater){ bg='#C8F0E8'; textColor='#1A6B55'; emoji='🥳'; }
