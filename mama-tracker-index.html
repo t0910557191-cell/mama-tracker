@@ -2182,7 +2182,7 @@ function renderWeightDotChart() {
     <div class="ws-item"><div class="ws-val" style="color:#3DBFA0">${goal} kg</div><div class="ws-lbl">目標</div></div>
   </div>`;
 
-  const recent = weights.slice(-14);
+  const recent = weights.slice(-7);
   const n      = recent.length;
   const W=300, H=110, PL=18, PR=14, PT=14, PB=22;
   const chartW = W-PL-PR, chartH = H-PT-PB;
