@@ -183,7 +183,7 @@ body::before, body::after { display: none; }
 .input-group input {
   width: 100%; padding: 9px 12px;
   border: 2px solid var(--blush); border-radius: 12px;
-  font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-lg);
+  font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-num);
   color: var(--text-dark); background: var(--cream);
   outline: none; transition: border-color 0.2s;
   box-shadow: 2px 2px 0 rgba(224,92,122,0.1);
@@ -222,15 +222,17 @@ body::before, body::after { display: none; }
   border-radius: 16px; padding: 12px;
   border: 2px solid rgba(255,255,255,0.5);
   box-shadow: var(--shadow);
+  display: flex; align-items: flex-start; gap: 8px;
 }
 .stat-card.calories { background: linear-gradient(135deg, #FFE8EE, #FFD0DC); }
 .stat-card.water    { background: linear-gradient(135deg, #D6EEFF, #BFE0FF); }
 .stat-card.milk     { background: linear-gradient(135deg, var(--lavender), #D8C8FF); }
 .stat-card.exercise { background: linear-gradient(135deg, var(--peach), #FFD0B0); }
-.stat-emoji { font-size: 1.4rem; }
+.stat-emoji { font-size: 2.1rem; line-height: 1; flex-shrink: 0; }
+.stat-text { flex: 1; text-align: right; min-width: 0; }
 .stat-value {
   font-family: 'Patrick Hand', sans-serif;
-  font-size: var(--fs-num-lg); line-height: 1.1; margin: 3px 0 2px;
+  font-size: var(--fs-num); line-height: 1.1; margin-bottom: 2px;
   color: var(--text-dark);
 }
 .stat-label {
@@ -283,7 +285,7 @@ body::before, body::after { display: none; }
 .fast-running-row:last-child { margin-bottom: 0; }
 .fast-running-lbl { font-size: var(--fs-sm); font-weight: 700; color: #1A6B55; font-family: 'Nunito', sans-serif; }
 .fast-running-val { font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-lg); color: var(--mint-deep); }
-.fast-running-timer { font-size: 1.6rem !important; color: #1A6B55 !important; }
+.fast-running-timer { font-size: var(--fs-lg) !important; color: #1A6B55 !important; }
 
 /* ── TYPE SELECTOR ── */
 .type-selector { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; }
@@ -453,7 +455,7 @@ body::before, body::after { display: none; }
 .hd-item.milk   { background: var(--lavender); }
 .hd-item.exburn { background: var(--peach); }
 .hd-item.weight { background: linear-gradient(135deg,#FFE8D6,#FFD0B0); }
-.hd-val { font-family: 'Patrick Hand', sans-serif; font-size: 1.1rem; color: var(--text-dark); }
+.hd-val { font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-num); color: var(--text-dark); }
 .hd-lbl { font-size: var(--fs-xs); color: var(--text-mid); font-weight: 700; margin-top: 2px; font-family: 'Nunito', sans-serif; text-transform: uppercase; letter-spacing: 0.3px; }
 .hd-verdict { margin-top: 10px; text-align: center; font-size: var(--fs-label); font-family: 'Nunito', sans-serif; font-weight: 800; padding: 10px; border-radius: 12px; background: var(--cream); }
 .section-label { font-size: var(--fs-label); font-weight: 700; color: var(--text-mid); margin-bottom: 8px; font-family: 'Nunito', sans-serif; text-transform: uppercase; letter-spacing: 0.4px; }
@@ -498,7 +500,7 @@ body::before, body::after { display: none; }
 .fast-cycle-dates { flex: 1; }
 .fast-cycle-time { font-size: var(--fs-sm); color: var(--text-mid); font-family: 'Patrick Hand', sans-serif; }
 .fast-cycle-arrow { font-size: var(--fs-xs); color: var(--text-light); margin: 2px 0; }
-.fast-cycle-hrs { font-family: 'Patrick Hand', sans-serif; font-size: 1.5rem; text-align: right; white-space: nowrap; }
+.fast-cycle-hrs { font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-num); text-align: right; white-space: nowrap; }
 .fast-cycle-unit { font-size: var(--fs-xs); font-weight: 700; margin-left: 1px; font-family: 'Nunito', sans-serif; }
 .cross-day-tag { display: inline-block; background: var(--lavender); color: var(--lav-deep); font-size: var(--fs-xs); font-weight: 700; padding: 1px 6px; border-radius: 8px; margin-left: 4px; vertical-align: middle; font-family: 'Nunito', sans-serif; }
 
@@ -506,7 +508,7 @@ body::before, body::after { display: none; }
 .two-col-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
 .big-stat {
   font-family: 'Patrick Hand', sans-serif;
-  font-size: var(--fs-num-lg); color: var(--rose-deep);
+  font-size: 1.9rem; color: var(--rose-deep);
   text-align: center; line-height: 1.2;
 }
 .big-stat-sub {
@@ -536,7 +538,7 @@ body::before, body::after { display: none; }
 .step-text code { background: var(--blush); color: var(--rose-deep); padding: 1px 5px; border-radius: 4px; font-size: var(--fs-xs); font-family: 'Nunito', sans-serif; }
 .sync-stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
 .sync-stat { background: var(--cream); border-radius: 12px; padding: 10px 6px; text-align: center; border: 1.5px solid rgba(224,92,122,0.1); }
-.sync-stat-val { font-family: 'Patrick Hand', sans-serif; font-size: 1.3rem; color: var(--rose-deep); }
+.sync-stat-val { font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-num); color: var(--rose-deep); }
 .sync-stat-lbl { font-size: var(--fs-xs); color: var(--text-mid); font-weight: 700; margin-top: 2px; font-family: 'Nunito', sans-serif; text-transform: uppercase; }
 .sync-btn {
   width: 100%; padding: 13px; border-radius: 14px;
@@ -732,7 +734,7 @@ body::before, body::after { display: none; }
 }
 .goal-dist-num {
   font-family: 'Patrick Hand', sans-serif;
-  font-size: var(--fs-num); color: var(--rose-deep);
+  font-size: var(--fs-lg); color: var(--rose-deep);
   line-height: 1;
 }
 
@@ -742,6 +744,14 @@ body::before, body::after { display: none; }
   font-size: var(--fs-sm); color: #7B3A10;
   font-weight: 600; margin-bottom: 8px;
   font-family: 'Nunito', sans-serif;
+}
+
+.history-date-display {
+  margin-top: 6px;
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: var(--fs-lg);
+  color: var(--rose-deep);
+  text-align: center;
 }
 
 </style>
@@ -812,10 +822,38 @@ body::before, body::after { display: none; }
 
   <!-- STATS -->
   <div class="dashboard-grid">
-    <div class="stat-card calories"><div class="stat-emoji">🍽️</div><div class="stat-value" id="totalCalIn">0</div><div class="stat-label">攝取 kcal</div><div class="stat-sub">目標≥1500</div></div>
-    <div class="stat-card water"><div class="stat-emoji">💧</div><div class="stat-value" id="totalWater">0</div><div class="stat-label">飲水 ml</div><div class="stat-sub" id="waterGoalSmall">—</div></div>
-    <div class="stat-card milk"><div class="stat-emoji">🍼</div><div class="stat-value" id="totalMilk">0</div><div class="stat-label">奶量 ml</div><div class="stat-sub" id="milkBurnSub">—</div></div>
-    <div class="stat-card exercise"><div class="stat-emoji">🏃</div><div class="stat-value" id="totalExBurn">0</div><div class="stat-label">運動消耗 kcal</div><div class="stat-sub">已燃燒</div></div>
+    <div class="stat-card calories">
+      <div class="stat-emoji">🍽️</div>
+      <div class="stat-text">
+        <div class="stat-value" id="totalCalIn">0</div>
+        <div class="stat-label">攝取 kcal</div>
+        <div class="stat-sub">目標≥1500</div>
+      </div>
+    </div>
+    <div class="stat-card water">
+      <div class="stat-emoji">💧</div>
+      <div class="stat-text">
+        <div class="stat-value" id="totalWater">0</div>
+        <div class="stat-label">飲水 ml</div>
+        <div class="stat-sub" id="waterGoalSmall">—</div>
+      </div>
+    </div>
+    <div class="stat-card milk">
+      <div class="stat-emoji">🍼</div>
+      <div class="stat-text">
+        <div class="stat-value" id="totalMilk">0</div>
+        <div class="stat-label">奶量 ml</div>
+        <div class="stat-sub" id="milkBurnSub">—</div>
+      </div>
+    </div>
+    <div class="stat-card exercise">
+      <div class="stat-emoji">🏃</div>
+      <div class="stat-text">
+        <div class="stat-value" id="totalExBurn">0</div>
+        <div class="stat-label">運動消耗 kcal</div>
+        <div class="stat-sub">已燃燒</div>
+      </div>
+    </div>
   </div>
 
   <!-- PROGRESS -->
@@ -827,7 +865,6 @@ body::before, body::after { display: none; }
     <div class="progress-track"><div class="progress-fill water-bar" id="waterBar" style="width:0%"></div></div>
     <div class="progress-label"><span>熱量狀態</span><span id="deficitLabel">—</span></div>
     <div class="progress-track"><div class="progress-fill deficit-bar" id="deficitBar" style="width:0%"></div></div>
-    <div style="font-size:0.72rem;color:var(--text-mid);text-align:right;margin-top:2px" id="deficitText">—</div>
   </div>
 
   <!-- FASTING CARD — independent cross-day cycle -->
@@ -1269,18 +1306,18 @@ function updateDateBadge() {
   const d    = new Date(y, m-1, day);
   const days = ['日','一','二','三','四','五','六'];
   document.getElementById('dateBadge').textContent =
-    `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（週${days[d.getDay()]}）`;
+    `${fmtYMD(d)}（週${days[d.getDay()]}）`;
   document.getElementById('dateNavNext').disabled = (logDay >= currentDay);
   const banner = document.getElementById('notTodayBanner');
   const lbl    = document.getElementById('notTodayLabel');
   if (logDay !== currentDay) {
-    lbl.textContent = `${d.getMonth()+1}/${d.getDate()}`;
+    lbl.textContent = fmtYMD(d);
     banner.classList.remove('hidden');
   } else {
     banner.classList.add('hidden');
   }
   const sd = document.getElementById('summaryDate');
-  if (sd) sd.textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+  if (sd) sd.textContent = fmtYMD(d);
 }
 
 function setDefaultTimeForDay(day) {
@@ -1379,16 +1416,13 @@ function updateDashboard() {
   document.getElementById('waterPct').textContent  = waterPct + '%';
 
   if (deficit < 0) {
-    document.getElementById('deficitLabel').textContent = '赤字 💪';
-    document.getElementById('deficitText').textContent  = `赤字 ${Math.abs(deficit)} kcal`;
+    document.getElementById('deficitLabel').textContent = `-${Math.abs(deficit)} kcal`;
     document.getElementById('deficitBar').style.background = 'linear-gradient(90deg,#3DBFA0,#1A9A7E)';
   } else if (deficit > 0) {
-    document.getElementById('deficitLabel').textContent = '盈餘 📈';
-    document.getElementById('deficitText').textContent  = `盈餘 +${deficit} kcal`;
+    document.getElementById('deficitLabel').textContent = `+${deficit} kcal`;
     document.getElementById('deficitBar').style.background = 'linear-gradient(90deg,#FF8FA3,#FF5C8A)';
   } else {
-    document.getElementById('deficitLabel').textContent = '平衡 ⚖️';
-    document.getElementById('deficitText').textContent  = '';
+    document.getElementById('deficitLabel').textContent = '±0 kcal';
   }
 }
 
@@ -1547,7 +1581,7 @@ function renderPoopHistory(dateStr) {
   }
   el.innerHTML = entries.map(p => `
     <div class="poop-row">
-      <span class="poop-time">${p.time}</span>
+      <span class="poop-time">${p.dateKey.slice(5).replace('-','/')} ${p.time}</span>
       <span class="poop-note">${p.note || '正常'}</span>
     </div>`).join('');
 }
@@ -1752,7 +1786,7 @@ function showSummary() {
   document.getElementById('s-totalBurn').textContent = `${totalBurn.toLocaleString()} kcal`;
   document.getElementById('s-waterGoal').textContent = `${waterGoal.toLocaleString()} ml`;
   document.getElementById('s-waterIn').textContent   = `${waterIn.toLocaleString()} ml`;
-  document.getElementById('s-calResult').textContent = deficit<0?`👉 熱量赤字 ${deficit} kcal`:`👉 熱量盈餘 +${deficit} kcal`;
+  document.getElementById('s-calResult').textContent = deficit<0?`👉 -${Math.abs(deficit)} kcal`:`👉 +${deficit} kcal`;
   document.getElementById('s-calHint').textContent   = deficit<0?(Math.abs(deficit)<=500?'完美的健康減脂區間！💪':'赤字偏大，記得補充蛋白質 🤍'):'今天熱量充足，有足夠能量產奶 🍼';
   document.getElementById('s-waterResult').textContent = waterPct>=100?'💧 水分達標 🎉':`💧 達成 ${waterPct}%`;
   document.getElementById('s-waterHint').textContent   = waterPct>=100?'充足水分對明天的奶量很有幫助 🌟':(waterPct<80?`睡前再補 ${Math.round((waterGoal-waterIn)/100)*100} ml 溫水！`:'睡前一杯水就達標 🥛');
@@ -2056,9 +2090,9 @@ function renderFastingCycles(showAll) {
     const crossTag = isCross ? `<span class="cross-day-tag">跨日</span>` : '';
     return `<div class="fast-cycle-row">
       <div class="fast-cycle-dates">
-        <div class="fast-cycle-time">${fmtFullDT(start)}</div>
+        <div class="fast-cycle-time">${fmtMDHM(start)}</div>
         <div class="fast-cycle-arrow">↓</div>
-        <div class="fast-cycle-time">${fmtFullDT(end)} ${crossTag}</div>
+        <div class="fast-cycle-time">${fmtMDHM(end)} ${crossTag}</div>
       </div>
       <div class="fast-cycle-hrs" style="color:${color}">${hrs.toFixed(1)}<span class="fast-cycle-unit">hr</span></div>
     </div>`;
@@ -2235,7 +2269,17 @@ function loadSheetJS(cb) {
 function fmtHHMM(date) {
   return `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
 }
+function fmtYMD(date) {
+  return `${date.getFullYear()}/${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')}`;
+}
+function fmtYMDFromKey(dateKey) {
+  // dateKey is 'YYYY-MM-DD'
+  return dateKey.replace(/-/g, '/');
+}
 function fmtFullDT(date) {
+  return `${fmtYMD(date)} ${fmtHHMM(date)}`;
+}
+function fmtMDHM(date) {
   return `${date.getMonth()+1}/${date.getDate()} ${fmtHHMM(date)}`;
 }
 function toLocalDatetimeInput(date) {
