@@ -44,13 +44,13 @@
   --shadow: 3px 3px 0px rgba(58,42,53,0.12);
 
   /* type scale */
-  --fs-xs:     0.75rem;   /* secondary info: units, hints, badge text */
-  --fs-sm:     0.875rem;  /* body / timeline values */
-  --fs-body:   0.95rem;   /* main body text */
-  --fs-label:  1rem;      /* form labels, card titles, tl-title — bigger than body */
-  --fs-lg:     1.05rem;   /* buttons */
-  --fs-num:    1.55rem;   /* Patrick Hand numbers */
-  --fs-num-lg: 2rem;      /* big stat numbers */
+  --fs-xs:     0.8rem;    /* secondary info: units, hints, badge text */
+  --fs-sm:     0.93rem;   /* body / timeline values */
+  --fs-body:   1rem;      /* main body text */
+  --fs-label:  1.07rem;   /* form labels, card titles, tl-title — bigger than body */
+  --fs-lg:     1.12rem;   /* buttons */
+  --fs-num:    1.65rem;   /* Patrick Hand numbers */
+  --fs-num-lg: 2.1rem;    /* big stat numbers */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -99,7 +99,7 @@ body::before, body::after { display: none; }
   background: var(--blush);
 }
 
-.tab-content { padding: 12px; position: relative; z-index: 1; }
+.tab-content { padding: 14px; position: relative; z-index: 1; }
 
 /* ── HEADER (no icon) ── */
 .header { text-align: center; padding: 16px 16px 10px; }
@@ -161,7 +161,7 @@ body::before, body::after { display: none; }
 /* ── CARDS ── */
 .card {
   background: var(--warm-white);
-  border-radius: 18px; padding: 14px; margin-bottom: 12px;
+  border-radius: 18px; padding: 16px; margin-bottom: 16px;
   border: 2px solid rgba(224,92,122,0.2);
   box-shadow: var(--shadow);
   position: relative;
@@ -170,7 +170,7 @@ body::before, body::after { display: none; }
   font-family: 'Nunito', sans-serif;
   font-weight: 800; font-size: var(--fs-label);
   color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.6px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
 }
 
@@ -217,7 +217,7 @@ body::before, body::after { display: none; }
 }
 
 /* ── DASHBOARD ── */
-.dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
 .stat-card {
   border-radius: 16px; padding: 12px;
   border: 2px solid rgba(255,255,255,0.5);
@@ -306,7 +306,7 @@ body::before, body::after { display: none; }
 .type-btn.active-water    { border-color: var(--sky-deep);  background: var(--sky);      color: var(--sky-deep); }
 
 /* ── FORM FIELDS ── */
-.field-row { margin-bottom: 10px; }
+.field-row { margin-bottom: 12px; }
 .form-label {
   display: block; font-size: var(--fs-sm); color: var(--text-mid);
   font-weight: 700; margin-bottom: 4px;
@@ -500,6 +500,7 @@ body::before, body::after { display: none; }
 .fast-cycle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1.5px dashed rgba(224,92,122,0.1); gap: 8px; }
 .fast-cycle-row:last-child { border-bottom: none; }
 .fast-cycle-delete { flex-shrink: 0; padding: 6px; }
+.fast-cycle-edit { flex-shrink: 0; padding: 6px; }
 .fast-cycle-dates { flex: 1; }
 .fast-cycle-time { font-size: var(--fs-sm); color: var(--text-mid); font-family: 'Patrick Hand', sans-serif; }
 .fast-cycle-arrow { font-size: var(--fs-xs); color: var(--text-light); margin: 2px 0; }
@@ -508,7 +509,7 @@ body::before, body::after { display: none; }
 .cross-day-tag { display: inline-block; background: var(--lavender); color: var(--lav-deep); font-size: var(--fs-xs); font-weight: 700; padding: 1px 6px; border-radius: 8px; margin-left: 4px; vertical-align: middle; font-family: 'Nunito', sans-serif; }
 
 /* ── TWO-COL STATS — centered text ── */
-.two-col-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.two-col-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
 .big-stat {
   font-family: 'Patrick Hand', sans-serif;
   font-size: 1.9rem; color: var(--rose-deep);
@@ -853,6 +854,41 @@ h3 .hicon svg { width: 22px; height: 22px; }
 .confirm-icon { margin-bottom: 8px; text-align: center; }
 .confirm-icon .hicon svg { width: 40px; height: 40px; }
 
+/* ── COLLAPSIBLE CARDS ── */
+.card-title.collapsible {
+  cursor: pointer;
+  justify-content: space-between;
+  user-select: none;
+}
+.card-title.collapsible .title-left {
+  display: flex; align-items: center; gap: 6px;
+}
+.collapse-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+.collapse-chevron svg { width: 20px; height: 20px; }
+.card.collapsed .collapse-chevron { transform: rotate(-90deg); }
+.card-body {
+  overflow: hidden;
+  max-height: 2000px;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.3s ease;
+  opacity: 1;
+}
+.card.collapsed .card-body {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0 !important;
+  pointer-events: none;
+}
+.card.collapsed .card-title.collapsible {
+  margin-bottom: 0;
+}
+
 </style>
 </head>
 <body>
@@ -967,8 +1003,9 @@ h3 .hicon svg { width: 22px; height: 22px; }
   </div>
 
   <!-- FASTING CARD — independent cross-day cycle -->
-  <div class="card fasting-card">
-    <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="26" r="16"/><line x1="24" y1="26" x2="24" y2="16"/><line x1="24" y1="26" x2="30" y2="30"/><line x1="19" y1="6" x2="29" y2="6"/></svg></span> 斷食週期</div>
+  <div class="card fasting-card" id="card-fasting">
+    <div class="card-title collapsible" onclick="toggleCard('card-fasting')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="26" r="16"/><line x1="24" y1="26" x2="24" y2="16"/><line x1="24" y1="26" x2="30" y2="30"/><line x1="19" y1="6" x2="29" y2="6"/></svg></span> 斷食週期</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+    <div class="card-body">
     <div id="fastingIdleView">
       <p class="fasting-hint">記錄你的斷食開始和結束時間，自動計算跨日時長</p>
       <div class="field-row" style="margin-bottom:8px">
@@ -994,11 +1031,13 @@ h3 .hicon svg { width: 22px; height: 22px; }
       </div>
       <button class="fast-stop-btn" onclick="stopFastCycle()">✅ 結束斷食</button>
     </div>
+    </div>
   </div>
 
   <!-- POOP CARD — independent log -->
-  <div class="card poop-card">
-    <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 38 Q12 38 12 34 Q12 31 15 30 Q13 27 16 25 Q15 21 19 20 Q19 16 24 16 Q28 16 28 20 Q32 21 31 25 Q34 27 32 30 Q35 31 35 34 Q35 38 31 38 Z"/><circle cx="19" cy="32" r="1.3" fill="currentColor" stroke="none"/><circle cx="27" cy="32" r="1.3" fill="currentColor" stroke="none"/><path d="M20 35 Q24 37 28 35" stroke-width="1.8"/></svg></span> 便便紀錄</div>
+  <div class="card poop-card" id="card-poop">
+    <div class="card-title collapsible" onclick="toggleCard('card-poop')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 38 Q12 38 12 34 Q12 31 15 30 Q13 27 16 25 Q15 21 19 20 Q19 16 24 16 Q28 16 28 20 Q32 21 31 25 Q34 27 32 30 Q35 31 35 34 Q35 38 31 38 Z"/><circle cx="19" cy="32" r="1.3" fill="currentColor" stroke="none"/><circle cx="27" cy="32" r="1.3" fill="currentColor" stroke="none"/><path d="M20 35 Q24 37 28 35" stroke-width="1.8"/></svg></span> 便便紀錄</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+    <div class="card-body">
     <div class="field-row">
       <label class="form-label">時間</label>
       <input type="time" class="form-input" id="poopTimeInput">
@@ -1011,11 +1050,13 @@ h3 .hicon svg { width: 22px; height: 22px; }
 
     <!-- today's poop list -->
     <div id="poopTodayList" style="margin-top:12px"></div>
+    </div>
   </div>
 
   <!-- LOG FORM -->
-  <div class="card">
-    <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="24" y1="10" x2="24" y2="38"/><line x1="10" y1="24" x2="38" y2="24"/></svg></span> 新增紀錄</div>
+  <div class="card" id="card-addentry">
+    <div class="card-title collapsible" onclick="toggleCard('card-addentry')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="24" y1="10" x2="24" y2="38"/><line x1="10" y1="24" x2="38" y2="24"/></svg></span> 新增紀錄</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+    <div class="card-body">
     <div class="type-selector">
       <button class="type-btn active-eat"      onclick="selectType('eat')"      id="btn-eat"><span class="t-emoji"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="22" cy="26" r="15"/><circle cx="22" cy="26" r="6"/><path d="M37 14 L37 38"/><path d="M34 14 L34 22 Q34 25 37 25 Q40 25 40 22 L40 14"/></svg></span></span>進食</button>
       <button class="type-btn"                 onclick="selectType('exercise')" id="btn-exercise"><span class="t-emoji"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="28" cy="10" r="4"/><path d="M28 16 L22 24 L26 30 L22 40"/><path d="M22 24 L34 22"/><path d="M26 30 L18 34"/><path d="M26 30 L34 36"/></svg></span></span>運動</button>
@@ -1041,6 +1082,7 @@ h3 .hicon svg { width: 22px; height: 22px; }
       <div class="field-row"><label class="form-label">水量 (ml)</label><input type="number" class="form-input" id="valInput-water" placeholder="例：300"></div>
     </div>
     <button class="add-btn" onclick="addEntry()">＋ 新增到日誌</button>
+    </div>
   </div>
 
   <!-- TIMELINE -->
@@ -1097,47 +1139,59 @@ h3 .hicon svg { width: 22px; height: 22px; }
     <div id="historyDayEmpty" class="empty-timeline hidden"><span class="big-emoji"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="21" r="13"/><line x1="30.5" y1="30.5" x2="42" y2="42"/></svg></span></span>這天沒有記錄</div>
   </div>
 
-  <div class="card">
-    <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 L28.5 18.5 L41 20 L31.5 28.5 L34.5 41 L24 33.5 L13.5 41 L16.5 28.5 L7 20 L19.5 18.5 Z"/></svg></span> 整體表現趨勢</div>
+  <div class="card" id="card-trend">
+    <div class="card-title collapsible" onclick="toggleCard('card-trend')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 L28.5 18.5 L41 20 L31.5 28.5 L34.5 41 L24 33.5 L13.5 41 L16.5 28.5 L7 20 L19.5 18.5 Z"/></svg></span> 整體表現趨勢</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+    <div class="card-body">
     <div class="trend-legend">
       <span>🥳 完美</span><span>🤩 不錯</span><span>🫪 加油</span>
     </div>
     <div class="emoji-calendar" id="emojiCalendar"></div>
+    </div>
   </div>
 
   <!-- Weight dot chart -->
-  <div class="card">
-    <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="20" width="32" height="22" rx="4"/><circle cx="24" cy="31" r="7"/><line x1="24" y1="31" x2="27" y2="27"/><circle cx="24" cy="31" r="1" fill="currentColor" stroke="none"/><path d="M14 20 Q14 12 24 12 Q34 12 34 20"/></svg></span> 體重變化</div>
+  <div class="card" id="card-weight">
+    <div class="card-title collapsible" onclick="toggleCard('card-weight')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="20" width="32" height="22" rx="4"/><circle cx="24" cy="31" r="7"/><line x1="24" y1="31" x2="27" y2="27"/><circle cx="24" cy="31" r="1" fill="currentColor" stroke="none"/><path d="M14 20 Q14 12 24 12 Q34 12 34 20"/></svg></span> 體重變化</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+    <div class="card-body">
     <div id="weightDotChart"></div>
     <div id="noWeightData" class="empty-timeline hidden"><span class="big-emoji" id="noWeightIcon"></span>還沒有體重記錄</div>
+    </div>
   </div>
 
   <!-- Fasting cycles -->
-  <div class="card">
-    <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M30 8 C20 8 13 16 13 25 C13 34 20 41 29 41 C33 41 37 39 39 36 C29 37 21 30 21 21 C21 15 24 10 30 8 Z"/><circle cx="36" cy="14" r="1.3" fill="currentColor" stroke="none"/><circle cx="40" cy="20" r="1" fill="currentColor" stroke="none"/></svg></span> 斷食週期紀錄（最近三筆）</div>
+  <div class="card" id="card-fastcycles">
+    <div class="card-title collapsible" onclick="toggleCard('card-fastcycles')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M30 8 C20 8 13 16 13 25 C13 34 20 41 29 41 C33 41 37 39 39 36 C29 37 21 30 21 21 C21 15 24 10 30 8 Z"/><circle cx="36" cy="14" r="1.3" fill="currentColor" stroke="none"/><circle cx="40" cy="20" r="1" fill="currentColor" stroke="none"/></svg></span> 斷食週期紀錄（最近三筆）</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+    <div class="card-body">
     <div id="fastingCycleList">
       <div class="empty-timeline"><span class="big-emoji"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="26" r="16"/><line x1="24" y1="26" x2="24" y2="16"/><line x1="24" y1="26" x2="30" y2="30"/><line x1="19" y1="6" x2="29" y2="6"/></svg></span></span>還沒有斷食紀錄</div>
+    </div>
     </div>
   </div>
 
   <!-- Poop history -->
-  <div class="card">
-    <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 38 Q12 38 12 34 Q12 31 15 30 Q13 27 16 25 Q15 21 19 20 Q19 16 24 16 Q28 16 28 20 Q32 21 31 25 Q34 27 32 30 Q35 31 35 34 Q35 38 31 38 Z"/><circle cx="19" cy="32" r="1.3" fill="currentColor" stroke="none"/><circle cx="27" cy="32" r="1.3" fill="currentColor" stroke="none"/><path d="M20 35 Q24 37 28 35" stroke-width="1.8"/></svg></span> 便便紀錄（最近三天）</div>
+  <div class="card" id="card-poophistory">
+    <div class="card-title collapsible" onclick="toggleCard('card-poophistory')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 38 Q12 38 12 34 Q12 31 15 30 Q13 27 16 25 Q15 21 19 20 Q19 16 24 16 Q28 16 28 20 Q32 21 31 25 Q34 27 32 30 Q35 31 35 34 Q35 38 31 38 Z"/><circle cx="19" cy="32" r="1.3" fill="currentColor" stroke="none"/><circle cx="27" cy="32" r="1.3" fill="currentColor" stroke="none"/><path d="M20 35 Q24 37 28 35" stroke-width="1.8"/></svg></span> 便便紀錄（最近三天）</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+    <div class="card-body">
     <div id="poopHistoryList">
       <div class="empty-timeline" style="padding:12px">載入中...</div>
+    </div>
     </div>
   </div>
 
   <div class="two-col-cards">
-    <div class="card">
-      <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="6" width="8" height="6" rx="1.5"/><path d="M16 12 Q14 16 14 20 L14 38 Q14 42 18 42 L22 42 Q26 42 26 38 L26 20 Q26 16 24 12"/><line x1="14" y1="22" x2="26" y2="22"/><line x1="14" y1="28" x2="26" y2="28"/><line x1="14" y1="34" x2="26" y2="34"/></svg></span> 當日擠奶</div>
+    <div class="card" id="card-milkstat">
+      <div class="card-title collapsible" onclick="toggleCard('card-milkstat')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="6" width="8" height="6" rx="1.5"/><path d="M16 12 Q14 16 14 20 L14 38 Q14 42 18 42 L22 42 Q26 42 26 38 L26 20 Q26 16 24 12"/><line x1="14" y1="22" x2="26" y2="22"/><line x1="14" y1="28" x2="26" y2="28"/><line x1="14" y1="34" x2="26" y2="34"/></svg></span> 當日擠奶</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+      <div class="card-body">
       <div class="big-stat" id="totalMilkAll">—</div><div class="big-stat-sub">奶量 ml</div>
       <div class="big-stat" id="totalMilkSessions">—</div><div class="big-stat-sub">次數</div>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="26" r="16"/><line x1="24" y1="26" x2="24" y2="16"/><line x1="24" y1="26" x2="30" y2="30"/><line x1="19" y1="6" x2="29" y2="6"/></svg></span> 斷食紀錄</div>
+    <div class="card" id="card-faststat">
+      <div class="card-title collapsible" onclick="toggleCard('card-faststat')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="26" r="16"/><line x1="24" y1="26" x2="24" y2="16"/><line x1="24" y1="26" x2="30" y2="30"/><line x1="19" y1="6" x2="29" y2="6"/></svg></span> 斷食紀錄</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+      <div class="card-body">
       <div class="big-stat" id="totalFastHrs">—</div><div class="big-stat-sub">完成週期數</div>
       <div class="big-stat" id="avgFastHrs">—</div><div class="big-stat-sub">平均每次時數</div>
+      </div>
     </div>
   </div>
 </div>
@@ -1148,16 +1202,19 @@ h3 .hicon svg { width: 22px; height: 22px; }
     
     <h1>資料同步</h1>
   </div>
-  <div class="card info-card">
-    <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 C16 6 12 12 12 19 C12 24 14.5 27 17 30 L17 34 L31 34 L31 30 C33.5 27 36 24 36 19 C36 12 32 6 24 6 Z"/><line x1="19" y1="40" x2="29" y2="40"/><line x1="20" y1="44" x2="28" y2="44"/></svg></span> 跨裝置同步說明</div>
+  <div class="card info-card" id="card-syncinfo">
+    <div class="card-title collapsible" onclick="toggleCard('card-syncinfo')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 C16 6 12 12 12 19 C12 24 14.5 27 17 30 L17 34 L31 34 L31 30 C33.5 27 36 24 36 19 C36 12 32 6 24 6 Z"/><line x1="19" y1="40" x2="29" y2="40"/><line x1="20" y1="44" x2="28" y2="44"/></svg></span> 跨裝置同步說明</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+    <div class="card-body">
     <div class="sync-steps">
       <div class="sync-step"><div class="step-num">1</div><div class="step-text">在舊裝置點「📥 下載備份檔」，儲存 <code>.json</code> 到 iCloud / Google Drive</div></div>
       <div class="sync-step"><div class="step-num">2</div><div class="step-text">在新裝置開啟此頁，點「📤 上傳備份檔」選取同一個檔案</div></div>
       <div class="sync-step"><div class="step-num">3</div><div class="step-text">資料自動合併，不覆蓋現有記錄 ✅</div></div>
     </div>
+    </div>
   </div>
-  <div class="card">
-    <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 16 L24 8 L40 16 L40 34 L24 42 L8 34 Z"/><path d="M8 16 L24 24 L40 16"/><line x1="24" y1="24" x2="24" y2="42"/></svg></span> 備份與還原</div>
+  <div class="card" id="card-backup">
+    <div class="card-title collapsible" onclick="toggleCard('card-backup')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 16 L24 8 L40 16 L40 34 L24 42 L8 34 Z"/><path d="M8 16 L24 24 L40 16"/><line x1="24" y1="24" x2="24" y2="42"/></svg></span> 備份與還原</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+    <div class="card-body">
     <div class="sync-stat-row">
       <div class="sync-stat"><div class="sync-stat-val" id="syncDayCount">—</div><div class="sync-stat-lbl">已記錄天數</div></div>
       <div class="sync-stat"><div class="sync-stat-val" id="syncEntryCount">—</div><div class="sync-stat-lbl">總紀錄筆數</div></div>
@@ -1175,13 +1232,16 @@ h3 .hicon svg { width: 22px; height: 22px; }
       <div class="card-title" style="color:#C0392B"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 L44 40 L4 40 Z"/><line x1="24" y1="18" x2="24" y2="28"/><circle cx="24" cy="33" r="1.3" fill="currentColor" stroke="none"/></svg></span> 危險操作</div>
       <button class="sync-btn danger" onclick="clearAllData()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14 L38 14"/><path d="M18 14 L18 8 L30 8 L30 14"/><path d="M14 14 L16 40 Q16 42 18 42 L30 42 Q32 42 32 40 L34 14"/><line x1="20" y1="20" x2="20" y2="35"/><line x1="28" y1="20" x2="28" y2="35"/></svg></span> 清除所有本機資料</button>
     </div>
+    </div>
   </div>
-  <div class="card">
-    <div class="card-title"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="42" x2="8" y2="14"/><line x1="8" y1="42" x2="42" y2="42"/><rect x="14" y="28" width="6" height="14"/><rect x="24" y="20" width="6" height="22"/><rect x="34" y="10" width="6" height="32"/></svg></span> 匯出 Excel</div>
+  <div class="card" id="card-excel">
+    <div class="card-title collapsible" onclick="toggleCard('card-excel')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="42" x2="8" y2="14"/><line x1="8" y1="42" x2="42" y2="42"/><rect x="14" y="28" width="6" height="14"/><rect x="24" y="20" width="6" height="22"/><rect x="34" y="10" width="6" height="32"/></svg></span> 匯出 Excel</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+    <div class="card-body">
     <p style="font-size:0.8rem;color:var(--text-mid);margin-bottom:14px;line-height:1.6">匯出為 .xlsx，含每日摘要＋詳細時間軸兩個工作表</p>
     <div class="field-row"><label class="form-label">起始日期（留空＝全部）</label><input type="date" class="form-input" id="excelFrom"></div>
     <div class="field-row"><label class="form-label">結束日期（留空＝全部）</label><input type="date" class="form-input" id="excelTo"></div>
     <button class="sync-btn excel" onclick="exportExcel()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="42" x2="8" y2="14"/><line x1="8" y1="42" x2="42" y2="42"/><rect x="14" y="28" width="6" height="14"/><rect x="24" y="20" width="6" height="22"/><rect x="34" y="10" width="6" height="32"/></svg></span> 匯出 Excel (.xlsx)</button>
+    </div>
   </div>
 </div>
 
@@ -1228,6 +1288,33 @@ h3 .hicon svg { width: 22px; height: 22px; }
     <div style="display:flex;gap:8px;margin-top:4px">
       <button class="add-btn" onclick="saveEdit()" style="flex:1">💾 儲存</button>
       <button class="close-btn" onclick="closeEdit()" style="flex:0.5;margin-top:0;background:var(--text-light)">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="poopEditOverlay">
+  <div class="overlay-card" style="max-width:340px">
+    <h2 style="font-size:1rem;margin-bottom:16px"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M30 8 L40 18 L16 42 L6 42 L6 32 Z"/><line x1="26" y1="12" x2="36" y2="22"/></svg></span> 修改便便紀錄</h2>
+    <input type="hidden" id="poopEditId">
+    <div class="field-row"><label class="form-label">日期</label><input type="date" class="form-input" id="poopEditDate"></div>
+    <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="poopEditTime"></div>
+    <div class="field-row"><label class="form-label">備註</label><input type="text" class="form-input" id="poopEditNote" placeholder="例：正常、偏硬、偏軟"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="add-btn" onclick="savePoopEdit()" style="flex:1">💾 儲存</button>
+      <button class="close-btn" onclick="closePoopEdit()" style="flex:0.5;margin-top:0;background:var(--text-light)">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="fastCycleEditOverlay">
+  <div class="overlay-card" style="max-width:340px">
+    <h2 style="font-size:1rem;margin-bottom:16px"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M30 8 L40 18 L16 42 L6 42 L6 32 Z"/><line x1="26" y1="12" x2="36" y2="22"/></svg></span> 修改斷食週期</h2>
+    <input type="hidden" id="fastCycleEditId">
+    <div class="field-row"><label class="form-label">開始時間</label><input type="datetime-local" class="form-input" id="fastCycleEditStart"></div>
+    <div class="field-row"><label class="form-label">結束時間</label><input type="datetime-local" class="form-input" id="fastCycleEditEnd"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="add-btn" onclick="saveFastCycleEdit()" style="flex:1">💾 儲存</button>
+      <button class="close-btn" onclick="closeFastCycleEdit()" style="flex:0.5;margin-top:0;background:var(--text-light)">取消</button>
     </div>
   </div>
 </div>
@@ -1397,6 +1484,7 @@ window.onload = () => {
   startDayWatcher();
   loadHistoryDefault();
   updateSyncStats();
+  restoreCollapsedCards();
 };
 
 // ── DAY WATCHER ──
@@ -1759,7 +1847,61 @@ function renderPoopHistory() {
     <div class="poop-row">
       <span class="poop-time">${p.dateKey.slice(5).replace('-','/')} ${p.time}</span>
       <span class="poop-note">${p.note || '正常'}</span>
+      <button class="tl-edit" onclick="openPoopEdit(${p.id})">${getEditIconHtml()}</button>
+      <button class="tl-delete" onclick="deletePoopFromHistory(${p.id})">${getDeleteIconHtml()}</button>
     </div>`).join('');
+}
+
+function getEditIconHtml() {
+  return `<span class="hicon">${HICONS.edit}</span>`;
+}
+
+function openPoopEdit(id) {
+  const log = getPoopLog();
+  const p = log.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('poopEditId').value = id;
+  document.getElementById('poopEditDate').value = p.dateKey;
+  document.getElementById('poopEditTime').value = p.time;
+  document.getElementById('poopEditNote').value = p.note || '';
+  document.getElementById('poopEditOverlay').classList.remove('hidden');
+}
+
+function closePoopEdit() {
+  document.getElementById('poopEditOverlay').classList.add('hidden');
+}
+
+function savePoopEdit() {
+  const id = parseInt(document.getElementById('poopEditId').value);
+  const newDate = document.getElementById('poopEditDate').value;
+  const newTime = document.getElementById('poopEditTime').value;
+  const newNote = document.getElementById('poopEditNote').value.trim();
+  if (!newDate || !newTime) { showToast('⚠️ 請填寫日期與時間'); return; }
+
+  const log = getPoopLog();
+  const p = log.find(x => x.id === id);
+  if (!p) return;
+  p.dateKey = newDate;
+  p.time = newTime;
+  p.note = newNote;
+  savePoopLog(log);
+
+  closePoopEdit();
+  renderPoopHistory();   // refresh history view
+  renderPoopToday();     // keep today's log in sync too
+  showToast('✅ 已儲存！');
+}
+
+function deletePoopFromHistory(id) {
+  showDeleteConfirm('__poophist__' + id, 'poophist');
+}
+
+function _doDeletePoopFromHistory(id) {
+  const log = getPoopLog().filter(p => p.id !== id);
+  savePoopLog(log);
+  renderPoopHistory();
+  renderPoopToday();
+  showToast('🗑️ 已刪除');
 }
 
 // ── TYPE SELECTOR (no 'fast' or 'poop' type) ──
@@ -1867,6 +2009,8 @@ function confirmDelete() {
     _doDeleteDay(String(_pendingDeleteId).replace('__day__', ''));
   } else if (_pendingDeleteScope === 'fastcycle') {
     _doDeleteFastCycle(String(_pendingDeleteId).replace('__fastcycle__', ''));
+  } else if (_pendingDeleteScope === 'poophist') {
+    _doDeletePoopFromHistory(parseInt(String(_pendingDeleteId).replace('__poophist__', '')));
   } else {
     _doDeleteEntry(_pendingDeleteId);
   }
@@ -1940,6 +2084,8 @@ function saveEdit() {
 
 function closeEdit() { document.getElementById('editOverlay').classList.add('hidden'); }
 document.getElementById('editOverlay').addEventListener('click', function(ev){ if(ev.target===this) closeEdit(); });
+document.getElementById('poopEditOverlay').addEventListener('click', function(ev){ if(ev.target===this) closePoopEdit(); });
+document.getElementById('fastCycleEditOverlay').addEventListener('click', function(ev){ if(ev.target===this) closeFastCycleEdit(); });
 
 function syncHistoryIfVisible(date) {
   const dp = document.getElementById('historyDatePicker');
@@ -2263,6 +2409,7 @@ function renderFastingCycles() {
         <div class="fast-cycle-time">${fmtMDHM(end)} ${crossTag}</div>
       </div>
       <div class="fast-cycle-hrs" style="color:${color}">${hrs.toFixed(1)}<span class="fast-cycle-unit">hr</span></div>
+      <button class="tl-edit fast-cycle-edit" onclick="openFastCycleEdit('${c.startISO}')">${getEditIconHtml()}</button>
       <button class="tl-delete fast-cycle-delete" onclick="deleteFastCycle('${c.startISO}')">${getDeleteIconHtml()}</button>
     </div>`;
   }).join('');
@@ -2270,6 +2417,43 @@ function renderFastingCycles() {
 
 function getDeleteIconHtml() {
   return `<span class="hicon">${HICONS.trash}</span>`;
+}
+
+function openFastCycleEdit(startISO) {
+  const cycles = getFastCycles();
+  const c = cycles.find(x => x.startISO === startISO);
+  if (!c) return;
+  document.getElementById('fastCycleEditId').value = startISO;
+  document.getElementById('fastCycleEditStart').value = toLocalDatetimeInput(new Date(c.startISO));
+  document.getElementById('fastCycleEditEnd').value   = toLocalDatetimeInput(new Date(c.endISO));
+  document.getElementById('fastCycleEditOverlay').classList.remove('hidden');
+}
+
+function closeFastCycleEdit() {
+  document.getElementById('fastCycleEditOverlay').classList.add('hidden');
+}
+
+function saveFastCycleEdit() {
+  const oldStartISO = document.getElementById('fastCycleEditId').value;
+  const newStartVal = document.getElementById('fastCycleEditStart').value;
+  const newEndVal   = document.getElementById('fastCycleEditEnd').value;
+  if (!newStartVal || !newEndVal) { showToast('⚠️ 請填寫開始與結束時間'); return; }
+
+  const newStart = new Date(newStartVal);
+  const newEnd   = new Date(newEndVal);
+  if (newEnd <= newStart) { showToast('⚠️ 結束時間必須晚於開始時間'); return; }
+
+  const cycles = getFastCycles();
+  const c = cycles.find(x => x.startISO === oldStartISO);
+  if (!c) return;
+  c.startISO = newStart.toISOString();
+  c.endISO   = newEnd.toISOString();
+  saveFastCycles(cycles.sort((a,b) => a.startISO.localeCompare(b.startISO)));
+
+  closeFastCycleEdit();
+  renderFastingCycles();
+  renderMilkFastStats();
+  showToast('✅ 已儲存！');
 }
 
 function deleteFastCycle(startISO) {
@@ -2467,6 +2651,31 @@ function toLocalDatetimeInput(date) {
 
 // ── TOAST ──
 let toastTimeout;
+// ── COLLAPSIBLE CARDS ──
+function getCollapsedState() {
+  return JSON.parse(localStorage.getItem('mama_collapsed_cards') || '{}');
+}
+function saveCollapsedState(state) {
+  localStorage.setItem('mama_collapsed_cards', JSON.stringify(state));
+}
+function toggleCard(cardId) {
+  const card = document.getElementById(cardId);
+  if (!card) return;
+  const isCollapsed = card.classList.toggle('collapsed');
+  const state = getCollapsedState();
+  state[cardId] = isCollapsed;
+  saveCollapsedState(state);
+}
+function restoreCollapsedCards() {
+  const state = getCollapsedState();
+  Object.entries(state).forEach(([cardId, isCollapsed]) => {
+    if (isCollapsed) {
+      const card = document.getElementById(cardId);
+      if (card) card.classList.add('collapsed');
+    }
+  });
+}
+
 function showToast(msg) {
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.remove('hidden');
