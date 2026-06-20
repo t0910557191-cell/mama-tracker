@@ -263,21 +263,29 @@ body::before, body::after { display: none; }
 /* ── TYPE SELECTOR ── */
 .type-selector { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; }
 .type-btn {
-  padding: 8px 4px; border: 2.5px solid #C9B8C0; border-radius: 14px;
+  box-sizing: border-box;
+  padding: 8px 4px; border: 2px solid #C9B8C0; border-radius: 14px;
   background: white; cursor: pointer; text-align: center;
   font-size: var(--fs-sm); font-weight: 700; color: var(--text-mid);
   display: flex; flex-direction: column; align-items: center; gap: 3px;
-  font-family: 'Nunito', sans-serif; transition: all 0.15s;
+  font-family: 'Nunito', sans-serif; transition: box-shadow 0.15s;
   box-shadow: 2px 2px 0 rgba(0,0,0,0.06);
   text-transform: uppercase; letter-spacing: 0.3px;
+  outline: 2px solid transparent;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
 }
 .t-emoji { font-size: 1.3rem; }
-.type-btn:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 rgba(0,0,0,0.1); }
-.type-btn:active { transform: translate(0,0); box-shadow: 1px 1px 0 rgba(0,0,0,0.08); outline: none; -webkit-tap-highlight-color: transparent; }
-.type-btn.active-eat      { border-width: 2.5px; border-color: var(--rose);      background: var(--blush);    color: var(--rose-deep); }
-.type-btn.active-exercise { border-width: 2.5px; border-color: #FF8C42;          background: var(--peach);    color: #8B3A00; }
-.type-btn.active-milk     { border-width: 2.5px; border-color: var(--lav-deep);  background: var(--lavender); color: var(--lav-deep); }
-.type-btn.active-water    { border-width: 2.5px; border-color: var(--sky-deep);  background: var(--sky);      color: var(--sky-deep); }
+.type-btn:hover { box-shadow: 3px 3px 0 rgba(0,0,0,0.1); }
+.type-btn:active { box-shadow: 1px 1px 0 rgba(0,0,0,0.08); }
+.type-btn:focus { outline: none; }
+.type-btn:focus-visible { outline: 2px solid var(--rose); outline-offset: 1px; }
+.type-btn.active-eat      { border-width: 2px; border-color: var(--rose);      background: var(--blush);    color: var(--rose-deep); }
+.type-btn.active-exercise { border-width: 2px; border-color: #FF8C42;          background: var(--peach);    color: #8B3A00; }
+.type-btn.active-milk     { border-width: 2px; border-color: var(--lav-deep);  background: var(--lavender); color: var(--lav-deep); }
+.type-btn.active-water    { border-width: 2px; border-color: var(--sky-deep);  background: var(--sky);      color: var(--sky-deep); }
 .type-btn:focus { outline: none; }
 
 /* ── FORM FIELDS ── */
@@ -716,8 +724,8 @@ body::before, body::after { display: none; }
 .stat-emoji { display: flex; align-items: center; justify-content: center; }
 
 /* Type buttons */
-.t-emoji .hicon { vertical-align: 0; }
-.t-emoji .hicon svg { width: 26px; height: 26px; }
+.t-emoji .hicon { vertical-align: 0; margin-top: 10px; }
+.t-emoji .hicon svg { width: 30px; height: 30px; }
 
 /* Big empty-state icons */
 .big-emoji .hicon { vertical-align: 0; }
