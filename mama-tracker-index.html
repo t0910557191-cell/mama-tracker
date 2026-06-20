@@ -116,25 +116,10 @@ body::before, body::after { display: none; }
   line-height: 1;
   text-transform: uppercase;
 }
-.header-emoji { display: none; }   /* removed */
 .header h1:not(.app-title) {
   font-family: 'Patrick Hand', sans-serif;
   font-size: 1.3rem; font-weight: 400;
   color: var(--rose-deep); letter-spacing: 0.5px;
-}
-.header-sub {
-  font-size: var(--fs-sm); color: var(--text-mid); margin-top: 3px;
-}
-.date-nav {
-  display: flex; align-items: center; justify-content: center;
-  gap: 6px; margin-top: 6px;
-}
-.date-badge {
-  display: inline-block; text-align: center;
-  background: var(--blush); color: var(--rose-deep);
-  font-size: var(--fs-sm); font-weight: 700;
-  padding: 3px 12px; border-radius: 20px;
-  border: 1.5px solid var(--rose); margin-top: 6px;
 }
 .date-nav {
   display: flex; align-items: center; justify-content: center;
@@ -186,21 +171,6 @@ body::before, body::after { display: none; }
 }
 
 /* ── PROFILE ── */
-.profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.input-group label {
-  display: block; font-size: var(--fs-xs); color: var(--text-mid);
-  font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px;
-}
-.input-group input {
-  width: 100%; padding: 9px 12px;
-  border: 2px solid var(--blush); border-radius: 12px;
-  font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-num);
-  color: var(--text-dark); background: var(--cream);
-  outline: none; transition: border-color 0.2s;
-  box-shadow: 2px 2px 0 rgba(224,92,122,0.1);
-}
-.input-group input:focus { border-color: var(--rose); }
-
 .bmr-display {
   margin-top: 10px;
   background: linear-gradient(135deg, var(--blush), var(--lavender));
@@ -217,14 +187,6 @@ body::before, body::after { display: none; }
   font-size: var(--fs-xs); color: var(--text-mid);
   font-family: 'Nunito', sans-serif; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.4px;
-}
-
-.goal-chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: var(--butter); border: 2px solid var(--amber);
-  border-radius: 20px; padding: 3px 12px;
-  font-size: var(--fs-sm); font-weight: 700; color: #8B5E00; margin-top: 8px;
-  box-shadow: 2px 2px 0 rgba(255,179,71,0.2);
 }
 
 /* ── DASHBOARD ── */
@@ -301,7 +263,7 @@ body::before, body::after { display: none; }
 /* ── TYPE SELECTOR ── */
 .type-selector { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; }
 .type-btn {
-  padding: 8px 4px; border: 2px solid #EEE; border-radius: 14px;
+  padding: 8px 4px; border: 2px solid #DDD0D5; border-radius: 14px;
   background: white; cursor: pointer; text-align: center;
   font-size: var(--fs-sm); font-weight: 700; color: var(--text-mid);
   display: flex; flex-direction: column; align-items: center; gap: 3px;
@@ -356,14 +318,18 @@ body::before, body::after { display: none; }
 .add-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
 /* ── FILTER CHIPS ── */
-.filter-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+.filter-chips { display: flex; flex-wrap: nowrap; gap: 4px; margin-top: 2px; width: 100%; }
 .chip {
-  padding: 3px 10px; border: 1.5px solid #DDD; border-radius: 20px;
-  background: white; font-size: var(--fs-xs); font-weight: 700;
+  padding: 3px 6px; border: 1.5px solid #DDD; border-radius: 16px;
+  background: white; font-size: 0.65rem; font-weight: 700;
   color: var(--text-light); cursor: pointer; transition: all 0.15s;
   font-family: 'Nunito', sans-serif; white-space: nowrap;
-  text-transform: uppercase; letter-spacing: 0.3px;
+  text-transform: uppercase; letter-spacing: 0.1px;
+  display: flex; align-items: center; gap: 2px;
+  flex: 1; justify-content: center;
 }
+.chip .hicon svg { width: 13px; height: 13px; }
+.chip .hicon { vertical-align: -2px; }
 .chip:hover { border-color: var(--rose); color: var(--rose-deep); }
 .chip-active { background: var(--blush); border-color: var(--rose); color: var(--rose-deep); }
 
@@ -511,7 +477,6 @@ body::before, body::after { display: none; }
 .fast-cycle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1.5px dashed rgba(224,92,122,0.1); gap: 8px; }
 .fast-cycle-row:last-child { border-bottom: none; }
 .fast-cycle-delete { flex-shrink: 0; padding: 6px; }
-.fast-cycle-edit { flex-shrink: 0; padding: 6px; }
 .fast-cycle-dates { flex: 1; }
 .fast-cycle-time { font-size: var(--fs-sm); color: var(--text-mid); font-family: 'Patrick Hand', sans-serif; }
 .fast-cycle-arrow { font-size: var(--fs-xs); color: var(--text-light); margin: 2px 0; }
@@ -590,9 +555,8 @@ body::before, body::after { display: none; }
 ::-webkit-scrollbar-thumb { background: var(--blush); border-radius: 10px; }
 
 /* ── POOP ── */
-.type-btn.active-poop { border-color: #A0522D; background: #FFF3E0; color: #7B3A10; }
 .tl-dot.poop { background: #FFE0B0; }
-.type-selector { grid-template-columns: repeat(5,1fr); }
+/* type-selector now has 4 buttons (poop moved to standalone card) */
 
 .poop-reminder {
   margin-top: 8px;
@@ -638,56 +602,6 @@ body::before, body::after { display: none; }
 .emoji-day-today {
   border: 2px solid var(--rose) !important;
   background: var(--blush) !important;
-}
-
-.legend-dot {
-  display: inline-block; width: 12px; height: 12px;
-  border-radius: 4px; margin-right: 4px;
-  border: 1px solid rgba(0,0,0,0.08); vertical-align: middle;
-}
-
-/* ── BMI ROW ── */
-.bmi-row {
-  display: flex; align-items: center; gap: 8px;
-  margin-top: 10px; padding: 8px 12px;
-  background: var(--cream); border-radius: 12px;
-  border: 1.5px solid rgba(224,92,122,0.12);
-  flex-wrap: wrap;
-}
-.bmi-label {
-  font-family: 'Nunito', sans-serif; font-weight: 800;
-  font-size: var(--fs-xs); color: var(--text-light);
-  text-transform: uppercase; letter-spacing: 0.4px;
-}
-.bmi-value {
-  font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-num);
-  color: var(--text-dark); line-height: 1;
-}
-.bmi-tag {
-  font-family: 'Nunito', sans-serif; font-weight: 800;
-  font-size: var(--fs-sm); padding: 2px 8px;
-  border-radius: 10px; background: rgba(0,0,0,0.05);
-}
-.bmi-suggest {
-  font-size: var(--fs-xs); color: var(--text-mid);
-  margin-left: auto;
-}
-.bmi-suggest strong { color: var(--text-dark); font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-body); }
-
-/* ── BMI SUGGEST BOX (beside goal input) ── */
-.bmi-suggest-box {
-  background: var(--cream); border-radius: 12px;
-  padding: 9px 12px; border: 2px solid #EEE;
-  box-shadow: 2px 2px 0 rgba(0,0,0,0.05);
-  display: flex; flex-direction: column; gap: 2px;
-  min-height: 44px; justify-content: center;
-}
-.bmi-suggest-range {
-  font-size: var(--fs-xs); color: var(--text-mid);
-}
-.bmi-suggest-range strong {
-  font-family: 'Patrick Hand', sans-serif;
-  font-size: var(--fs-body); color: var(--text-dark);
 }
 
 /* ── GOAL + BMI UNIFIED ROW ── */
@@ -763,15 +677,6 @@ body::before, body::after { display: none; }
   font-family: 'Nunito', sans-serif;
 }
 
-.history-date-display {
-  margin-top: 6px;
-  font-family: 'Patrick Hand', sans-serif;
-  font-size: var(--fs-lg);
-  color: var(--rose-deep);
-  text-align: center;
-}
-
-/* ── HAND-DRAWN ICONS ── */
 /* ── HAND-DRAWN ICONS ──
    Sizing hierarchy (content icons must be >= card-title size):
    - card-title icon:      24px  (section headers — the "base" size)
@@ -837,10 +742,6 @@ body::before, body::after { display: none; }
 .tl-edit .hicon svg, .tl-delete .hicon svg { width: 20px; height: 20px; }
 .tl-edit { color: var(--lav-deep); }
 .tl-delete { color: #E74C3C; }
-
-/* Filter chips — small icon + text */
-.chip .hicon { vertical-align: -3px; }
-.chip .hicon svg { width: 16px; height: 16px; }
 
 /* Date badge icon (small text context) */
 .date-badge .hicon { vertical-align: -3px; }
@@ -1040,7 +941,7 @@ h3 .hicon svg { width: 22px; height: 22px; }
         <label class="form-label">結束時間</label>
         <input type="datetime-local" class="form-input" id="fastEndInput">
       </div>
-      <button class="fast-stop-btn" onclick="stopFastCycle()">✅ 結束斷食</button>
+      <button class="fast-stop-btn" onclick="stopFastCycle()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 25 L20 35 L40 12"/></svg></span> 結束斷食</button>
     </div>
     </div>
   </div>
@@ -1835,10 +1736,6 @@ function renderPoopHistory() {
     </div>`).join('');
 }
 
-function getEditIconHtml() {
-  return `<span class="hicon">${HICONS.edit}</span>`;
-}
-
 function deletePoopFromHistory(id) {
   showDeleteConfirm('__poophist__' + id, 'poophist');
 }
@@ -1939,7 +1836,6 @@ function renderTimeline() {
 // ── DELETE ──
 let _pendingDeleteId = null, _pendingDeleteScope = '';
 function deleteEntry(id)     { showDeleteConfirm(id, 'today'); }
-function deleteHistEntry(id) { showDeleteConfirm(id, 'history'); }
 function showDeleteConfirm(id, scope) {
   _pendingDeleteId = id; _pendingDeleteScope = scope;
   document.getElementById('deleteConfirmOverlay').classList.remove('hidden');
@@ -2540,10 +2436,6 @@ function fmtHHMM(date) {
 }
 function fmtYMD(date) {
   return `${date.getFullYear()}/${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')}`;
-}
-function fmtYMDFromKey(dateKey) {
-  // dateKey is 'YYYY-MM-DD'
-  return dateKey.replace(/-/g, '/');
 }
 function fmtFullDT(date) {
   return `${fmtYMD(date)} ${fmtHHMM(date)}`;
