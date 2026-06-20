@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Mamatab">
+<meta name="apple-mobile-web-app-title" content="MAMIFIT">
 <meta name="theme-color" content="#E05C7A">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Mamatab</title>
+<title>MAMIFIT</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700&family=Patrick+Hand&display=swap');
 
@@ -263,7 +263,7 @@ body::before, body::after { display: none; }
 /* ── TYPE SELECTOR ── */
 .type-selector { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; }
 .type-btn {
-  padding: 8px 4px; border: 2px solid #DDD0D5; border-radius: 14px;
+  padding: 8px 4px; border: 2.5px solid #C9B8C0; border-radius: 14px;
   background: white; cursor: pointer; text-align: center;
   font-size: var(--fs-sm); font-weight: 700; color: var(--text-mid);
   display: flex; flex-direction: column; align-items: center; gap: 3px;
@@ -273,10 +273,12 @@ body::before, body::after { display: none; }
 }
 .t-emoji { font-size: 1.3rem; }
 .type-btn:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 rgba(0,0,0,0.1); }
-.type-btn.active-eat      { border-color: var(--rose);      background: var(--blush);    color: var(--rose-deep); }
-.type-btn.active-exercise { border-color: #FF8C42;          background: var(--peach);    color: #8B3A00; }
-.type-btn.active-milk     { border-color: var(--lav-deep);  background: var(--lavender); color: var(--lav-deep); }
-.type-btn.active-water    { border-color: var(--sky-deep);  background: var(--sky);      color: var(--sky-deep); }
+.type-btn:active { transform: translate(0,0); box-shadow: 1px 1px 0 rgba(0,0,0,0.08); outline: none; -webkit-tap-highlight-color: transparent; }
+.type-btn.active-eat      { border-width: 2.5px; border-color: var(--rose);      background: var(--blush);    color: var(--rose-deep); }
+.type-btn.active-exercise { border-width: 2.5px; border-color: #FF8C42;          background: var(--peach);    color: #8B3A00; }
+.type-btn.active-milk     { border-width: 2.5px; border-color: var(--lav-deep);  background: var(--lavender); color: var(--lav-deep); }
+.type-btn.active-water    { border-width: 2.5px; border-color: var(--sky-deep);  background: var(--sky);      color: var(--sky-deep); }
+.type-btn:focus { outline: none; }
 
 /* ── FORM FIELDS ── */
 .field-row { margin-bottom: 12px; }
@@ -816,7 +818,7 @@ h3 .hicon svg { width: 22px; height: 22px; }
 
   <div class="header">
     
-    <h1 class="app-title">Mamatab</h1>
+    <h1 class="app-title">MAMIFIT</h1>
     <div class="date-nav">
       <button class="date-nav-btn" onclick="shiftLogDay(-1)">‹</button>
       <div class="date-badge" id="dateBadge"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="10" width="32" height="30" rx="3"/><line x1="8" y1="18" x2="40" y2="18"/><line x1="15" y1="6" x2="15" y2="13"/><line x1="33" y1="6" x2="33" y2="13"/><circle cx="17" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="24" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="31" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="17" cy="32" r="1.6" fill="currentColor" stroke="none"/></svg></span> 載入中...</div>
@@ -1118,8 +1120,8 @@ h3 .hicon svg { width: 22px; height: 22px; }
     <div class="card-title collapsible" onclick="toggleCard('card-syncinfo')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 C16 6 12 12 12 19 C12 24 14.5 27 17 30 L17 34 L31 34 L31 30 C33.5 27 36 24 36 19 C36 12 32 6 24 6 Z"/><line x1="19" y1="40" x2="29" y2="40"/><line x1="20" y1="44" x2="28" y2="44"/></svg></span> 跨裝置同步說明</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
     <div class="card-body">
     <div class="sync-steps">
-      <div class="sync-step"><div class="step-num">1</div><div class="step-text">在舊裝置點「📥 下載備份檔」，儲存 <code>.json</code> 到 iCloud / Google Drive</div></div>
-      <div class="sync-step"><div class="step-num">2</div><div class="step-text">在新裝置開啟此頁，點「📤 上傳備份檔」選取同一個檔案</div></div>
+      <div class="sync-step"><div class="step-num">1</div><div class="step-text">在舊裝置點「<span class="hicon"><svg style="width:14px;height:14px" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="24" y1="6" x2="24" y2="30"/><path d="M14 20 L24 30 L34 20"/><line x1="10" y1="38" x2="38" y2="38"/></svg></span> 下載備份檔」，儲存 <code>.json</code> 到 iCloud / Google Drive</div></div>
+      <div class="sync-step"><div class="step-num">2</div><div class="step-text">在新裝置開啟此頁，點「<span class="hicon"><svg style="width:14px;height:14px" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="24" y1="30" x2="24" y2="6"/><path d="M14 16 L24 6 L34 16"/><line x1="10" y1="38" x2="38" y2="38"/></svg></span> 上傳備份檔」選取同一個檔案</div></div>
       <div class="sync-step"><div class="step-num">3</div><div class="step-text">資料自動合併，不覆蓋現有記錄 ✅</div></div>
     </div>
     </div>
@@ -1132,10 +1134,10 @@ h3 .hicon svg { width: 22px; height: 22px; }
       <div class="sync-stat"><div class="sync-stat-val" id="syncEntryCount">—</div><div class="sync-stat-lbl">總紀錄筆數</div></div>
       <div class="sync-stat"><div class="sync-stat-val" id="syncLastDate">—</div><div class="sync-stat-lbl">最新日期</div></div>
     </div>
-    <button class="sync-btn download" onclick="downloadBackup()">📥 下載備份檔（.json）</button>
+    <button class="sync-btn download" onclick="downloadBackup()"><span class="hicon"><svg style="width:16px;height:16px" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="24" y1="6" x2="24" y2="30"/><path d="M14 20 L24 30 L34 20"/><line x1="10" y1="38" x2="38" y2="38"/></svg></span> 下載備份檔（.json）</button>
     <div class="sync-divider">或</div>
     <div class="upload-area" onclick="document.getElementById('backupFileInput').click()">
-      <span style="font-size:1.8rem">📤</span>
+      <span style="font-size:1.8rem"><span class="hicon"><svg style="width:28px;height:28px" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="24" y1="30" x2="24" y2="6"/><path d="M14 16 L24 6 L34 16"/><line x1="10" y1="38" x2="38" y2="38"/></svg></span></span>
       <p style="font-size:0.85rem;margin-top:6px;color:var(--text-mid)">點擊上傳備份檔</p>
       <p style="font-size:0.7rem;color:var(--text-light)">支援 .json 備份檔</p>
     </div>
@@ -1198,7 +1200,7 @@ h3 .hicon svg { width: 22px; height: 22px; }
     <div class="field-row" id="editValueRow"><label class="form-label" id="editValueLabel">數值</label><input type="number" class="form-input" id="editValue" min="0"></div>
     <div class="field-row" id="editNoteRow"><label class="form-label">備註</label><input type="text" class="form-input" id="editNote"></div>
     <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="add-btn" onclick="saveEdit()" style="flex:1">💾 儲存</button>
+      <button class="add-btn" onclick="saveEdit()" style="flex:1"><span class="hicon"><svg style="width:16px;height:16px" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 25 L20 35 L40 12"/></svg></span> 儲存</button>
       <button class="close-btn" onclick="closeEdit()" style="flex:0.5;margin-top:0;background:var(--text-light)">取消</button>
     </div>
   </div>
@@ -1282,9 +1284,21 @@ const HICONS = {
   search: `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="21" r="13"/><line x1="30.5" y1="30.5" x2="42" y2="42"/></svg>`,
   
   target: `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="16"/><circle cx="24" cy="24" r="9"/><circle cx="24" cy="24" r="2.5" fill="currentColor" stroke="none"/></svg>`,
+
+  download: `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="24" y1="6" x2="24" y2="30"/><path d="M14 20 L24 30 L34 20"/><line x1="10" y1="38" x2="38" y2="38"/></svg>`,
+
+  upload: `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="24" y1="30" x2="24" y2="6"/><path d="M14 16 L24 6 L34 16"/><line x1="10" y1="38" x2="38" y2="38"/></svg>`,
+
+  check: `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 25 L20 35 L40 12"/></svg>`,
+
+  sunrise: `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="28" r="9"/><line x1="24" y1="10" x2="24" y2="14"/><line x1="8" y1="28" x2="12" y2="28"/><line x1="36" y1="28" x2="40" y2="28"/><line x1="12" y1="16" x2="15" y2="19"/><line x1="36" y1="16" x2="33" y2="19"/><line x1="6" y1="40" x2="42" y2="40"/></svg>`,
+
+  arrow: `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="24" x2="38" y2="24"/><path d="M28 14 L38 24 L28 34"/></svg>`,
+
+  heart: `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 40 C24 40 6 28 6 16 C6 9 11 5 17 5 C20.5 5 23 7 24 10 C25 7 27.5 5 31 5 C37 5 42 9 42 16 C42 28 24 40 24 40 Z"/></svg>`,
 };
 // ════════════════════════════════
-//  Mamatab — app.js  v6.0
+//  MAMIFIT — app.js  v6.0
 // ════════════════════════════════
 
 // ── STORAGE ──
@@ -1380,7 +1394,7 @@ function startDayWatcher() {
     currentDay = newDay;
     if (logDay < currentDay) loadLogDay(currentDay);
     tickFastTimer();
-    showToast('🌅 新的一天開始了！加油媽咪 💪');
+    showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.sunrise}</span> 新的一天開始了！加油媽咪 💪`);
   }, 30000);
 }
 
@@ -1605,7 +1619,7 @@ function startFastCycle() {
   saveFastCycles(cycles);
   showFastingActiveView({ startISO });
   launchFastTimer();
-  showToast('🌙 斷食開始！加油媽咪');
+  showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.moon}</span> 斷食開始！加油媽咪`);
 }
 
 function stopFastCycle() {
@@ -1628,7 +1642,7 @@ function stopFastCycle() {
   showFastingIdleView();
   // Reset start input to now
   document.getElementById('fastStartInput').value = toLocalDatetimeInput(new Date());
-  showToast(`✅ 斷食完成！共 ${hrs.toFixed(1)} 小時 🎉`);
+  showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 斷食完成！共 ${hrs.toFixed(1)} 小時 🎉`);
 }
 
 function launchFastTimer() {
@@ -1796,7 +1810,7 @@ function addEntry() {
 
   renderTimeline(); recalculate(); updateDashboard();
   syncHistoryIfVisible(logDay);
-  showToast('✅ 已新增！');
+  showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 已新增！`);
 }
 
 // ── FILTER ──
@@ -1922,7 +1936,7 @@ function saveEdit() {
   syncHistoryIfVisible(isHist ? histDate : logDay);
   document.getElementById('editEntryId').dataset.histDate = '';
   closeEdit();
-  showToast('✅ 已儲存！');
+  showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 已儲存！`);
 }
 
 function closeEdit() { document.getElementById('editOverlay').classList.add('hidden'); }
@@ -1948,6 +1962,8 @@ function showSummary() {
   const deficit  = calIn-totalBurn;
   const waterPct = Math.round(waterIn/Math.max(waterGoal,1)*100);
 
+  const icon = (name, size=14) => `<span class="hicon" style="display:inline-flex;width:${size}px;height:${size}px;vertical-align:-2px">${HICONS[name]}</span>`;
+
   document.getElementById('s-calIn').textContent     = `${calIn.toLocaleString()} kcal`;
   document.getElementById('s-bmr').textContent       = `${tdee.toLocaleString()} kcal`;
   document.getElementById('s-milkBurn').textContent  = `${milkBurn} kcal`;
@@ -1955,10 +1971,10 @@ function showSummary() {
   document.getElementById('s-totalBurn').textContent = `${totalBurn.toLocaleString()} kcal`;
   document.getElementById('s-waterGoal').textContent = `${waterGoal.toLocaleString()} ml`;
   document.getElementById('s-waterIn').textContent   = `${waterIn.toLocaleString()} ml`;
-  document.getElementById('s-calResult').textContent = deficit<0?`👉 -${Math.abs(deficit)} kcal`:`👉 +${deficit} kcal`;
-  document.getElementById('s-calHint').textContent   = deficit<0?(Math.abs(deficit)<=500?'完美的健康減脂區間！💪':'赤字偏大，記得補充蛋白質 🤍'):'今天熱量充足，有足夠能量產奶 🍼';
-  document.getElementById('s-waterResult').textContent = waterPct>=100?'💧 水分達標 🎉':`💧 達成 ${waterPct}%`;
-  document.getElementById('s-waterHint').textContent   = waterPct>=100?'充足水分對明天的奶量很有幫助 🌟':(waterPct<80?`睡前再補 ${Math.round((waterGoal-waterIn)/100)*100} ml 溫水！`:'睡前一杯水就達標 🥛');
+  document.getElementById('s-calResult').innerHTML = deficit<0?`${icon('arrow')} -${Math.abs(deficit)} kcal`:`${icon('arrow')} +${deficit} kcal`;
+  document.getElementById('s-calHint').innerHTML   = deficit<0?(Math.abs(deficit)<=500?`完美的健康減脂區間！${icon('flame')}`:`赤字偏大，記得補充蛋白質 ${icon('heart')}`):`今天熱量充足，有足夠能量產奶 ${icon('milk')}`;
+  document.getElementById('s-waterResult').innerHTML = waterPct>=100?`${icon('water')} 水分達標 ${icon('sparkle')}`:`${icon('water')} 達成 ${waterPct}%`;
+  document.getElementById('s-waterHint').innerHTML   = waterPct>=100?`充足水分對明天的奶量很有幫助 ${icon('star')}`:(waterPct<80?`睡前再補 ${Math.round((waterGoal-waterIn)/100)*100} ml 溫水！`:`睡前一杯水就達標 ${icon('water')}`);
 
   // Fasting: show active cycle info
   const active = getActiveCycle();
@@ -1966,16 +1982,16 @@ function showSummary() {
     const dur = (new Date() - new Date(active.startISO)) / 3600000;
     document.getElementById('s-fastStart').textContent = fmtFullDT(new Date(active.startISO));
     document.getElementById('s-fastDur').textContent   = `${dur.toFixed(1)} 小時（進行中）`;
-    document.getElementById('s-fastHint').textContent  = '睡眠也是燃脂黃金期！🌙';
+    document.getElementById('s-fastHint').innerHTML  = `睡眠也是燃脂黃金期！${icon('moon')}`;
   } else {
     document.getElementById('s-fastStart').textContent = '目前無進行中的斷食';
     document.getElementById('s-fastDur').textContent   = '—';
-    document.getElementById('s-fastHint').textContent  = '可在斷食卡片開始新週期 🌟';
+    document.getElementById('s-fastHint').innerHTML  = `可在斷食卡片開始新週期 ${icon('star')}`;
   }
 
   let warn = '';
-  if (calIn>0&&calIn<1500) warn += `<div class="warning-box">⚠️ 媽咪今天吃得太少！熱量不足可能讓奶量減少。</div>`;
-  if (waterIn>0&&waterPct<80) warn += `<div class="warning-box" style="margin-top:6px">💧 水分不夠，睡前再補 100ml 溫水！</div>`;
+  if (calIn>0&&calIn<1500) warn += `<div class="warning-box">${icon('warning')} 媽咪今天吃得太少！熱量不足可能讓奶量減少。</div>`;
+  if (waterIn>0&&waterPct<80) warn += `<div class="warning-box" style="margin-top:6px">${icon('water')} 水分不夠，睡前再補 100ml 溫水！</div>`;
   document.getElementById('warningBox').innerHTML = warn;
   document.getElementById('summaryOverlay').classList.remove('hidden');
 }
@@ -2301,11 +2317,11 @@ function updateSyncStats() {
 
 function downloadBackup() {
   const obj={}; getAllDates().forEach(d=>{obj[d]=getDayData(d);});
-  const payload = { version:3, exportedAt:new Date().toISOString(), appName:'Mamatab',
+  const payload = { version:3, exportedAt:new Date().toISOString(), appName:'MAMIFIT',
     fastCycles:getFastCycles(), poopLog:getPoopLog(), data:obj };
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download=`Mamatab備份_${currentDay}.json`; a.click();
+  const a=document.createElement('a'); a.href=url; a.download=`MAMIFIT備份_${currentDay}.json`; a.click();
   URL.revokeObjectURL(url);
   showToast('📥 備份已下載！');
 }
@@ -2418,7 +2434,7 @@ function exportExcel() {
     XLSX.utils.book_append_sheet(wb,ws1,'每日摘要');
     XLSX.utils.book_append_sheet(wb,ws2,'詳細紀錄');
     XLSX.utils.book_append_sheet(wb,ws3,'斷食週期');
-    XLSX.writeFile(wb,`Mamatab_${currentDay}.xlsx`);
+    XLSX.writeFile(wb,`MAMIFIT_${currentDay}.xlsx`);
     showToast('📊 Excel 已下載！');
   });
 }
@@ -2477,7 +2493,7 @@ function restoreCollapsedCards() {
 
 function showToast(msg) {
   const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.remove('hidden');
+  t.innerHTML=msg; t.classList.remove('hidden');
   clearTimeout(toastTimeout);
   toastTimeout=setTimeout(()=>t.classList.add('hidden'),2800);
 }
