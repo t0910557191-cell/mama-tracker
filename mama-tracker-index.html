@@ -10,11 +10,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Mamatab</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Yellowtail&family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700&family=Patrick+Hand&family=Yellowtail&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700&family=Patrick+Hand&display=swap');
 
 /* ══ TYPOGRAPHY SYSTEM ══
    Body text   : Noto Sans TC 14px / 0.875rem
@@ -110,19 +107,19 @@ body::before, body::after { display: none; }
   padding: 16px 16px 10px;
 }
 .app-title {
-  font-family: 'Yellowtail', 'Patrick Hand', cursive, sans-serif;
-  font-size: 4.8rem;
-  font-weight: 400;
-  color: #E54D38;
+  font-family: 'Patrick Hand', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--rose-deep);
   letter-spacing: 1px;
   display: inline-block;
   line-height: 1;
-  text-shadow: 3px 3px 0 rgba(229,77,56,0.18);
+  text-transform: uppercase;
 }
 .header-emoji { display: none; }   /* removed */
-.header h1 {
+.header h1:not(.app-title) {
   font-family: 'Patrick Hand', sans-serif;
-  font-size: 1.6rem; font-weight: 400;
+  font-size: 1.3rem; font-weight: 400;
   color: var(--rose-deep); letter-spacing: 0.5px;
 }
 .header-sub {
