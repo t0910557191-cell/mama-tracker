@@ -497,8 +497,9 @@ body::before, body::after { display: none; }
 .ws-lbl { font-size: var(--fs-xs); color: var(--text-light); font-weight: 700; margin-top: 2px; font-family: 'Nunito', sans-serif; text-transform: uppercase; }
 
 /* ── FASTING CYCLES ── */
-.fast-cycle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1.5px dashed rgba(224,92,122,0.1); gap: 10px; }
+.fast-cycle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1.5px dashed rgba(224,92,122,0.1); gap: 8px; }
 .fast-cycle-row:last-child { border-bottom: none; }
+.fast-cycle-delete { flex-shrink: 0; padding: 6px; }
 .fast-cycle-dates { flex: 1; }
 .fast-cycle-time { font-size: var(--fs-sm); color: var(--text-mid); font-family: 'Patrick Hand', sans-serif; }
 .fast-cycle-arrow { font-size: var(--fs-xs); color: var(--text-light); margin: 2px 0; }
@@ -1864,6 +1865,8 @@ function confirmDelete() {
     _doDeleteHistEntry(_pendingDeleteId);
   } else if (_pendingDeleteScope === 'day') {
     _doDeleteDay(String(_pendingDeleteId).replace('__day__', ''));
+  } else if (_pendingDeleteScope === 'fastcycle') {
+    _doDeleteFastCycle(String(_pendingDeleteId).replace('__fastcycle__', ''));
   } else {
     _doDeleteEntry(_pendingDeleteId);
   }
@@ -2260,8 +2263,25 @@ function renderFastingCycles() {
         <div class="fast-cycle-time">${fmtMDHM(end)} ${crossTag}</div>
       </div>
       <div class="fast-cycle-hrs" style="color:${color}">${hrs.toFixed(1)}<span class="fast-cycle-unit">hr</span></div>
+      <button class="tl-delete fast-cycle-delete" onclick="deleteFastCycle('${c.startISO}')">${getDeleteIconHtml()}</button>
     </div>`;
   }).join('');
+}
+
+function getDeleteIconHtml() {
+  return `<span class="hicon">${HICONS.trash}</span>`;
+}
+
+function deleteFastCycle(startISO) {
+  showDeleteConfirm('__fastcycle__' + startISO, 'fastcycle');
+}
+
+function _doDeleteFastCycle(startISO) {
+  const cycles = getFastCycles().filter(c => c.startISO !== startISO);
+  saveFastCycles(cycles);
+  renderFastingCycles();
+  renderMilkFastStats();
+  showToast('🗑️ 已刪除這筆斷食紀錄');
 }
 
 function renderMilkFastStats() {
