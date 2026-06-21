@@ -1741,32 +1741,43 @@ function renderPoopHistory() {
   if (!el) return;
 
   const today = new Date(); today.setHours(0,0,0,0);
-  const threeDaysAgo = new Date(today); threeDaysAgo.setDate(today.getDate()-2);
   const recentDays = [];
   for (let i=0; i<3; i++) {
     const d = new Date(today); d.setDate(today.getDate()-i);
     recentDays.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
   }
 
-  const entries = getPoopLog()
-    .filter(p => recentDays.includes(p.dateKey))
-    .sort((a,b) => (b.dateKey+b.time).localeCompare(a.dateKey+a.time));  // newest first
+  const log = getPoopLog();
+  const hasAny = log.some(p => recentDays.includes(p.dateKey));
 
-  if (!entries.length) {
-    el.innerHTML = `
+  let html = '';
+  if (!hasAny) {
+    html += `
       <div class="poop-warning">
         <span class="hicon hicon-content">${HICONS.warning}</span> 三天內沒有便便紀錄<br>
         <span style="font-weight:600">改善建議：</span>多喝水、補充蔬菜水果與纖維、適度散步活動，必要時諮詢醫師
       </div>`;
-    return;
   }
 
-  el.innerHTML = entries.map(p => `
-    <div class="poop-row">
-      <span class="poop-time">${p.dateKey.slice(5).replace('-','/')} ${p.time}</span>
-      <span class="poop-note">${p.note || '正常'}</span>
-      <button class="tl-delete" onclick="deletePoopFromHistory(${p.id})">${getDeleteIconHtml()}</button>
-    </div>`).join('');
+  // List each of the 3 days explicitly, newest first
+  html += recentDays.map(dateKey => {
+    const dayEntries = log.filter(p => p.dateKey === dateKey).sort((a,b)=>a.time.localeCompare(b.time));
+    const dateLabel = dateKey.slice(5).replace('-','/');
+    if (!dayEntries.length) {
+      return `<div class="poop-row">
+        <span class="poop-time">${dateLabel}</span>
+        <span class="poop-note" style="color:var(--text-light)">無</span>
+      </div>`;
+    }
+    return dayEntries.map(p => `
+      <div class="poop-row">
+        <span class="poop-time">${dateLabel} ${p.time}</span>
+        <span class="poop-note">${p.note || '正常'}</span>
+        <button class="tl-delete" onclick="deletePoopFromHistory(${p.id})">${getDeleteIconHtml()}</button>
+      </div>`).join('');
+  }).join('');
+
+  el.innerHTML = html;
 }
 
 function deletePoopFromHistory(id) {
@@ -2127,6 +2138,7 @@ function renderEmojiCalendar() {
     return;
   }
 
+  // Build full date range from first recorded day to today
   const allDates = [];
   const [fy,fm,fd] = recorded[0].split('-').map(Number);
   let cur = new Date(fy, fm-1, fd);
@@ -2137,13 +2149,15 @@ function renderEmojiCalendar() {
     cur = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate()+1);
   }
 
-  // Only show last 7 days
-  const last7 = allDates.slice(-7);
+  // Keep only days that have data, or are today
+  const withData = allDates.filter(d => getDayScore(getDayData(d)) || d === currentDay);
+
+  // Take the most recent 7
+  const last7 = withData.slice(-7);
 
   cal.innerHTML = last7.map(d => {
     const s    = getDayScore(getDayData(d));
     const isNow = d === currentDay;
-    if (!s && !isNow) return '';  // skip days with no data
     let bg, textColor, emoji;
     if (isNow || !s)                { bg='var(--cream)'; textColor='var(--text-light)'; emoji=''; }
     else if (s.goodCal&&s.goodWater){ bg='#C8F0E8'; textColor='#1A6B55'; emoji='🥳'; }
