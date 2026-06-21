@@ -1400,7 +1400,13 @@ function startDayWatcher() {
     const newDay = todayKey();
     if (newDay === currentDay) return;
     currentDay = newDay;
-    if (logDay < currentDay) loadLogDay(currentDay);
+    if (logDay < currentDay) {
+      loadLogDay(currentDay);
+    } else if (logDay === currentDay && !getActiveCycle()) {
+      // Already viewing today — just refresh the fasting start time field
+      const fastStartEl = document.getElementById('fastStartInput');
+      if (fastStartEl) fastStartEl.value = toLocalDatetimeInput(new Date());
+    }
     tickFastTimer();
     showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.sunrise}</span> 新的一天開始了！加油媽咪 💪`);
   }, 30000);
@@ -1453,6 +1459,11 @@ function loadLogDay(day) {
     } else {
       poopTimeEl.value = '12:00';
     }
+  }
+  // Refresh fasting card start time to "now" when on today (only if no active cycle)
+  if (day === currentDay && !getActiveCycle()) {
+    const fastStartEl = document.getElementById('fastStartInput');
+    if (fastStartEl) fastStartEl.value = toLocalDatetimeInput(new Date());
   }
 }
 
