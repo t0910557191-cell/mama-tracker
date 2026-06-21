@@ -460,9 +460,9 @@ body::before, body::after { display: none; }
   font-size: var(--fs-xs); color: var(--text-mid);
   font-family: 'Nunito', sans-serif; font-weight: 700;
 }
-.emoji-calendar { display: flex; flex-wrap: wrap; gap: 7px; }
+.emoji-calendar { display: flex; flex-wrap: nowrap; gap: 5px; width: 100%; }
 .emoji-day {
-  width: 42px; height: 50px; border-radius: 12px;
+  flex: 1; min-width: 0; height: 50px; border-radius: 12px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   cursor: pointer; background: var(--cream);
   border: 1.5px solid rgba(224,92,122,0.1);
@@ -470,7 +470,7 @@ body::before, body::after { display: none; }
   font-size: 1.3rem; line-height: 1;
   gap: 3px;
 }
-.emoji-day:hover { transform: scale(1.1); border-color: var(--rose); }
+.emoji-day:hover { transform: scale(1.06); border-color: var(--rose); }
 .emoji-day-label {
   font-size: 0.45rem; color: var(--text-light);
   font-family: 'Nunito', sans-serif; font-weight: 700;
