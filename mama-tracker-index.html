@@ -1742,7 +1742,7 @@ function renderPoopHistory() {
 
   const today = new Date(); today.setHours(0,0,0,0);
   const recentDays = [];
-  for (let i=0; i<3; i++) {
+  for (let i=1; i<=3; i++) {
     const d = new Date(today); d.setDate(today.getDate()-i);
     recentDays.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
   }
@@ -1936,7 +1936,7 @@ function openEdit(id) {
     milk:`<span class="hicon hicon-content">${HICONS.milk}</span> 奶量 (ml)`,
     water:`<span class="hicon hicon-content">${HICONS.water}</span> 水量 (ml)`
   };
-  document.getElementById('editValueLabel').textContent = labelMap[e.type] || '數值';
+  document.getElementById('editValueLabel').innerHTML = labelMap[e.type] || '數值';
   if (e.type === 'eat' || e.type === 'exercise') {
     document.getElementById('editNoteRow').classList.remove('hidden');
     document.getElementById('editNote').value = e.note || '';
