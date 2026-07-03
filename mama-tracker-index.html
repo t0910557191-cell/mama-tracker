@@ -275,6 +275,25 @@ body::before, body::after { display: none; }
 .water-quick-btn { flex: 1; padding: 8px 4px; border-radius: 10px; border: 2px solid var(--sky-deep); background: var(--sky); color: var(--sky-deep); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: var(--fs-sm); cursor: pointer; }
 .water-quick-btn:active { transform: translate(1px,1px); }
 .photo-est-btn { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 12px; border: 2px solid var(--rose-deep); background: var(--blush); color: var(--rose-deep); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: var(--fs-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+.photo-action-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.photo-run-btn {
+  flex: 2; padding: 12px; border-radius: 12px; border: none;
+  background: var(--rose-deep); color: white;
+  font-family: 'Nunito', sans-serif; font-weight: 800; font-size: var(--fs-sm);
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+  box-shadow: 0 3px 0 #B8435E; transition: all 0.1s;
+}
+.photo-run-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #B8435E; }
+.photo-run-btn.loading { opacity: 0.6; pointer-events: none; }
+.photo-reselect-btn {
+  flex: 1; padding: 12px 8px; border-radius: 12px; border: 2px solid var(--blush);
+  background: white; color: var(--text-mid);
+  font-family: 'Nunito', sans-serif; font-weight: 700; font-size: var(--fs-xs);
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;
+  transition: all 0.15s;
+}
+.photo-reselect-btn:active { background: var(--blush); }
 .photo-est-btn:active { transform: translate(1px,1px); }
 .photo-est-btn.loading { opacity: 0.6; pointer-events: none; }
 .photo-est-hint { font-size: var(--fs-xs); color: var(--text-mid); text-align: center; margin: -4px 0 10px; min-height: 1em; }
@@ -1043,9 +1062,9 @@ h3 .hicon svg { width: 22px; height: 22px; }
           <label class="form-label">備註（選填，可修正食材/醬料/份量）</label>
           <input type="text" class="form-input" id="photoEstNote" placeholder="例：其中一份換成柚子醬、沒有麵包丁">
         </div>
-        <div style="display:flex; gap:8px;">
-          <button type="button" class="photo-est-btn" style="flex:1" id="runEstimateBtn" onclick="runPhotoEstimate()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="16"/><path d="M24 14 L24 24 L31 28"/></svg></span> 估算熱量</button>
-          <button type="button" class="photo-est-clear-btn" style="margin:0;flex:0 0 auto" onclick="cancelPhotoSelection()">✕ 重新選照片</button>
+        <div class="photo-action-row">
+          <button type="button" class="photo-run-btn" id="runEstimateBtn" onclick="runPhotoEstimate()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="16"/><path d="M24 14 L24 24 L31 28"/></svg></span> 估算熱量</button>
+          <button type="button" class="photo-reselect-btn" onclick="cancelPhotoSelection()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12 L36 36 M36 12 L12 36"/></svg></span> 重選</button>
         </div>
       </div>
 
@@ -1444,6 +1463,8 @@ function getAllDates() {
 function getFastCycles()       { return JSON.parse(localStorage.getItem('mama_fast_cycles') || '[]'); }
 function saveFastCycles(arr)   { localStorage.setItem('mama_fast_cycles', JSON.stringify(arr)); }
 function getActiveCycle()      { const c = getFastCycles(); return c.find(x => !x.endISO) || null; }
+
+
 
 // Poop log: stored as array of {id, dateKey, time, note}
 function getPoopLog()     { return JSON.parse(localStorage.getItem('mama_poop_log') || '[]'); }
@@ -1959,6 +1980,19 @@ function addEntry() {
  try {
   const time = document.getElementById(`timeInput-${currentType}`).value;
   if (!time) { showToast(`${hi('warning')} 請填寫時間！`); return; }
+
+  // 斷食中新增進食提醒
+  if (currentType === 'eat') {
+    const activeCycle = getActiveCycle();
+    if (activeCycle) {
+      const startTime = new Date(activeCycle.startISO);
+      const hrs = (Date.now() - startTime.getTime()) / 3600000;
+      const confirmed = confirm(
+        `⏰ 你目前正在斷食中（已持續 ${hrs.toFixed(1)} 小時）\n\n確定要新增這筆進食紀錄嗎？\n\n新增後斷食紀錄不會自動結束，如果這代表斷食已經結束，別忘了回去按「結束斷食」。`
+      );
+      if (!confirmed) return;
+    }
+  }
 
   const labels = { eat:'進食', exercise:'運動', milk:'擠奶', water:'喝水', poop:'便便' };
   const units  = { eat:'kcal', exercise:'kcal', milk:'ml', water:'ml', poop:'' };
