@@ -792,6 +792,7 @@ body::before, body::after { display: none; }
 
 /* Buttons with icon + text (white icons on colored buttons) */
 .fast-start-btn .hicon,
+.fast-stop-btn .hicon,
 .poop-add-btn .hicon,
 .summary-trigger .hicon,
 .delete-day-btn .hicon,
@@ -799,6 +800,7 @@ body::before, body::after { display: none; }
 .add-btn .hicon,
 .close-btn .hicon { vertical-align: -5px; color: inherit; }
 .fast-start-btn .hicon svg,
+.fast-stop-btn .hicon svg,
 .poop-add-btn .hicon svg,
 .summary-trigger .hicon svg,
 .delete-day-btn .hicon svg,
@@ -1530,6 +1532,7 @@ window.onload = () => {
   initFastingCard();
   initPoopCard();
   scheduleAutoSummary();
+  checkMissedDailySummary();
   startDayWatcher();
   loadHistoryDefault();
   updateSyncStats();
@@ -2610,14 +2613,20 @@ function syncHistoryIfVisible(date) {
 }
 
 // ── SUMMARY ──
-function showSummary() {
-  const w = parseFloat(document.getElementById('weightInput').value)||70.5;
-  const h = parseFloat(document.getElementById('heightInput').value)||162;
+function showSummary(dateStr) {
+  const targetDate = dateStr || logDay;
+  const isToday = targetDate === logDay;
+  // Use the target day's own saved data (weight/height/entries) instead of
+  // the live input fields — those reflect whatever day is on screen right
+  // now, which after midnight is already the NEW (empty) day, not this one.
+  const data = isToday ? todayData : (getDayData(targetDate) || { entries: [], weight: 70.5, height: 162 });
+  const w = data.weight || 70.5;
+  const h = data.height || 162;
   const bmr = getMifflinBMR(w,h), tdee = Math.round(bmr*1.2);
-  const calIn    = todayData.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
-  const milkTot  = todayData.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
-  const waterIn  = todayData.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
-  const exBurn   = todayData.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
+  const calIn    = data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
+  const milkTot  = data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
+  const waterIn  = data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
+  const exBurn   = data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
   const milkBurn = Math.round(milkTot*0.8);
   const totalBurn= tdee+milkBurn+exBurn;
   const waterGoal= Math.round(w*35+milkTot);
@@ -2625,6 +2634,12 @@ function showSummary() {
   const waterPct = Math.round(waterIn/Math.max(waterGoal,1)*100);
 
   const icon = (name, size=14) => `<span class="hicon" style="display:inline-flex;width:${size}px;height:${size}px;vertical-align:-2px">${HICONS[name]}</span>`;
+
+  const summaryDateEl = document.getElementById('summaryDate');
+  if (summaryDateEl) {
+    const [sy,sm,sd] = targetDate.split('-').map(Number);
+    summaryDateEl.textContent = fmtYMD(new Date(sy, sm-1, sd)) + (isToday ? '' : '（前一天）');
+  }
 
   document.getElementById('s-calIn').textContent     = `${calIn.toLocaleString()} kcal`;
   document.getElementById('s-bmr').textContent       = `${tdee.toLocaleString()} kcal`;
@@ -2638,7 +2653,7 @@ function showSummary() {
   document.getElementById('s-waterResult').innerHTML = waterPct>=100?`${icon('water')} 水分達標 ${icon('sparkle')}`:`${icon('water')} 達成 ${waterPct}%`;
   document.getElementById('s-waterHint').innerHTML   = waterPct>=100?`充足水分對明天的奶量很有幫助 ${icon('star')}`:(waterPct<80?`睡前再補 ${Math.round((waterGoal-waterIn)/100)*100} ml 溫水！`:`睡前一杯水就達標 ${icon('water')}`);
 
-  // Fasting: show active cycle info
+  // Fasting: show active cycle info (real-time status, independent of which day's report this is)
   const active = getActiveCycle();
   if (active) {
     const dur = (new Date() - new Date(active.startISO)) / 3600000;
@@ -2661,7 +2676,23 @@ function closeSummary() { document.getElementById('summaryOverlay').classList.ad
 document.getElementById('summaryOverlay').addEventListener('click', function(ev){ if(ev.target===this) closeSummary(); });
 function scheduleAutoSummary() {
   const now=new Date(), midnight=new Date(); midnight.setHours(24,0,0,0);
-  setTimeout(showSummary, midnight-now);
+  const dayEnding = todayKey(); // capture the day that is ABOUT to end, before it rolls over
+  setTimeout(() => {
+    showSummary(dayEnding);
+    localStorage.setItem('mama_last_seen_day', todayKey());
+    scheduleAutoSummary(); // reschedule for the following midnight
+  }, midnight-now);
+}
+
+// ── CATCH-UP: if the app wasn't open exactly at midnight, show the
+//    previous day's summary the first time it's opened on a new day ──
+function checkMissedDailySummary() {
+  const lastSeenDay = localStorage.getItem('mama_last_seen_day');
+  const todayStr = todayKey();
+  if (lastSeenDay && lastSeenDay !== todayStr) {
+    setTimeout(() => showSummary(lastSeenDay), 600);
+  }
+  localStorage.setItem('mama_last_seen_day', todayStr);
 }
 
 // ══════════════════════════════════
