@@ -285,6 +285,10 @@ body::before, body::after { display: none; }
   font-weight: 600; cursor: pointer; transition: all 0.15s;
 }
 .photo-est-clear-btn:hover { background: var(--blush); border-color: var(--rose); color: var(--rose-deep); }
+.photo-preview-img {
+  width: 100%; max-height: 260px; object-fit: cover; border-radius: 14px;
+  border: 2px solid var(--rose); margin-bottom: 10px; display: block;
+}
 .photo-est-key-link { margin-top: 8px; font-size: var(--fs-xs); color: var(--text-light); text-align: center; cursor: pointer; text-decoration: underline; }
 .slider-container { display: flex; flex-direction: column; gap: 6px; }
 .slider { width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, #FFD6E0 0%, #FF8FA3 50%, #E05C7A 100%); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
@@ -1030,12 +1034,21 @@ h3 .hicon svg { width: 22px; height: 22px; }
       <button class="type-btn"                 onclick="selectType('water')"    id="btn-water"><span class="t-emoji"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 C24 6 12 22 12 30 C12 37 17.5 42 24 42 C30.5 42 36 37 36 30 C36 22 24 6 24 6 Z"/><path d="M18 30 Q18 35 23 36" stroke-width="1.6" opacity="0.6"/></svg></span></span>喝水</button>
     </div>
     <div id="fields-eat">
-      <div class="field-row">
-        <label class="form-label">拍照前備註（選填，可修正食材/醬料/份量）</label>
-        <input type="text" class="form-input" id="photoEstNote" placeholder="例：換成柚子醬、沒有麵包丁、手掌大">
+      <button type="button" class="photo-est-btn" id="photoEstBtn" onclick="triggerPhotoEstimate()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="14" width="36" height="26" rx="3"/><path d="M17 14 L20 9 L28 9 L31 14"/><circle cx="24" cy="27" r="8"/></svg></span> 選擇照片估算熱量</button>
+      <input type="file" accept="image/*" id="photoEstInput" class="hidden" onchange="handlePhotoSelected(event)">
+      
+      <div id="photoPreviewWrap" class="hidden">
+        <img id="photoPreviewImg" class="photo-preview-img" alt="食物照片預覽">
+        <div class="field-row">
+          <label class="form-label">備註（選填，可修正食材/醬料/份量）</label>
+          <input type="text" class="form-input" id="photoEstNote" placeholder="例：其中一份換成柚子醬、沒有麵包丁">
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="photo-est-btn" style="flex:1" id="runEstimateBtn" onclick="runPhotoEstimate()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="16"/><path d="M24 14 L24 24 L31 28"/></svg></span> 估算熱量</button>
+          <button type="button" class="photo-est-clear-btn" style="margin:0;flex:0 0 auto" onclick="cancelPhotoSelection()">✕ 重新選照片</button>
+        </div>
       </div>
-      <button type="button" class="photo-est-btn" id="photoEstBtn" onclick="triggerPhotoEstimate()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="14" width="36" height="26" rx="3"/><path d="M17 14 L20 9 L28 9 L31 14"/><circle cx="24" cy="27" r="8"/></svg></span> 拍照估算熱量</button>
-      <input type="file" accept="image/*" id="photoEstInput" class="hidden" onchange="handlePhotoEstimate(event)">
+
       <div class="photo-est-hint" id="photoEstStatus"></div>
       <button type="button" class="photo-est-clear-btn hidden" id="photoEstClearBtn" onclick="clearPhotoEstimate()">✕ 清除估算結果</button>
       <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-eat"></div>
@@ -1987,6 +2000,9 @@ function addEntry() {
     document.getElementById('photoEstStatus').textContent = '';
     document.getElementById('photoEstClearBtn').classList.add('hidden');
     document.getElementById('photoEstNote').value = '';
+    document.getElementById('photoPreviewWrap').classList.add('hidden');
+    document.getElementById('photoPreviewImg').src = '';
+    selectedPhotoFile = null;
   }
 
   renderTimeline(); recalculate(); updateDashboard();
@@ -2017,6 +2033,9 @@ function clearPhotoEstimate() {
   document.getElementById('valInput-eat').value = '';
   document.getElementById('noteInput-eat').value = '';
   document.getElementById('photoEstNote').value = '';
+  document.getElementById('photoPreviewWrap').classList.add('hidden');
+  document.getElementById('photoPreviewImg').src = '';
+  selectedPhotoFile = null;
   showToast(`${hi('trash')} 已清除估算結果`);
 }
 
@@ -2257,7 +2276,9 @@ function quickAddWater(ml) {
   addEntry();
 }
 
-async function handlePhotoEstimate(event) {
+let selectedPhotoFile = null;
+
+function handlePhotoSelected(event) {
   const file = event.target.files[0];
   event.target.value = ''; // allow re-selecting the same file next time
   if (!file) return;
@@ -2268,12 +2289,41 @@ async function handlePhotoEstimate(event) {
     return;
   }
 
+  selectedPhotoFile = file;
+
+  // 顯示照片預覽
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById('photoPreviewImg').src = e.target.result;
+    document.getElementById('photoPreviewWrap').classList.remove('hidden');
+    document.getElementById('photoEstNote').value = '';
+    document.getElementById('photoEstNote').focus();
+    document.getElementById('photoEstStatus').textContent = '';
+    document.getElementById('photoEstClearBtn').classList.add('hidden');
+  };
+  reader.onerror = () => {
+    showToast(`${hi('warning')} 圖片預覽失敗，請重新選擇`);
+  };
+  reader.readAsDataURL(file);
+}
+
+function cancelPhotoSelection() {
+  selectedPhotoFile = null;
+  document.getElementById('photoPreviewWrap').classList.add('hidden');
+  document.getElementById('photoPreviewImg').src = '';
+  document.getElementById('photoEstNote').value = '';
+}
+
+async function runPhotoEstimate() {
+  const file = selectedPhotoFile;
+  if (!file) { showToast(`${hi('warning')} 請先選擇照片`); return; }
+
   const key = getGeminiApiKey();
   if (!key) { showToast(`${hi('warning')} 請先設定 Gemini API Key`); return; }
 
-  const btn = document.getElementById('photoEstBtn');
+  const runBtn = document.getElementById('runEstimateBtn');
   const status = document.getElementById('photoEstStatus');
-  btn.classList.add('loading');
+  runBtn.classList.add('loading');
   status.innerHTML = `${hi('search')} 估算中，請稍候…`;
 
   try {
@@ -2283,15 +2333,15 @@ async function handlePhotoEstimate(event) {
     
     const userNote = (document.getElementById('photoEstNote').value || '').trim();
     const noteBlock = userNote
-      ? `\n\n【使用者備註（非常重要，請優先採用）】\n使用者提供了以下食材/份量說明：「${userNote}」\n如果這則備註提到了食材置換、醬料不同、份量大小等資訊，請務必以使用者的文字說明為準去修正你的視覺判斷，扣除不存在的傳統配料、換成備註中提到的實際醬料/食材，不要被食物「外觀看起來像什麼」誤導。\n`
+      ? `\n\n【使用者備註（非常重要，請優先採用）】\n使用者提供了以下食材/份量說明：「${userNote}」\n這則備註只是用來修正備註中提到的那個品項的細節（例如醬料、食材置換、份量大小），並不是說照片裡「只有」這個品項。如果照片中還有其他沒有被備註提到的食物，請照樣正常辨識並計算熱量，不要因為使用者只寫了一個品項的備註，就忽略或漏算畫面中其他的食物。\n`
       : '';
 
-    const prompt = `你是一個專業的營養師，請仔細辨識照片中的食物，以「台灣常見的食材與份量」進行精準的熱量估算。如果有不確定的食材，請以最合理的常規份量計算，不要過度高估。${noteBlock}
+    const prompt = `你是一個專業的營養師，請仔細辨識照片中「所有」的食物項目，以「台灣常見的食材與份量」進行精準的熱量估算。如果有不確定的食材，請以最合理的常規份量計算，不要過度高估。${noteBlock}
 請依照以下步驟：
-1. 先仔細辨識照片中每一項食物是什麼（主食、配菜、肉類/魚類、醬料、湯品等），不要猜測不存在的食材
+1. 先仔細掃描整張照片，列出畫面中每一項食物（可能不只一種主食/配菜/飲料/醬料），不要遺漏任何一個可見的品項，也不要猜測不存在的食材
 2. 針對每個項目，用台灣常見份量估算重量（例如：飯一碗約200g、雞腿一隻約150g、魚一片約120g）
-3. 根據份量與台灣常見烹調方式（煎、炸、滷、清蒸等）估算每個項目的熱量。若使用者備註提到食材置換（例如換成柚子醬、去掉麵包丁等），請依照備註調整，不要照傳統標準配方硬套
-4. 將所有項目熱量加總，得出總熱量
+3. 根據份量與台灣常見烹調方式（煎、炸、滷、清蒸等）估算每個項目的熱量。若使用者備註提到食材置換（例如換成柚子醬、去掉麵包丁等），只針對備註提到的那個品項做調整，其餘品項仍照正常方式估算，不要跳過
+4. 將「所有」項目的熱量加總，得出總熱量（畫面中有幾樣食物，items 陣列就該列出幾項，不能因為備註只提到一項就只算一項）
 
 請仔細觀察顏色、油亮程度、烹調痕跡來判斷烹調方式（例如：清蒸魚 vs 油炸排骨熱量差很多），避免因為顏色深或油亮就誤判成油炸類。
 
@@ -2340,7 +2390,6 @@ async function handlePhotoEstimate(event) {
     if (!calories || isNaN(calories)) throw new Error('無法解析熱量數字');
 
     console.log('Step 5: Success! Calories:', calories, 'Food:', foodName, 'Items:', items);
-    selectType('eat');
     document.getElementById('valInput-eat').value = calories;
     if (foodName) document.getElementById('noteInput-eat').value = foodName;
     if (!document.getElementById('timeInput-eat').value) {
@@ -2355,14 +2404,15 @@ async function handlePhotoEstimate(event) {
       : '';
     status.innerHTML = `${hi('check')} 估算完成：${foodName ? foodName + ' ' : ''}約 ${calories} kcal${itemsHtml}${noteAppliedHtml}<div style="margin-top:6px;font-weight:600">請核對上方辨識結果，確認無誤後按「新增到日誌」</div>`;
     document.getElementById('photoEstClearBtn').classList.remove('hidden');
-    showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 估算完成！請核對辨識結果後送出`);
+    document.getElementById('photoPreviewWrap').classList.add('hidden');
+    showToast(`${hi('check')} 估算完成！請核對辨識結果後送出`);
   } catch (err) {
     status.textContent = '';
     const errorMsg = `${hi('warning')} 估算失敗：` + err.message;
     showToast(errorMsg);
     console.error('Photo estimate error:', err);
   } finally {
-    btn.classList.remove('loading');
+    runBtn.classList.remove('loading');
   }
 }
 
