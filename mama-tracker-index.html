@@ -1048,7 +1048,13 @@ h3 .hicon svg { width: 22px; height: 22px; }
     </div>
     <div id="fields-water" class="hidden">
       <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-water"></div>
-      <div class="field-row"><label class="form-label">水量 (ml)</label><input type="number" class="form-input" id="valInput-water" placeholder="例：300"></div>
+      <div class="field-row">
+        <label class="form-label">水量</label>
+        <div class="slider-container">
+          <input type="range" class="slider" id="waterSlider" min="0" max="1000" step="10" value="300" oninput="updateWaterDisplay()">
+          <div class="slider-label"><span id="waterLabel">300</span> ml</div>
+        </div>
+      </div>
       <div class="water-quick-row">
         <button type="button" class="water-quick-btn" onclick="quickAddWater(100)">+100ml</button>
         <button type="button" class="water-quick-btn" onclick="quickAddWater(250)">+250ml</button>
@@ -1889,6 +1895,11 @@ function selectType(type) {
     document.getElementById('milkSlider').value = 150;
     updateMilkDisplay();
   }
+  // Reset water slider when switching to water
+  if (type === 'water') {
+    document.getElementById('waterSlider').value = 300;
+    updateWaterDisplay();
+  }
 
   // Always update to current time when switching type (only for today)
   if (logDay === currentDay) {
@@ -1909,9 +1920,11 @@ function addEntry() {
 
   let value = 0, note = '';
   
-  // Handle sliders for milk and exercise
+  // Handle sliders for milk, water, and exercise
   if (currentType === 'milk') {
     value = parseInt(document.getElementById('milkSlider').value) || 0;
+  } else if (currentType === 'water') {
+    value = parseInt(document.getElementById('waterSlider').value) || 0;
   } else if (currentType === 'exercise') {
     const selectEl = document.getElementById('exerciseTypeSelect');
     if (!selectEl.value) { showToast('⚠️ 請選擇運動類型！'); return; }
@@ -1934,7 +1947,8 @@ function addEntry() {
   todayData.entries.sort((a,b) => a.time.localeCompare(b.time));
   saveDayData(logDay, todayData);
 
-  document.getElementById(`valInput-${currentType}`).value = '';
+  if (currentType !== 'milk' && currentType !== 'water' && currentType !== 'exercise')
+    document.getElementById(`valInput-${currentType}`).value = '';
   if (currentType === 'eat' || currentType === 'exercise')
     document.getElementById(`noteInput-${currentType}`).value = '';
 
@@ -1947,6 +1961,12 @@ function addEntry() {
 function updateMilkDisplay() {
   const val = document.getElementById('milkSlider').value;
   document.getElementById('milkLabel').textContent = val;
+}
+
+// ── WATER SLIDER ──
+function updateWaterDisplay() {
+  const val = document.getElementById('waterSlider').value;
+  document.getElementById('waterLabel').textContent = val;
 }
 
 // ── EXERCISE TYPE & DURATION SLIDER ──
@@ -2073,9 +2093,9 @@ function compressImage(file) {
         let width = img.width;
         let height = img.height;
         
-        // 如果圖片太寬或太高，縮小到最多 1200px
-        if (width > 1200 || height > 1200) {
-          const ratio = Math.min(1200 / width, 1200 / height);
+        // 提高解析度上限到 1600px，讓 AI 看到更多食物細節
+        if (width > 1600 || height > 1600) {
+          const ratio = Math.min(1600 / width, 1600 / height);
           width = Math.round(width * ratio);
           height = Math.round(height * ratio);
         }
@@ -2085,11 +2105,11 @@ function compressImage(file) {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
         
-        // 壓縮成 JPEG，品質 0.8
+        // 提高壓縮品質到 0.92，盡量保留食物細節
         canvas.toBlob((blob) => {
           console.log('Compressed from', file.size, 'to', blob.size, 'bytes');
           resolve(blob);
-        }, 'image/jpeg', 0.8);
+        }, 'image/jpeg', 0.92);
       };
       img.onerror = () => reject(new Error('圖片加載失敗'));
       img.src = e.target.result;
@@ -2109,8 +2129,8 @@ function fileToBase64(file) {
     
     console.log('Converting file:', file.name, file.type, file.size);
     
-    // 如果檔案超過 5MB，先壓縮
-    const shouldCompress = file.size > 5 * 1024 * 1024;
+    // 如果檔案超過 8MB，先壓縮（提高門檻，盡量保留原始品質）
+    const shouldCompress = file.size > 8 * 1024 * 1024;
     if (shouldCompress) {
       console.log('File too large, compressing...');
       compressImage(file).then(compressedBlob => {
@@ -2177,7 +2197,8 @@ function quickAddWater(ml) {
     const now = new Date();
     timeEl.value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   }
-  document.getElementById('valInput-water').value = ml;
+  document.getElementById('waterSlider').value = ml;
+  updateWaterDisplay();
   addEntry();
 }
 
@@ -2205,7 +2226,17 @@ async function handlePhotoEstimate(event) {
     const base64 = await fileToBase64(file);
     console.log('Step 2: Calling Gemini API...');
     
-    const prompt = '這是一張食物照片。請估算這份食物大約的總熱量（kcal）與簡短名稱。只回傳 JSON，格式為 {"calories": 數字, "food_name": "字串"}，不要有其他文字或 markdown 符號。';
+    const prompt = `你是專業營養師。請仔細分析這張食物照片，依照以下步驟估算熱量：
+
+1. 先辨識照片中所有食物項目（主食、配菜、肉類、醬料、湯品等），逐一列出
+2. 針對每個項目，估算其份量（例如：飯一碗約200g、雞腿一隻約150g）
+3. 根據份量估算每個項目的熱量
+4. 將所有項目熱量加總，得出總熱量
+
+請仔細觀察份量大小（參考餐盤、餐具比例），避免低估或高估。如果有明顯的油、醬汁、勾芡，也要納入熱量計算。
+
+最後只回傳 JSON 格式（不要有其他文字、不要 markdown 符號、不要 \`\`\`）：
+{"calories": 總熱量數字, "food_name": "簡短食物名稱（15字內）"}`;
 
     const resp = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`,
