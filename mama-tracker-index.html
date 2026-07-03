@@ -278,6 +278,13 @@ body::before, body::after { display: none; }
 .photo-est-btn:active { transform: translate(1px,1px); }
 .photo-est-btn.loading { opacity: 0.6; pointer-events: none; }
 .photo-est-hint { font-size: var(--fs-xs); color: var(--text-mid); text-align: center; margin: -4px 0 10px; min-height: 1em; }
+.photo-est-clear-btn {
+  display: block; margin: 0 auto 12px; padding: 6px 16px;
+  background: transparent; border: 1.5px solid var(--text-light); border-radius: 20px;
+  color: var(--text-mid); font-family: 'Nunito', sans-serif; font-size: var(--fs-xs);
+  font-weight: 600; cursor: pointer; transition: all 0.15s;
+}
+.photo-est-clear-btn:hover { background: var(--blush); border-color: var(--rose); color: var(--rose-deep); }
 .photo-est-key-link { margin-top: 8px; font-size: var(--fs-xs); color: var(--text-light); text-align: center; cursor: pointer; text-decoration: underline; }
 .slider-container { display: flex; flex-direction: column; gap: 6px; }
 .slider { width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, #FFD6E0 0%, #FF8FA3 50%, #E05C7A 100%); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
@@ -285,6 +292,11 @@ body::before, body::after { display: none; }
 .slider::-webkit-slider-thumb:active { cursor: grabbing; }
 .slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: white; border: 3px solid var(--rose-deep); cursor: grab; box-shadow: 0 2px 4px rgba(58,42,53,0.15); }
 .slider-label { display: flex; justify-content: space-between; align-items: center; font-size: var(--fs-sm); color: var(--text-mid); font-family: 'Patrick Hand', sans-serif; }
+.exercise-cal-preview {
+  text-align: center; font-size: var(--fs-sm); color: var(--text-mid);
+  background: var(--blush); border-radius: 12px; padding: 10px; margin: 4px 0 12px;
+}
+.exercise-cal-preview strong { color: var(--rose-deep); font-size: 1.1em; }
 .slider-label span { font-size: var(--fs-num); color: var(--rose-deep); font-weight: 800; }
 
 
@@ -1018,9 +1030,14 @@ h3 .hicon svg { width: 22px; height: 22px; }
       <button class="type-btn"                 onclick="selectType('water')"    id="btn-water"><span class="t-emoji"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 C24 6 12 22 12 30 C12 37 17.5 42 24 42 C30.5 42 36 37 36 30 C36 22 24 6 24 6 Z"/><path d="M18 30 Q18 35 23 36" stroke-width="1.6" opacity="0.6"/></svg></span></span>喝水</button>
     </div>
     <div id="fields-eat">
+      <div class="field-row">
+        <label class="form-label">拍照前備註（選填，可修正食材/醬料/份量）</label>
+        <input type="text" class="form-input" id="photoEstNote" placeholder="例：換成柚子醬、沒有麵包丁、手掌大">
+      </div>
       <button type="button" class="photo-est-btn" id="photoEstBtn" onclick="triggerPhotoEstimate()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="14" width="36" height="26" rx="3"/><path d="M17 14 L20 9 L28 9 L31 14"/><circle cx="24" cy="27" r="8"/></svg></span> 拍照估算熱量</button>
       <input type="file" accept="image/*" id="photoEstInput" class="hidden" onchange="handlePhotoEstimate(event)">
       <div class="photo-est-hint" id="photoEstStatus"></div>
+      <button type="button" class="photo-est-clear-btn hidden" id="photoEstClearBtn" onclick="clearPhotoEstimate()">✕ 清除估算結果</button>
       <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-eat"></div>
       <div class="field-row"><label class="form-label">熱量 (kcal)</label><input type="number" class="form-input" id="valInput-eat" placeholder="例：450"></div>
       <div class="field-row"><label class="form-label">食物備註（選填）</label><input type="text" class="form-input" id="noteInput-eat" placeholder="例：雞腿便當"></div>
@@ -1035,6 +1052,7 @@ h3 .hicon svg { width: 22px; height: 22px; }
           <div class="slider-label"><span id="exerciseDurationLabel">30</span> 分鐘</div>
         </div>
       </div>
+      <div class="exercise-cal-preview" id="exerciseCalPreview">選擇運動類型後會顯示預估熱量</div>
     </div>
     <div id="fields-milk" class="hidden">
       <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-milk"></div>
@@ -1191,7 +1209,7 @@ h3 .hicon svg { width: 22px; height: 22px; }
         <label class="form-label">🔑 Gemini API Key（拍照估算熱量用）</label>
         <p style="font-size: 0.8rem; color: var(--text-light); margin: 0 0 8px; line-height: 1.4;">可在 <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--sky-deep); text-decoration: underline;">Google AI Studio</a> 免費申請</p>
         <input type="password" id="apiKeyInput" class="form-input" placeholder="貼上你的 API Key" style="font-family: monospace;">
-        <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 8px;" id="apiKeyStatus">⚠️ 未設定</div>
+        <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 8px;" id="apiKeyStatus">未設定</div>
       </div>
       <div style="display: flex; gap: 8px;">
         <button class="sync-btn download" style="flex: 1;" onclick="saveApiKey()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 25 L20 35 L40 12"/></svg></span> 儲存</button>
@@ -1206,7 +1224,7 @@ h3 .hicon svg { width: 22px; height: 22px; }
     <div class="sync-steps">
       <div class="sync-step"><div class="step-num">1</div><div class="step-text">在舊裝置點「<span class="hicon"><svg style="width:14px;height:14px" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="24" y1="6" x2="24" y2="30"/><path d="M14 20 L24 30 L34 20"/><line x1="10" y1="38" x2="38" y2="38"/></svg></span> 下載備份檔」，儲存 <code>.json</code> 到 iCloud / Google Drive</div></div>
       <div class="sync-step"><div class="step-num">2</div><div class="step-text">在新裝置開啟此頁，點「<span class="hicon"><svg style="width:14px;height:14px" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="24" y1="30" x2="24" y2="6"/><path d="M14 16 L24 6 L34 16"/><line x1="10" y1="38" x2="38" y2="38"/></svg></span> 上傳備份檔」選取同一個檔案</div></div>
-      <div class="sync-step"><div class="step-num">3</div><div class="step-text">資料自動合併，不覆蓋現有記錄 ✅</div></div>
+      <div class="sync-step"><div class="step-num">3</div><div class="step-text">資料自動合併，不覆蓋現有記錄</div></div>
     </div>
     </div>
   </div>
@@ -1382,6 +1400,13 @@ const HICONS = {
 
   heart: `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 40 C24 40 6 28 6 16 C6 9 11 5 17 5 C20.5 5 23 7 24 10 C25 7 27.5 5 31 5 C37 5 42 9 42 16 C42 28 24 40 24 40 Z"/></svg>`,
 };
+
+// 統一圖示輸出：所有 toast / 狀態文字都用同一套手繪風格圖示，不再混用系統 emoji
+function hi(name, size = 16) {
+  const svg = HICONS[name];
+  if (!svg) return '';
+  return `<span class="hicon" style="display:inline-flex;width:${size}px;height:${size}px;vertical-align:-3px">${svg}</span>`;
+}
 // ════════════════════════════════
 //  MAMIFIT — app.js  v6.0
 // ════════════════════════════════
@@ -1443,6 +1468,12 @@ let logDay      = '';
 let historyEditDate = '';
 
 // ── INIT ──
+// 全域錯誤攔截：手機上沒辦法看 Console，出錯時直接跳出來
+window.addEventListener('error', function(e) {
+  console.error('Global error:', e.error || e.message);
+  alert('⚠️ 程式發生錯誤：\n' + (e.message || '未知錯誤') + '\n\n位置：' + (e.filename ? e.filename.split('/').pop() : '') + ' 第 ' + e.lineno + ' 行\n\n請截圖這個訊息回報');
+});
+
 window.onload = () => {
   // Initialize static icons that exist before JS-rendered content
   const noWeightIcon = document.getElementById('noWeightIcon');
@@ -1486,7 +1517,7 @@ function startDayWatcher() {
       if (fastStartEl) fastStartEl.value = toLocalDatetimeInput(new Date());
     }
     tickFastTimer();
-    showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.sunrise}</span> 新的一天開始了！加油媽咪 💪`);
+    showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.sunrise}</span> 新的一天開始了！加油媽咪`);
   }, 30000);
 }
 
@@ -1707,7 +1738,7 @@ function showFastingActiveView(cycle) {
 
 function startFastCycle() {
   const input = document.getElementById('fastStartInput').value;
-  if (!input) { showToast('⚠️ 請選擇開始時間'); return; }
+  if (!input) { showToast(`${hi('warning')} 請選擇開始時間`); return; }
   const startISO = new Date(input).toISOString();
   const cycles = getFastCycles();
   // End any lingering active cycle first
@@ -1721,15 +1752,15 @@ function startFastCycle() {
 
 function stopFastCycle() {
   const input = document.getElementById('fastEndInput').value;
-  if (!input) { showToast('⚠️ 請選擇結束時間'); return; }
+  if (!input) { showToast(`${hi('warning')} 請選擇結束時間`); return; }
   const endISO = new Date(input).toISOString();
   const cycles = getFastCycles();
   const active = cycles.find(c => !c.endISO);
-  if (!active) { showToast('⚠️ 找不到進行中的斷食'); return; }
+  if (!active) { showToast(`${hi('warning')} 找不到進行中的斷食`); return; }
 
   const start = new Date(active.startISO);
   const end   = new Date(endISO);
-  if (end <= start) { showToast('⚠️ 結束時間必須晚於開始時間'); return; }
+  if (end <= start) { showToast(`${hi('warning')} 結束時間必須晚於開始時間`); return; }
 
   active.endISO = endISO;
   saveFastCycles(cycles);
@@ -1741,7 +1772,7 @@ function stopFastCycle() {
   document.getElementById('fastStartInput').value = toLocalDatetimeInput(new Date());
   renderFastingCycles();
   renderMilkFastStats();
-  showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 斷食完成！共 ${hrs.toFixed(1)} 小時 🎉`);
+  showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 斷食完成！共 ${hrs.toFixed(1)} 小時`);
 }
 
 // ── Manually add a past (already-completed) fasting cycle ──
@@ -1774,7 +1805,7 @@ function initPoopCard() {
 
 function addPoopEntry() {
   const time = document.getElementById('poopTimeInput').value;
-  if (!time) { showToast('⚠️ 請填寫時間！'); return; }
+  if (!time) { showToast(`${hi('warning')} 請填寫時間！`); return; }
   const note = document.getElementById('poopNoteInput').value.trim();
 
   const log = getPoopLog();
@@ -1789,7 +1820,7 @@ function addPoopEntry() {
 
   renderPoopToday();
   syncHistoryIfVisible(logDay);
-  showToast('💩 記錄成功！');
+  showToast(`${hi('poop')} 記錄成功！`);
 }
 
 function renderPoopToday() {
@@ -1816,7 +1847,7 @@ function deletePoopEntry(id) {
   const log = getPoopLog().filter(p => p.id !== id);
   savePoopLog(log);
   renderPoopToday();
-  showToast('🗑️ 已刪除');
+  showToast(`${hi('trash')} 已刪除`);
 }
 
 function renderPoopHistory() {
@@ -1872,7 +1903,7 @@ function _doDeletePoopFromHistory(id) {
   savePoopLog(log);
   renderPoopHistory();
   renderPoopToday();
-  showToast('🗑️ 已刪除');
+  showToast(`${hi('trash')} 已刪除`);
 }
 
 // ── TYPE SELECTOR (no 'fast' or 'poop' type) ──
@@ -1912,8 +1943,9 @@ function selectType(type) {
 
 // ── ADD ENTRY ──
 function addEntry() {
+ try {
   const time = document.getElementById(`timeInput-${currentType}`).value;
-  if (!time) { showToast('⚠️ 請填寫時間！'); return; }
+  if (!time) { showToast(`${hi('warning')} 請填寫時間！`); return; }
 
   const labels = { eat:'進食', exercise:'運動', milk:'擠奶', water:'喝水', poop:'便便' };
   const units  = { eat:'kcal', exercise:'kcal', milk:'ml', water:'ml', poop:'' };
@@ -1927,18 +1959,18 @@ function addEntry() {
     value = parseInt(document.getElementById('waterSlider').value) || 0;
   } else if (currentType === 'exercise') {
     const selectEl = document.getElementById('exerciseTypeSelect');
-    if (!selectEl.value) { showToast('⚠️ 請選擇運動類型！'); return; }
+    if (!selectEl.value) { showToast(`${hi('warning')} 請選擇運動類型！`); return; }
     value = parseInt(document.getElementById('exerciseDurationSlider').dataset.calculatedCals) || 0;
-    if (!value) { showToast('⚠️ 請選擇運動類型和時間！'); return; }
+    if (!value) { showToast(`${hi('warning')} 請選擇運動類型和時間！`); return; }
     note = selectedExerciseType || '';
   } else {
     value = parseFloat(document.getElementById(`valInput-${currentType}`).value);
   }
   
   const isEmpty = isNaN(value) || value === '';
-  if (isEmpty) { showToast('⚠️ 請填寫數量！'); return; }
-  if (currentType !== 'eat' && value <= 0) { showToast('⚠️ 請填寫正確數量！'); return; }
-  if (value < 0) { showToast('⚠️ 數值不能是負數！'); return; }
+  if (isEmpty) { showToast(`${hi('warning')} 請填寫數量！`); return; }
+  if (currentType !== 'eat' && value <= 0) { showToast(`${hi('warning')} 請填寫正確數量！`); return; }
+  if (value < 0) { showToast(`${hi('warning')} 數值不能是負數！`); return; }
   if (currentType === 'eat')
     note = document.getElementById(`noteInput-${currentType}`).value.trim();
 
@@ -1949,12 +1981,21 @@ function addEntry() {
 
   if (currentType !== 'milk' && currentType !== 'water' && currentType !== 'exercise')
     document.getElementById(`valInput-${currentType}`).value = '';
-  if (currentType === 'eat' || currentType === 'exercise')
+  if (currentType === 'eat')
     document.getElementById(`noteInput-${currentType}`).value = '';
+  if (currentType === 'eat') {
+    document.getElementById('photoEstStatus').textContent = '';
+    document.getElementById('photoEstClearBtn').classList.add('hidden');
+    document.getElementById('photoEstNote').value = '';
+  }
 
   renderTimeline(); recalculate(); updateDashboard();
   syncHistoryIfVisible(logDay);
   showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 已新增！`);
+ } catch (err) {
+  console.error('addEntry error:', err);
+  alert('新增失敗，發生錯誤：\n' + err.message + '\n\n（請截圖這個訊息回報）');
+ }
 }
 
 // ── MILK SLIDER ──
@@ -1967,6 +2008,16 @@ function updateMilkDisplay() {
 function updateWaterDisplay() {
   const val = document.getElementById('waterSlider').value;
   document.getElementById('waterLabel').textContent = val;
+}
+
+// ── CLEAR PHOTO ESTIMATE RESULT ──
+function clearPhotoEstimate() {
+  document.getElementById('photoEstStatus').textContent = '';
+  document.getElementById('photoEstClearBtn').classList.add('hidden');
+  document.getElementById('valInput-eat').value = '';
+  document.getElementById('noteInput-eat').value = '';
+  document.getElementById('photoEstNote').value = '';
+  showToast(`${hi('trash')} 已清除估算結果`);
 }
 
 // ── EXERCISE TYPE & DURATION SLIDER ──
@@ -1995,10 +2046,12 @@ function initExerciseTypes() {
 function updateExerciseCalories() {
   const selectEl = document.getElementById('exerciseTypeSelect');
   const selectedKey = selectEl.value;
+  const preview = document.getElementById('exerciseCalPreview');
   
   if (!selectedKey) {
     document.getElementById('exerciseDurationLabel').textContent = '30';
     selectedExerciseType = null;
+    if (preview) preview.textContent = '選擇運動類型後會顯示預估熱量';
     return;
   }
   
@@ -2008,6 +2061,8 @@ function updateExerciseCalories() {
   
   const calPerMin = exerciseTypes[selectedKey].calPerMin;
   const totalCal = Math.round(calPerMin * durationMin);
+  
+  if (preview) preview.innerHTML = `${hi('flame')} 預估消耗 <strong>${totalCal}</strong> kcal`;
   
   // Store calculated calories in a data attribute so addEntry can read it
   document.getElementById('exerciseDurationSlider').dataset.calculatedCals = totalCal;
@@ -2020,11 +2075,11 @@ function saveApiKey() {
   const input = document.getElementById('apiKeyInput');
   const key = input.value.trim();
   if (!key) {
-    showToast('⚠️ 請輸入 API Key');
+    showToast(`${hi('warning')} 請輸入 API Key`);
     return;
   }
   localStorage.setItem('mama_gemini_api_key', key);
-  showToast(`✅ API Key 已儲存（${key.slice(0,8)}...）`);
+  showToast(`${hi('check')} API Key 已儲存（${key.slice(0,8)}...）`);
   loadApiKeyStatus();
 }
 
@@ -2032,7 +2087,7 @@ function clearApiKey() {
   if (confirm('確定要刪除 API Key 嗎？')) {
     localStorage.removeItem('mama_gemini_api_key');
     document.getElementById('apiKeyInput').value = '';
-    showToast('🗑️ 已清除 API Key');
+    showToast(`${hi('trash')} 已清除 API Key`);
     loadApiKeyStatus();
   }
 }
@@ -2046,9 +2101,9 @@ function loadApiKeyStatus() {
   }
   if (statusEl) {
     if (key) {
-      statusEl.innerHTML = `✅ 已設定（${key.slice(0,8)}...）`;
+      statusEl.innerHTML = `${hi('check')} 已設定（${key.slice(0,8)}...）`;
     } else {
-      statusEl.innerHTML = '⚠️ 未設定';
+      statusEl.innerHTML = `${hi('warning')} 未設定`;
     }
   }
 }
@@ -2069,14 +2124,14 @@ function setGeminiApiKey() {
   const key = prompt(msg, current || '');
   if (key === null) return; // cancelled
   localStorage.setItem('mama_gemini_api_key', key.trim());
-  showToast(key.trim() ? `✅ API Key 已儲存（${key.trim().slice(0,8)}...）` : '🗑️ 已清除 API Key');
+  showToast(key.trim() ? `${hi('check')} API Key 已儲存（${key.trim().slice(0,8)}...）` : `${hi('trash')} 已清除 API Key`);
   loadApiKeyStatus();
 }
 
 function triggerPhotoEstimate() {
   const key = getGeminiApiKey();
   if (!key) {
-    showToast('⚠️ 請先設定 Gemini API Key（去「同步」頁面設定）');
+    showToast(`${hi('warning')} 請先設定 Gemini API Key（去「同步」頁面設定）`);
     return;
   }
   document.getElementById('photoEstInput').click();
@@ -2209,34 +2264,39 @@ async function handlePhotoEstimate(event) {
 
   // 檔案大小檢查（超過 20MB 會有問題）
   if (file.size > 20 * 1024 * 1024) {
-    showToast('⚠️ 圖片太大（超過 20MB），請選更小的檔案');
+    showToast(`${hi('warning')} 圖片太大（超過 20MB），請選更小的檔案`);
     return;
   }
 
   const key = getGeminiApiKey();
-  if (!key) { showToast('⚠️ 請先設定 Gemini API Key'); return; }
+  if (!key) { showToast(`${hi('warning')} 請先設定 Gemini API Key`); return; }
 
   const btn = document.getElementById('photoEstBtn');
   const status = document.getElementById('photoEstStatus');
   btn.classList.add('loading');
-  status.textContent = '🔍 估算中，請稍候…';
+  status.innerHTML = `${hi('search')} 估算中，請稍候…`;
 
   try {
     console.log('Step 1: Converting file to base64...');
     const base64 = await fileToBase64(file);
     console.log('Step 2: Calling Gemini API...');
     
-    const prompt = `你是專業營養師。請仔細分析這張食物照片，依照以下步驟估算熱量：
+    const userNote = (document.getElementById('photoEstNote').value || '').trim();
+    const noteBlock = userNote
+      ? `\n\n【使用者備註（非常重要，請優先採用）】\n使用者提供了以下食材/份量說明：「${userNote}」\n如果這則備註提到了食材置換、醬料不同、份量大小等資訊，請務必以使用者的文字說明為準去修正你的視覺判斷，扣除不存在的傳統配料、換成備註中提到的實際醬料/食材，不要被食物「外觀看起來像什麼」誤導。\n`
+      : '';
 
-1. 先辨識照片中所有食物項目（主食、配菜、肉類、醬料、湯品等），逐一列出
-2. 針對每個項目，估算其份量（例如：飯一碗約200g、雞腿一隻約150g）
-3. 根據份量估算每個項目的熱量
+    const prompt = `你是一個專業的營養師，請仔細辨識照片中的食物，以「台灣常見的食材與份量」進行精準的熱量估算。如果有不確定的食材，請以最合理的常規份量計算，不要過度高估。${noteBlock}
+請依照以下步驟：
+1. 先仔細辨識照片中每一項食物是什麼（主食、配菜、肉類/魚類、醬料、湯品等），不要猜測不存在的食材
+2. 針對每個項目，用台灣常見份量估算重量（例如：飯一碗約200g、雞腿一隻約150g、魚一片約120g）
+3. 根據份量與台灣常見烹調方式（煎、炸、滷、清蒸等）估算每個項目的熱量。若使用者備註提到食材置換（例如換成柚子醬、去掉麵包丁等），請依照備註調整，不要照傳統標準配方硬套
 4. 將所有項目熱量加總，得出總熱量
 
-請仔細觀察份量大小（參考餐盤、餐具比例），避免低估或高估。如果有明顯的油、醬汁、勾芡，也要納入熱量計算。
+請仔細觀察顏色、油亮程度、烹調痕跡來判斷烹調方式（例如：清蒸魚 vs 油炸排骨熱量差很多），避免因為顏色深或油亮就誤判成油炸類。
 
-最後只回傳 JSON 格式（不要有其他文字、不要 markdown 符號、不要 \`\`\`）：
-{"calories": 總熱量數字, "food_name": "簡短食物名稱（15字內）"}`;
+只回傳 JSON 格式（不要有其他文字、不要 markdown 符號、不要 \`\`\`）：
+{"calories": 總熱量數字, "food_name": "簡短食物名稱（15字內）", "items": ["辨識出的食物項目1（含估計份量與熱量）", "食物項目2", "..."]}`;
 
     const resp = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`,
@@ -2276,9 +2336,10 @@ async function handlePhotoEstimate(event) {
     const parsed = JSON.parse(jsonMatch[0]);
     const calories = Math.round(Number(parsed.calories));
     const foodName = String(parsed.food_name || '').trim();
+    const items = Array.isArray(parsed.items) ? parsed.items : [];
     if (!calories || isNaN(calories)) throw new Error('無法解析熱量數字');
 
-    console.log('Step 5: Success! Calories:', calories, 'Food:', foodName);
+    console.log('Step 5: Success! Calories:', calories, 'Food:', foodName, 'Items:', items);
     selectType('eat');
     document.getElementById('valInput-eat').value = calories;
     if (foodName) document.getElementById('noteInput-eat').value = foodName;
@@ -2286,11 +2347,18 @@ async function handlePhotoEstimate(event) {
       const now = new Date();
       document.getElementById('timeInput-eat').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
     }
-    status.textContent = `✅ 估算完成：${foodName ? foodName + ' ' : ''}約 ${calories} kcal，確認無誤後請按「新增到日誌」`;
-    showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 估算完成！請確認後送出`);
+    const itemsHtml = items.length 
+      ? `<div style="margin-top:6px;font-size:0.8rem;color:var(--text-mid);text-align:left">AI 辨識出：<br>${items.map(i => '• ' + i).join('<br>')}</div>`
+      : '';
+    const noteAppliedHtml = userNote
+      ? `<div style="margin-top:6px;font-size:0.8rem;color:var(--rose-deep);text-align:left">${hi('check',13)} 已套用你的備註：「${userNote}」</div>`
+      : '';
+    status.innerHTML = `${hi('check')} 估算完成：${foodName ? foodName + ' ' : ''}約 ${calories} kcal${itemsHtml}${noteAppliedHtml}<div style="margin-top:6px;font-weight:600">請核對上方辨識結果，確認無誤後按「新增到日誌」</div>`;
+    document.getElementById('photoEstClearBtn').classList.remove('hidden');
+    showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 估算完成！請核對辨識結果後送出`);
   } catch (err) {
     status.textContent = '';
-    const errorMsg = '⚠️ 估算失敗：' + err.message;
+    const errorMsg = `${hi('warning')} 估算失敗：` + err.message;
     showToast(errorMsg);
     console.error('Photo estimate error:', err);
   } finally {
@@ -2319,7 +2387,7 @@ function renderTimeline() {
   tl.innerHTML = entries.map(e => {
     const val = `${e.value.toLocaleString()} ${e.unit}${e.note?' · '+e.note:''}`;
     const sub = e.type==='milk'     ? `（消耗 ${Math.round(e.value*0.8)} kcal）` :
-                e.type==='exercise' ? `（燃燒 ${e.value} kcal 🔥）` : '';
+                e.type==='exercise' ? `（燃燒 ${e.value} kcal ${hi('flame',13)}）` : '';
     return `<div class="timeline-item">
       <div class="tl-time">${e.time}</div>
       <div class="tl-dot ${e.type}">${getIcon(e.type)}</div>
@@ -2365,7 +2433,7 @@ function _doDeleteEntry(id) {
   saveDayData(logDay, todayData);
   renderTimeline(); recalculate(); updateDashboard();
   syncHistoryIfVisible(logDay);
-  showToast('🗑️ 已刪除');
+  showToast(`${hi('trash')} 已刪除`);
 }
 function _doDeleteHistEntry(id) {
   if (!historyEditDate) return;
@@ -2374,7 +2442,7 @@ function _doDeleteHistEntry(id) {
   saveDayData(historyEditDate, data);
   if (historyEditDate === logDay) { todayData = data; renderTimeline(); recalculate(); updateDashboard(); }
   loadHistoryDay();
-  showToast('🗑️ 已刪除');
+  showToast(`${hi('trash')} 已刪除`);
 }
 
 // ── EDIT ──
@@ -2409,10 +2477,10 @@ function saveEdit() {
   if (!data) return;
   const e = data.entries.find(x => x.id === id); if (!e) return;
   const newTime = document.getElementById('editTime').value;
-  if (!newTime) { showToast('⚠️ 請填寫時間'); return; }
+  if (!newTime) { showToast(`${hi('warning')} 請填寫時間`); return; }
   e.time = newTime;
   const newVal = parseFloat(document.getElementById('editValue').value);
-  if (isNaN(newVal) || (e.type !== 'eat' && newVal <= 0)) { showToast('⚠️ 請填寫正確數值'); return; }
+  if (isNaN(newVal) || (e.type !== 'eat' && newVal <= 0)) { showToast(`${hi('warning')} 請填寫正確數值`); return; }
   e.value = newVal;
   if (e.type === 'eat' || e.type === 'exercise') e.note = document.getElementById('editNote').value.trim();
   data.entries.sort((a,b) => a.time.localeCompare(b.time));
@@ -2589,7 +2657,7 @@ function renderEmojiCalendar() {
   const cal = document.getElementById('emojiCalendar');
   const recorded = getAllDates();
   if (!recorded.length) {
-    cal.innerHTML = '<div style="font-size:0.8rem;color:var(--text-light);padding:10px">還沒有歷史記錄 🌱</div>';
+    cal.innerHTML = `<div style="font-size:0.8rem;color:var(--text-light);padding:10px">${hi('sparkle',13)} 還沒有歷史記錄</div>`;
     return;
   }
 
@@ -2647,7 +2715,7 @@ function _doDeleteDay(dateStr) {
   document.getElementById('historyDayCard').classList.add('hidden');
   document.getElementById('historyDayEmpty').classList.remove('hidden');
   renderHistory();
-  showToast(`🗑️ 已刪除 ${dateStr} 的所有紀錄`);
+  showToast(`${hi('trash')} 已刪除 ${dateStr} 的所有紀錄`);
 }
 
 // ── WEIGHT DOT CHART ──
@@ -2792,13 +2860,13 @@ function cancelEditFastCycle() {
 function saveEditedFastCycle(originalStartISO) {
   const startVal = document.getElementById('editFastStart').value;
   const endVal   = document.getElementById('editFastEnd').value;
-  if (!startVal || !endVal) { showToast('⚠️ 請填寫開始與結束時間'); return; }
+  if (!startVal || !endVal) { showToast(`${hi('warning')} 請填寫開始與結束時間`); return; }
   const start = new Date(startVal), end = new Date(endVal);
-  if (end <= start) { showToast('⚠️ 結束時間必須晚於開始時間'); return; }
+  if (end <= start) { showToast(`${hi('warning')} 結束時間必須晚於開始時間`); return; }
 
   const cycles = getFastCycles();
   const target = cycles.find(c => c.startISO === originalStartISO);
-  if (!target) { showToast('⚠️ 找不到這筆紀錄'); return; }
+  if (!target) { showToast(`${hi('warning')} 找不到這筆紀錄`); return; }
   target.startISO = start.toISOString();
   target.endISO   = end.toISOString();
   saveFastCycles(cycles);
@@ -2806,7 +2874,7 @@ function saveEditedFastCycle(originalStartISO) {
   editingFastCycleId = null;
   renderFastingCycles();
   renderMilkFastStats();
-  showToast('✅ 已更新這筆斷食紀錄');
+  showToast(`${hi('check')} 已更新這筆斷食紀錄`);
 }
 
 function getDeleteIconHtml() {
@@ -2822,7 +2890,7 @@ function _doDeleteFastCycle(startISO) {
   saveFastCycles(cycles);
   renderFastingCycles();
   renderMilkFastStats();
-  showToast('🗑️ 已刪除這筆斷食紀錄');
+  showToast(`${hi('trash')} 已刪除這筆斷食紀錄`);
 }
 
 function renderMilkFastStats() {
@@ -2861,7 +2929,7 @@ function downloadBackup() {
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url; a.download=`MAMIFIT備份_${currentDay}.json`; a.click();
   URL.revokeObjectURL(url);
-  showToast('📥 備份已下載！');
+  showToast(`${hi('download')} 備份已下載！`);
 }
 
 function uploadBackup(event) {
@@ -2904,8 +2972,8 @@ function uploadBackup(event) {
         todayData = existingToday;
       }
       recalculate(); renderTimeline(); updateDashboard(); updateSyncStats(); initFastingCard();
-      showToast(`✅ 合併完成！新增 ${merged} 天，略過 ${skipped} 天`);
-    } catch(err){showToast('❌ 檔案格式錯誤');}
+      showToast(`${hi('check')} 合併完成！新增 ${merged} 天，略過 ${skipped} 天`);
+    } catch(err){showToast(`${hi('warning')} 檔案格式錯誤`);}
   };
   reader.readAsText(file); event.target.value='';
 }
@@ -2921,7 +2989,7 @@ function confirmClear() {
   if(fastTimerInterval){clearInterval(fastTimerInterval);fastTimerInterval=null;}
   recalculate(); renderTimeline(); updateDashboard(); updateSyncStats(); initFastingCard();
   document.getElementById('confirmOverlay').classList.add('hidden');
-  showToast('🗑️ 資料已清除');
+  showToast(`${hi('trash')} 資料已清除`);
 }
 document.getElementById('confirmOverlay').addEventListener('click',function(ev){if(ev.target===this)this.classList.add('hidden');});
 
@@ -2930,7 +2998,7 @@ function exportExcel() {
   let dates=getAllDates();
   if(from) dates=dates.filter(d=>d>=from);
   if(to)   dates=dates.filter(d=>d<=to);
-  if(!dates.length){showToast('⚠️ 無資料');return;}
+  if(!dates.length){showToast(`${hi('warning')} 無資料`);return;}
 
   const summaryRows=[['日期','體重(kg)','攝取kcal','總消耗kcal','赤字kcal','飲水ml','水目標ml','水分%','奶量ml','奶量消耗kcal','運動消耗kcal','表現']];
   const detailRows=[['日期','時間','類型','數值','單位','備註']];
@@ -2973,14 +3041,14 @@ function exportExcel() {
     XLSX.utils.book_append_sheet(wb,ws2,'詳細紀錄');
     XLSX.utils.book_append_sheet(wb,ws3,'斷食週期');
     XLSX.writeFile(wb,`MAMIFIT_${currentDay}.xlsx`);
-    showToast('📊 Excel 已下載！');
+    showToast(`${hi('chart')} Excel 已下載！`);
   });
 }
 function loadSheetJS(cb) {
   if(typeof XLSX!=='undefined'){cb();return;}
   const s=document.createElement('script');
   s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-  s.onload=cb; s.onerror=()=>showToast('❌ 無法載入 Excel 函式庫');
+  s.onload=cb; s.onerror=()=>showToast(`${hi('warning')} 無法載入 Excel 函式庫`);
   document.head.appendChild(s);
 }
 
@@ -3062,7 +3130,7 @@ if ('serviceWorker' in navigator) {
 function showUpdateBanner() {
   const banner = document.createElement('div');
   banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#E05C7A;color:white;text-align:center;padding:12px;z-index:9999;font-family:Nunito,sans-serif;font-weight:800;font-size:0.85rem;';
-  banner.innerHTML = '🎉 有新版本！點此更新 <button onclick="window.location.reload()" style="margin-left:8px;background:white;color:#E05C7A;border:none;border-radius:8px;padding:4px 12px;font-weight:800;cursor:pointer;">立即更新</button>';
+  banner.innerHTML = `${hi('sparkle',15)} 有新版本！點此更新 <button onclick="window.location.reload()" style="margin-left:8px;background:white;color:#E05C7A;border:none;border-radius:8px;padding:4px 12px;font-weight:800;cursor:pointer;">立即更新</button>`;
   document.body.prepend(banner);
 }
 </script>
