@@ -141,6 +141,18 @@ body::before, body::after { display: none; }
 }
 .date-nav-btn:hover  { background: var(--rose); color: white; }
 .date-nav-btn:disabled { opacity: 0.25; cursor: default; }
+.header-right { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.settings-btn { background: transparent; border: none; color: var(--text-mid); cursor: pointer; padding: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: color 0.2s; }
+.settings-btn:hover { color: var(--rose-deep); }
+.settings-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(58,42,53,0.6); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 16px; }
+.settings-modal-content { background: white; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 8px 24px rgba(58,42,53,0.2); overflow: hidden; }
+.settings-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #F0E8EC; }
+.settings-modal-header h2 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin: 0; }
+.settings-modal-close { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--text-light); padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+.settings-modal-body { padding: 16px; }
+.settings-section { margin-bottom: 16px; }
+.settings-section h3 { font-size: 0.95rem; font-weight: 700; color: var(--text-dark); margin: 0 0 8px; }
+.settings-hint { font-size: 0.8rem; color: var(--text-light); margin: 0 0 10px; line-height: 1.5; }
 .not-today-banner {
   margin-top: 6px;
   background: var(--butter); border: 1.5px solid var(--amber);
@@ -259,11 +271,22 @@ body::before, body::after { display: none; }
 .fast-running-lbl { font-size: var(--fs-sm); font-weight: 700; color: #1A6B55; font-family: 'Nunito', sans-serif; }
 .fast-running-val { font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-lg); color: var(--mint-deep); }
 .fast-running-timer { font-size: var(--fs-num) !important; color: #1A6B55 !important; }
-.fast-manual-toggle { margin-top: 12px; font-size: var(--fs-sm); font-weight: 700; color: var(--mint-deep); text-align: center; cursor: pointer; text-decoration: underline; font-family: 'Nunito', sans-serif; }
-.fast-manual-form { margin-top: 10px; padding-top: 10px; border-top: 1.5px dashed rgba(61,191,160,0.25); }
 .water-quick-row { display: flex; gap: 8px; margin: 4px 0 14px; }
 .water-quick-btn { flex: 1; padding: 8px 4px; border-radius: 10px; border: 2px solid var(--sky-deep); background: var(--sky); color: var(--sky-deep); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: var(--fs-sm); cursor: pointer; }
 .water-quick-btn:active { transform: translate(1px,1px); }
+.photo-est-btn { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 12px; border: 2px solid var(--rose-deep); background: var(--blush); color: var(--rose-deep); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: var(--fs-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.photo-est-btn:active { transform: translate(1px,1px); }
+.photo-est-btn.loading { opacity: 0.6; pointer-events: none; }
+.photo-est-hint { font-size: var(--fs-xs); color: var(--text-mid); text-align: center; margin: -4px 0 10px; min-height: 1em; }
+.photo-est-key-link { margin-top: 8px; font-size: var(--fs-xs); color: var(--text-light); text-align: center; cursor: pointer; text-decoration: underline; }
+.slider-container { display: flex; flex-direction: column; gap: 6px; }
+.slider { width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, #FFD6E0 0%, #FF8FA3 50%, #E05C7A 100%); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
+.slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: white; border: 3px solid var(--rose-deep); cursor: grab; box-shadow: 0 2px 4px rgba(58,42,53,0.15); }
+.slider::-webkit-slider-thumb:active { cursor: grabbing; }
+.slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: white; border: 3px solid var(--rose-deep); cursor: grab; box-shadow: 0 2px 4px rgba(58,42,53,0.15); }
+.slider-label { display: flex; justify-content: space-between; align-items: center; font-size: var(--fs-sm); color: var(--text-mid); font-family: 'Patrick Hand', sans-serif; }
+.slider-label span { font-size: var(--fs-num); color: var(--rose-deep); font-weight: 800; }
+
 
 /* ── TYPE SELECTOR ── */
 .type-selector { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; }
@@ -832,10 +855,14 @@ h3 .hicon svg { width: 22px; height: 22px; }
   <div class="header">
     
     <h1 class="app-title">MAMIFIT</h1>
-    <div class="date-nav">
-      <button class="date-nav-btn" onclick="shiftLogDay(-1)">‹</button>
-      <div class="date-badge" id="dateBadge"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="10" width="32" height="30" rx="3"/><line x1="8" y1="18" x2="40" y2="18"/><line x1="15" y1="6" x2="15" y2="13"/><line x1="33" y1="6" x2="33" y2="13"/><circle cx="17" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="24" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="31" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="17" cy="32" r="1.6" fill="currentColor" stroke="none"/></svg></span> 載入中...</div>
-      <button class="date-nav-btn" onclick="shiftLogDay(1)" id="dateNavNext">›</button>
+    <div style="text-align: center; padding: 8px 16px;">
+    </div>
+    <div class="header-right">
+      <div class="date-nav">
+        <button class="date-nav-btn" onclick="shiftLogDay(-1)">‹</button>
+        <div class="date-badge" id="dateBadge"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="10" width="32" height="30" rx="3"/><line x1="8" y1="18" x2="40" y2="18"/><line x1="15" y1="6" x2="15" y2="13"/><line x1="33" y1="6" x2="33" y2="13"/><circle cx="17" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="24" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="31" cy="25" r="1.6" fill="currentColor" stroke="none"/><circle cx="17" cy="32" r="1.6" fill="currentColor" stroke="none"/></svg></span> 載入中...</div>
+        <button class="date-nav-btn" onclick="shiftLogDay(1)" id="dateNavNext">›</button>
+      </div>
     </div>
     <div style="height:10px"></div>
     <div id="notTodayBanner" class="not-today-banner hidden">
@@ -958,20 +985,6 @@ h3 .hicon svg { width: 22px; height: 22px; }
       </div>
       <button class="fast-stop-btn" onclick="stopFastCycle()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 25 L20 35 L40 12"/></svg></span> 結束斷食</button>
     </div>
-
-    <div class="fast-manual-toggle" onclick="toggleManualFastForm()" id="fastManualToggleBtn">✏️ 補登過去的斷食紀錄</div>
-    <div id="fastManualForm" class="fast-manual-form hidden">
-      <p class="fasting-hint">忘記記錄的斷食可以在這裡補登，不會影響目前進行中的斷食</p>
-      <div class="field-row" style="margin-bottom:8px">
-        <label class="form-label">開始時間</label>
-        <input type="datetime-local" class="form-input" id="manualFastStart">
-      </div>
-      <div class="field-row" style="margin-bottom:8px">
-        <label class="form-label">結束時間</label>
-        <input type="datetime-local" class="form-input" id="manualFastEnd">
-      </div>
-      <button class="fast-start-btn" onclick="addManualFastCycle()">＋ 補登這筆紀錄</button>
-    </div>
     </div>
   </div>
 
@@ -1005,18 +1018,33 @@ h3 .hicon svg { width: 22px; height: 22px; }
       <button class="type-btn"                 onclick="selectType('water')"    id="btn-water"><span class="t-emoji"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 C24 6 12 22 12 30 C12 37 17.5 42 24 42 C30.5 42 36 37 36 30 C36 22 24 6 24 6 Z"/><path d="M18 30 Q18 35 23 36" stroke-width="1.6" opacity="0.6"/></svg></span></span>喝水</button>
     </div>
     <div id="fields-eat">
+      <button type="button" class="photo-est-btn" id="photoEstBtn" onclick="triggerPhotoEstimate()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="14" width="36" height="26" rx="3"/><path d="M17 14 L20 9 L28 9 L31 14"/><circle cx="24" cy="27" r="8"/></svg></span> 拍照估算熱量</button>
+      <input type="file" accept="image/*" id="photoEstInput" class="hidden" onchange="handlePhotoEstimate(event)">
+      <div class="photo-est-hint" id="photoEstStatus"></div>
       <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-eat"></div>
       <div class="field-row"><label class="form-label">熱量 (kcal)</label><input type="number" class="form-input" id="valInput-eat" placeholder="例：450"></div>
       <div class="field-row"><label class="form-label">食物備註（選填）</label><input type="text" class="form-input" id="noteInput-eat" placeholder="例：雞腿便當"></div>
     </div>
     <div id="fields-exercise" class="hidden">
       <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-exercise"></div>
-      <div class="field-row"><label class="form-label">消耗熱量 (kcal)</label><input type="number" class="form-input" id="valInput-exercise" placeholder="例：200"></div>
-      <div class="field-row"><label class="form-label">運動類型（選填）</label><input type="text" class="form-input" id="noteInput-exercise" placeholder="例：慢跑 30 分鐘"></div>
+      <div class="field-row"><label class="form-label">運動類型</label><select class="form-input" id="exerciseTypeSelect" onchange="updateExerciseCalories()"><option value="">— 選擇運動</option></select></div>
+      <div class="field-row">
+        <label class="form-label">運動時間</label>
+        <div class="slider-container">
+          <input type="range" class="slider" id="exerciseDurationSlider" min="5" max="120" step="5" value="30" oninput="updateExerciseCalories()">
+          <div class="slider-label"><span id="exerciseDurationLabel">30</span> 分鐘</div>
+        </div>
+      </div>
     </div>
     <div id="fields-milk" class="hidden">
       <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-milk"></div>
-      <div class="field-row"><label class="form-label">奶量 (ml)</label><input type="number" class="form-input" id="valInput-milk" placeholder="例：180"></div>
+      <div class="field-row">
+        <label class="form-label">奶量</label>
+        <div class="slider-container">
+          <input type="range" class="slider" id="milkSlider" min="0" max="300" step="10" value="150" oninput="updateMilkDisplay()">
+          <div class="slider-label"><span id="milkLabel">150</span> ml</div>
+        </div>
+      </div>
     </div>
     <div id="fields-water" class="hidden">
       <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-water"></div>
@@ -1148,6 +1176,24 @@ h3 .hicon svg { width: 22px; height: 22px; }
     
     <h1>資料同步</h1>
   </div>
+  
+  <!-- SETTINGS CARD -->
+  <div class="card" id="card-settings" style="background: linear-gradient(135deg, #D6EEFF, #BFE0FF); border-color: rgba(78,168,222,0.25);">
+    <div class="card-title collapsible" onclick="toggleCard('card-settings')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="6"/><path d="M24 8 L28 14 L32 12 L30 18 L36 20 L30 22 L32 28 L28 26 L24 32 L20 26 L16 28 L18 22 L12 20 L18 18 L16 12 L20 14 Z"/></svg></span> 設定</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
+    <div class="card-body">
+      <div class="field-row">
+        <label class="form-label">🔑 Gemini API Key（拍照估算熱量用）</label>
+        <p style="font-size: 0.8rem; color: var(--text-light); margin: 0 0 8px; line-height: 1.4;">可在 <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--sky-deep); text-decoration: underline;">Google AI Studio</a> 免費申請</p>
+        <input type="password" id="apiKeyInput" class="form-input" placeholder="貼上你的 API Key" style="font-family: monospace;">
+        <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 8px;" id="apiKeyStatus">⚠️ 未設定</div>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="sync-btn download" style="flex: 1;" onclick="saveApiKey()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 25 L20 35 L40 12"/></svg></span> 儲存</button>
+        <button class="sync-btn danger" style="flex: 1;" onclick="clearApiKey()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14 L38 14"/><path d="M18 14 L18 8 L30 8 L30 14"/><path d="M14 14 L16 40 Q16 42 18 42 L30 42 Q32 42 32 40 L34 14"/><line x1="20" y1="20" x2="20" y2="35"/><line x1="28" y1="20" x2="28" y2="35"/></svg></span> 清除</button>
+      </div>
+    </div>
+  </div>
+  
   <div class="card info-card" id="card-syncinfo">
     <div class="card-title collapsible" onclick="toggleCard('card-syncinfo')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 C16 6 12 12 12 19 C12 24 14.5 27 17 30 L17 34 L31 34 L31 30 C33.5 27 36 24 36 19 C36 12 32 6 24 6 Z"/><line x1="19" y1="40" x2="29" y2="40"/><line x1="20" y1="44" x2="28" y2="44"/></svg></span> 跨裝置同步說明</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
     <div class="card-body">
@@ -1260,6 +1306,7 @@ h3 .hicon svg { width: 22px; height: 22px; }
 </div>
 
 <div class="toast hidden" id="toast"></div>
+
 <script>
 // Hand-drawn line icon set — all rose-deep colored (#E05C7A)
 // Usage: <span class="hicon">{{ICON_HTML}}</span>
@@ -1416,6 +1463,7 @@ window.onload = () => {
   loadHistoryDefault();
   updateSyncStats();
   restoreCollapsedCards();
+  loadApiKeyStatus();
 };
 
 // ── DAY WATCHER ──
@@ -1693,40 +1741,6 @@ function stopFastCycle() {
 // ── Manually add a past (already-completed) fasting cycle ──
 // Lets the user backfill a forgotten fast without touching any
 // currently-active cycle, and refreshes the history list immediately.
-function toggleManualFastForm() {
-  const form = document.getElementById('fastManualForm');
-  const isHidden = form.classList.contains('hidden');
-  if (isHidden) {
-    const now = new Date();
-    const startDefault = new Date(now.getTime() - 16 * 3600000); // default: 16h ago
-    document.getElementById('manualFastStart').value = toLocalDatetimeInput(startDefault);
-    document.getElementById('manualFastEnd').value   = toLocalDatetimeInput(now);
-  }
-  form.classList.toggle('hidden');
-  document.getElementById('fastManualToggleBtn').textContent = isHidden ? '✖️ 收合補登表單' : '✏️ 補登過去的斷食紀錄';
-}
-
-function addManualFastCycle() {
-  const startVal = document.getElementById('manualFastStart').value;
-  const endVal   = document.getElementById('manualFastEnd').value;
-  if (!startVal || !endVal) { showToast('⚠️ 請填寫開始與結束時間'); return; }
-
-  const start = new Date(startVal);
-  const end   = new Date(endVal);
-  if (end <= start) { showToast('⚠️ 結束時間必須晚於開始時間'); return; }
-
-  const cycles = getFastCycles();
-  cycles.push({ startISO: start.toISOString(), endISO: end.toISOString() });
-  cycles.sort((a, b) => new Date(a.startISO) - new Date(b.startISO));
-  saveFastCycles(cycles);
-
-  renderFastingCycles();
-  renderMilkFastStats();
-  toggleManualFastForm(); // collapse the form back down
-  const hrs = (end - start) / 3600000;
-  showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 已補登斷食紀錄！共 ${hrs.toFixed(1)} 小時`);
-}
-
 function launchFastTimer() {
   if (fastTimerInterval) clearInterval(fastTimerInterval);
   tickFastTimer();
@@ -1866,6 +1880,16 @@ function selectType(type) {
   document.getElementById(`btn-${type}`).classList.add(typeClasses[type]);
   document.getElementById(`fields-${type}`).classList.remove('hidden');
 
+  // Initialize exercise types when switching to exercise
+  if (type === 'exercise') {
+    initExerciseTypes();
+  }
+  // Reset milk slider when switching to milk
+  if (type === 'milk') {
+    document.getElementById('milkSlider').value = 150;
+    updateMilkDisplay();
+  }
+
   // Always update to current time when switching type (only for today)
   if (logDay === currentDay) {
     const now = new Date();
@@ -1884,12 +1908,25 @@ function addEntry() {
   const units  = { eat:'kcal', exercise:'kcal', milk:'ml', water:'ml', poop:'' };
 
   let value = 0, note = '';
-  value = parseFloat(document.getElementById(`valInput-${currentType}`).value);
-  const isEmpty = isNaN(value) || document.getElementById(`valInput-${currentType}`).value === '';
+  
+  // Handle sliders for milk and exercise
+  if (currentType === 'milk') {
+    value = parseInt(document.getElementById('milkSlider').value) || 0;
+  } else if (currentType === 'exercise') {
+    const selectEl = document.getElementById('exerciseTypeSelect');
+    if (!selectEl.value) { showToast('⚠️ 請選擇運動類型！'); return; }
+    value = parseInt(document.getElementById('exerciseDurationSlider').dataset.calculatedCals) || 0;
+    if (!value) { showToast('⚠️ 請選擇運動類型和時間！'); return; }
+    note = selectedExerciseType || '';
+  } else {
+    value = parseFloat(document.getElementById(`valInput-${currentType}`).value);
+  }
+  
+  const isEmpty = isNaN(value) || value === '';
   if (isEmpty) { showToast('⚠️ 請填寫數量！'); return; }
   if (currentType !== 'eat' && value <= 0) { showToast('⚠️ 請填寫正確數量！'); return; }
   if (value < 0) { showToast('⚠️ 數值不能是負數！'); return; }
-  if (currentType === 'eat' || currentType === 'exercise')
+  if (currentType === 'eat')
     note = document.getElementById(`noteInput-${currentType}`).value.trim();
 
   todayData.entries.push({ id:Date.now(), type:currentType, time, value, note,
@@ -1906,6 +1943,232 @@ function addEntry() {
   showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 已新增！`);
 }
 
+// ── MILK SLIDER ──
+function updateMilkDisplay() {
+  const val = document.getElementById('milkSlider').value;
+  document.getElementById('milkLabel').textContent = val;
+}
+
+// ── EXERCISE TYPE & DURATION SLIDER ──
+let selectedExerciseType = null;
+const exerciseTypes = {
+  'walk': { label: '散步', calPerMin: 1.3 },
+  'fastWalk': { label: '快走', calPerMin: 3.0 },
+  'yoga': { label: '瑜伽', calPerMin: 2.7 },
+  'jog': { label: '慢跑', calPerMin: 5.0 },
+  'run': { label: '跑步', calPerMin: 8.3 },
+  'jump': { label: '跳繩', calPerMin: 8.0 },
+  'cycling': { label: '騎車', calPerMin: 5.0 },
+  'hiit': { label: 'HIIT', calPerMin: 10.0 }
+};
+
+function initExerciseTypes() {
+  const select = document.getElementById('exerciseTypeSelect');
+  select.innerHTML = '<option value="">— 選擇運動</option>' + 
+    Object.entries(exerciseTypes).map(([key, info]) => 
+      `<option value="${key}">${info.label}</option>`
+    ).join('');
+  selectedExerciseType = null;
+  updateExerciseCalories();
+}
+
+function updateExerciseCalories() {
+  const selectEl = document.getElementById('exerciseTypeSelect');
+  const selectedKey = selectEl.value;
+  
+  if (!selectedKey) {
+    document.getElementById('exerciseDurationLabel').textContent = '30';
+    selectedExerciseType = null;
+    return;
+  }
+  
+  selectedExerciseType = exerciseTypes[selectedKey].label;
+  const durationMin = parseInt(document.getElementById('exerciseDurationSlider').value) || 30;
+  document.getElementById('exerciseDurationLabel').textContent = durationMin;
+  
+  const calPerMin = exerciseTypes[selectedKey].calPerMin;
+  const totalCal = Math.round(calPerMin * durationMin);
+  
+  // Store calculated calories in a data attribute so addEntry can read it
+  document.getElementById('exerciseDurationSlider').dataset.calculatedCals = totalCal;
+}
+
+// ══════════════════════════════════
+//  SETTINGS (in sync tab)
+// ══════════════════════════════════
+function saveApiKey() {
+  const input = document.getElementById('apiKeyInput');
+  const key = input.value.trim();
+  if (!key) {
+    showToast('⚠️ 請輸入 API Key');
+    return;
+  }
+  localStorage.setItem('mama_gemini_api_key', key);
+  showToast(`✅ API Key 已儲存（${key.slice(0,8)}...）`);
+  loadApiKeyStatus();
+}
+
+function clearApiKey() {
+  if (confirm('確定要刪除 API Key 嗎？')) {
+    localStorage.removeItem('mama_gemini_api_key');
+    document.getElementById('apiKeyInput').value = '';
+    showToast('🗑️ 已清除 API Key');
+    loadApiKeyStatus();
+  }
+}
+
+function loadApiKeyStatus() {
+  const key = getGeminiApiKey();
+  const statusEl = document.getElementById('apiKeyStatus');
+  const inputEl = document.getElementById('apiKeyInput');
+  if (inputEl) {
+    inputEl.value = key;
+  }
+  if (statusEl) {
+    if (key) {
+      statusEl.innerHTML = `✅ 已設定（${key.slice(0,8)}...）`;
+    } else {
+      statusEl.innerHTML = '⚠️ 未設定';
+    }
+  }
+}
+
+// ══════════════════════════════════
+//  PHOTO CALORIE ESTIMATE (Gemini Vision)
+//  Uses the user's own Gemini API key, stored locally on-device only.
+// ══════════════════════════════════
+function getGeminiApiKey() {
+  return localStorage.getItem('mama_gemini_api_key') || '';
+}
+
+function setGeminiApiKey() {
+  const current = getGeminiApiKey();
+  const msg = current 
+    ? `你已設定 API Key（${current.slice(0,8)}...）\n\n要更新嗎？留空則刪除。\n\n1. 去 https://aistudio.google.com/app/apikey 登入Google帳號\n2. 建立新的 API key\n3. 貼過來`
+    : `去這裡申請免費的 Gemini API Key：\nhttps://aistudio.google.com/app/apikey\n\n1. 用Google帳號登入\n2. 建立新的 API key\n3. 複製貼在下面`;
+  const key = prompt(msg, current || '');
+  if (key === null) return; // cancelled
+  localStorage.setItem('mama_gemini_api_key', key.trim());
+  showToast(key.trim() ? `✅ API Key 已儲存（${key.trim().slice(0,8)}...）` : '🗑️ 已清除 API Key');
+  loadApiKeyStatus();
+}
+
+function triggerPhotoEstimate() {
+  const key = getGeminiApiKey();
+  if (!key) {
+    showToast('⚠️ 請先設定 Gemini API Key（去「同步」頁面設定）');
+    return;
+  }
+  document.getElementById('photoEstInput').click();
+}
+
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        
+        // 如果圖片太寬或太高，縮小到最多 1200px
+        if (width > 1200 || height > 1200) {
+          const ratio = Math.min(1200 / width, 1200 / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // 壓縮成 JPEG，品質 0.8
+        canvas.toBlob((blob) => {
+          console.log('Compressed from', file.size, 'to', blob.size, 'bytes');
+          resolve(blob);
+        }, 'image/jpeg', 0.8);
+      };
+      img.onerror = () => reject(new Error('圖片加載失敗'));
+      img.src = e.target.result;
+    };
+    
+    reader.onerror = () => reject(new Error('檔案讀取失敗'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      reject(new Error('沒有選擇檔案'));
+      return;
+    }
+    
+    console.log('Converting file:', file.name, file.type, file.size);
+    
+    // 如果檔案超過 5MB，先壓縮
+    const shouldCompress = file.size > 5 * 1024 * 1024;
+    if (shouldCompress) {
+      console.log('File too large, compressing...');
+      compressImage(file).then(compressedBlob => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            let base64str = reader.result;
+            if (base64str.includes(',')) {
+              base64str = base64str.split(',')[1];
+            }
+            console.log('Compressed Base64 length:', base64str.length);
+            resolve(base64str);
+          } catch (err) {
+            reject(new Error('Base64 轉換失敗：' + err.message));
+          }
+        };
+        reader.onerror = () => {
+          reject(new Error('壓縮圖片轉換失敗：' + reader.error?.message));
+        };
+        reader.readAsDataURL(compressedBlob);
+      }).catch(reject);
+      return;
+    }
+    
+    // 小檔案直接轉換
+    const reader = new FileReader();
+    
+    reader.onload = () => {
+      try {
+        let base64str = reader.result;
+        // 移除 "data:image/...;base64," 前綴
+        if (base64str.includes(',')) {
+          base64str = base64str.split(',')[1];
+        }
+        console.log('Base64 length:', base64str.length);
+        resolve(base64str);
+      } catch (err) {
+        reject(new Error('Base64 轉換失敗：' + err.message));
+      }
+    };
+    
+    reader.onerror = () => {
+      console.error('FileReader error:', reader.error);
+      reject(new Error('檔案讀取失敗：' + (reader.error?.message || 'Unknown error')));
+    };
+    
+    reader.onabort = () => {
+      reject(new Error('檔案讀取被中止'));
+    };
+    
+    try {
+      reader.readAsDataURL(file);
+    } catch (err) {
+      reject(new Error('無法讀取檔案：' + err.message));
+    }
+  });
+}
+
 // ── ONE-TAP WATER QUICK ADD ──
 function quickAddWater(ml) {
   selectType('water');
@@ -1916,6 +2179,92 @@ function quickAddWater(ml) {
   }
   document.getElementById('valInput-water').value = ml;
   addEntry();
+}
+
+async function handlePhotoEstimate(event) {
+  const file = event.target.files[0];
+  event.target.value = ''; // allow re-selecting the same file next time
+  if (!file) return;
+
+  // 檔案大小檢查（超過 20MB 會有問題）
+  if (file.size > 20 * 1024 * 1024) {
+    showToast('⚠️ 圖片太大（超過 20MB），請選更小的檔案');
+    return;
+  }
+
+  const key = getGeminiApiKey();
+  if (!key) { showToast('⚠️ 請先設定 Gemini API Key'); return; }
+
+  const btn = document.getElementById('photoEstBtn');
+  const status = document.getElementById('photoEstStatus');
+  btn.classList.add('loading');
+  status.textContent = '🔍 估算中，請稍候…';
+
+  try {
+    console.log('Step 1: Converting file to base64...');
+    const base64 = await fileToBase64(file);
+    console.log('Step 2: Calling Gemini API...');
+    
+    const prompt = '這是一張食物照片。請估算這份食物大約的總熱量（kcal）與簡短名稱。只回傳 JSON，格式為 {"calories": 數字, "food_name": "字串"}，不要有其他文字或 markdown 符號。';
+
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { inline_data: { mime_type: file.type || 'image/jpeg', data: base64 } },
+              { text: prompt }
+            ]
+          }]
+        })
+      }
+    );
+
+    console.log('Step 3: API response status:', resp.status);
+    if (!resp.ok) {
+      const errText = await resp.text();
+      console.error('API Error Response:', errText);
+      throw new Error(`API 錯誤 (${resp.status})：${errText}`);
+    }
+
+    const data = await resp.json();
+    console.log('Step 4: API Response:', data);
+    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (!rawText) {
+      console.error('No text in response:', data);
+      throw new Error('API 沒有回傳估算結果，可能是圖片格式不對或 API 超額');
+    }
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error('Response text:', rawText);
+      throw new Error(`無法解析估算結果。Gemini 回傳：${rawText.slice(0,100)}`);
+    }
+    const parsed = JSON.parse(jsonMatch[0]);
+    const calories = Math.round(Number(parsed.calories));
+    const foodName = String(parsed.food_name || '').trim();
+    if (!calories || isNaN(calories)) throw new Error('無法解析熱量數字');
+
+    console.log('Step 5: Success! Calories:', calories, 'Food:', foodName);
+    selectType('eat');
+    document.getElementById('valInput-eat').value = calories;
+    if (foodName) document.getElementById('noteInput-eat').value = foodName;
+    if (!document.getElementById('timeInput-eat').value) {
+      const now = new Date();
+      document.getElementById('timeInput-eat').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    }
+    status.textContent = `✅ 估算完成：${foodName ? foodName + ' ' : ''}約 ${calories} kcal，確認無誤後請按「新增到日誌」`;
+    showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 估算完成！請確認後送出`);
+  } catch (err) {
+    status.textContent = '';
+    const errorMsg = '⚠️ 估算失敗：' + err.message;
+    showToast(errorMsg);
+    console.error('Photo estimate error:', err);
+  } finally {
+    btn.classList.remove('loading');
+  }
 }
 
 // ── FILTER ──
