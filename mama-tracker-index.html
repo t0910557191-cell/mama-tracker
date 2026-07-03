@@ -259,6 +259,11 @@ body::before, body::after { display: none; }
 .fast-running-lbl { font-size: var(--fs-sm); font-weight: 700; color: #1A6B55; font-family: 'Nunito', sans-serif; }
 .fast-running-val { font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-lg); color: var(--mint-deep); }
 .fast-running-timer { font-size: var(--fs-num) !important; color: #1A6B55 !important; }
+.fast-manual-toggle { margin-top: 12px; font-size: var(--fs-sm); font-weight: 700; color: var(--mint-deep); text-align: center; cursor: pointer; text-decoration: underline; font-family: 'Nunito', sans-serif; }
+.fast-manual-form { margin-top: 10px; padding-top: 10px; border-top: 1.5px dashed rgba(61,191,160,0.25); }
+.water-quick-row { display: flex; gap: 8px; margin: 4px 0 14px; }
+.water-quick-btn { flex: 1; padding: 8px 4px; border-radius: 10px; border: 2px solid var(--sky-deep); background: var(--sky); color: var(--sky-deep); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: var(--fs-sm); cursor: pointer; }
+.water-quick-btn:active { transform: translate(1px,1px); }
 
 /* ── TYPE SELECTOR ── */
 .type-selector { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; }
@@ -487,10 +492,10 @@ body::before, body::after { display: none; }
 .fast-cycle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1.5px dashed rgba(224,92,122,0.1); gap: 8px; }
 .fast-cycle-row:last-child { border-bottom: none; }
 .fast-cycle-delete { flex-shrink: 0; padding: 6px; }
-.fast-cycle-dates { flex: 1; }
+.fast-cycle-dates { flex: 1; cursor: pointer; }
 .fast-cycle-time { font-size: var(--fs-sm); color: var(--text-mid); font-family: 'Patrick Hand', sans-serif; }
 .fast-cycle-arrow { font-size: var(--fs-xs); color: var(--text-light); margin: 2px 0; }
-.fast-cycle-hrs { font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-num); text-align: right; white-space: nowrap; }
+.fast-cycle-hrs { font-family: 'Patrick Hand', sans-serif; font-size: var(--fs-num); text-align: right; white-space: nowrap; cursor: pointer; }
 .fast-cycle-unit { font-size: var(--fs-xs); font-weight: 700; margin-left: 1px; font-family: 'Nunito', sans-serif; }
 .cross-day-tag { display: inline-block; background: var(--lavender); color: var(--lav-deep); font-size: var(--fs-xs); font-weight: 700; padding: 1px 6px; border-radius: 8px; margin-left: 4px; vertical-align: middle; font-family: 'Nunito', sans-serif; }
 
@@ -953,6 +958,20 @@ h3 .hicon svg { width: 22px; height: 22px; }
       </div>
       <button class="fast-stop-btn" onclick="stopFastCycle()"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 25 L20 35 L40 12"/></svg></span> 結束斷食</button>
     </div>
+
+    <div class="fast-manual-toggle" onclick="toggleManualFastForm()" id="fastManualToggleBtn">✏️ 補登過去的斷食紀錄</div>
+    <div id="fastManualForm" class="fast-manual-form hidden">
+      <p class="fasting-hint">忘記記錄的斷食可以在這裡補登，不會影響目前進行中的斷食</p>
+      <div class="field-row" style="margin-bottom:8px">
+        <label class="form-label">開始時間</label>
+        <input type="datetime-local" class="form-input" id="manualFastStart">
+      </div>
+      <div class="field-row" style="margin-bottom:8px">
+        <label class="form-label">結束時間</label>
+        <input type="datetime-local" class="form-input" id="manualFastEnd">
+      </div>
+      <button class="fast-start-btn" onclick="addManualFastCycle()">＋ 補登這筆紀錄</button>
+    </div>
     </div>
   </div>
 
@@ -1002,6 +1021,11 @@ h3 .hicon svg { width: 22px; height: 22px; }
     <div id="fields-water" class="hidden">
       <div class="field-row"><label class="form-label">時間</label><input type="time" class="form-input" id="timeInput-water"></div>
       <div class="field-row"><label class="form-label">水量 (ml)</label><input type="number" class="form-input" id="valInput-water" placeholder="例：300"></div>
+      <div class="water-quick-row">
+        <button type="button" class="water-quick-btn" onclick="quickAddWater(100)">+100ml</button>
+        <button type="button" class="water-quick-btn" onclick="quickAddWater(250)">+250ml</button>
+        <button type="button" class="water-quick-btn" onclick="quickAddWater(500)">+500ml</button>
+      </div>
     </div>
     <button class="add-btn" onclick="addEntry()">＋ 新增到日誌</button>
     </div>
@@ -1661,7 +1685,46 @@ function stopFastCycle() {
   showFastingIdleView();
   // Reset start input to now
   document.getElementById('fastStartInput').value = toLocalDatetimeInput(new Date());
+  renderFastingCycles();
+  renderMilkFastStats();
   showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 斷食完成！共 ${hrs.toFixed(1)} 小時 🎉`);
+}
+
+// ── Manually add a past (already-completed) fasting cycle ──
+// Lets the user backfill a forgotten fast without touching any
+// currently-active cycle, and refreshes the history list immediately.
+function toggleManualFastForm() {
+  const form = document.getElementById('fastManualForm');
+  const isHidden = form.classList.contains('hidden');
+  if (isHidden) {
+    const now = new Date();
+    const startDefault = new Date(now.getTime() - 16 * 3600000); // default: 16h ago
+    document.getElementById('manualFastStart').value = toLocalDatetimeInput(startDefault);
+    document.getElementById('manualFastEnd').value   = toLocalDatetimeInput(now);
+  }
+  form.classList.toggle('hidden');
+  document.getElementById('fastManualToggleBtn').textContent = isHidden ? '✖️ 收合補登表單' : '✏️ 補登過去的斷食紀錄';
+}
+
+function addManualFastCycle() {
+  const startVal = document.getElementById('manualFastStart').value;
+  const endVal   = document.getElementById('manualFastEnd').value;
+  if (!startVal || !endVal) { showToast('⚠️ 請填寫開始與結束時間'); return; }
+
+  const start = new Date(startVal);
+  const end   = new Date(endVal);
+  if (end <= start) { showToast('⚠️ 結束時間必須晚於開始時間'); return; }
+
+  const cycles = getFastCycles();
+  cycles.push({ startISO: start.toISOString(), endISO: end.toISOString() });
+  cycles.sort((a, b) => new Date(a.startISO) - new Date(b.startISO));
+  saveFastCycles(cycles);
+
+  renderFastingCycles();
+  renderMilkFastStats();
+  toggleManualFastForm(); // collapse the form back down
+  const hrs = (end - start) / 3600000;
+  showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 已補登斷食紀錄！共 ${hrs.toFixed(1)} 小時`);
 }
 
 function launchFastTimer() {
@@ -1841,6 +1904,18 @@ function addEntry() {
   renderTimeline(); recalculate(); updateDashboard();
   syncHistoryIfVisible(logDay);
   showToast(`<span class="hicon" style="display:inline-flex;width:16px;height:16px;vertical-align:-3px">${HICONS.check}</span> 已新增！`);
+}
+
+// ── ONE-TAP WATER QUICK ADD ──
+function quickAddWater(ml) {
+  selectType('water');
+  const timeEl = document.getElementById('timeInput-water');
+  if (!timeEl.value) {
+    const now = new Date();
+    timeEl.value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  }
+  document.getElementById('valInput-water').value = ml;
+  addEntry();
 }
 
 // ── FILTER ──
@@ -2272,6 +2347,8 @@ function renderWeightDotChart() {
 }
 
 // ── FASTING CYCLES ──
+let editingFastCycleId = null;
+
 function renderFastingCycles() {
   const allCycles = getFastCycles()
     .filter(c => c.endISO)
@@ -2285,6 +2362,24 @@ function renderFastingCycles() {
   }
 
   el.innerHTML = allCycles.map(c => {
+    if (c.startISO === editingFastCycleId) {
+      return `<div class="fast-cycle-row fast-cycle-editing">
+        <div class="fast-cycle-dates" style="width:100%">
+          <div class="field-row" style="margin-bottom:6px">
+            <label class="form-label">開始</label>
+            <input type="datetime-local" class="form-input" id="editFastStart" value="${toLocalDatetimeInput(new Date(c.startISO))}">
+          </div>
+          <div class="field-row" style="margin-bottom:6px">
+            <label class="form-label">結束</label>
+            <input type="datetime-local" class="form-input" id="editFastEnd" value="${toLocalDatetimeInput(new Date(c.endISO))}">
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="fast-start-btn" style="flex:1" onclick="saveEditedFastCycle('${c.startISO}')">儲存</button>
+            <button class="fast-stop-btn" style="flex:1" onclick="cancelEditFastCycle()">取消</button>
+          </div>
+        </div>
+      </div>`;
+    }
     const start = new Date(c.startISO);
     const end   = new Date(c.endISO);
     const hrs   = (end - start) / 3600000;
@@ -2293,15 +2388,45 @@ function renderFastingCycles() {
     const isCross = start.toLocaleDateString() !== end.toLocaleDateString();
     const crossTag = isCross ? `<span class="cross-day-tag">跨日</span>` : '';
     return `<div class="fast-cycle-row">
-      <div class="fast-cycle-dates">
+      <div class="fast-cycle-dates" onclick="editFastCycle('${c.startISO}')">
         <div class="fast-cycle-time">${fmtMDHM(start)}</div>
         <div class="fast-cycle-arrow">↓</div>
         <div class="fast-cycle-time">${fmtMDHM(end)} ${crossTag}</div>
       </div>
-      <div class="fast-cycle-hrs" style="color:${color}">${hrs.toFixed(1)}<span class="fast-cycle-unit">hr</span></div>
+      <div class="fast-cycle-hrs" style="color:${color}" onclick="editFastCycle('${c.startISO}')">${hrs.toFixed(1)}<span class="fast-cycle-unit">hr</span></div>
       <button class="tl-delete fast-cycle-delete" onclick="deleteFastCycle('${c.startISO}')">${getDeleteIconHtml()}</button>
     </div>`;
   }).join('');
+}
+
+function editFastCycle(startISO) {
+  editingFastCycleId = startISO;
+  renderFastingCycles();
+}
+
+function cancelEditFastCycle() {
+  editingFastCycleId = null;
+  renderFastingCycles();
+}
+
+function saveEditedFastCycle(originalStartISO) {
+  const startVal = document.getElementById('editFastStart').value;
+  const endVal   = document.getElementById('editFastEnd').value;
+  if (!startVal || !endVal) { showToast('⚠️ 請填寫開始與結束時間'); return; }
+  const start = new Date(startVal), end = new Date(endVal);
+  if (end <= start) { showToast('⚠️ 結束時間必須晚於開始時間'); return; }
+
+  const cycles = getFastCycles();
+  const target = cycles.find(c => c.startISO === originalStartISO);
+  if (!target) { showToast('⚠️ 找不到這筆紀錄'); return; }
+  target.startISO = start.toISOString();
+  target.endISO   = end.toISOString();
+  saveFastCycles(cycles);
+
+  editingFastCycleId = null;
+  renderFastingCycles();
+  renderMilkFastStats();
+  showToast('✅ 已更新這筆斷食紀錄');
 }
 
 function getDeleteIconHtml() {
