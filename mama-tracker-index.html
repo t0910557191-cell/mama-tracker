@@ -520,6 +520,19 @@ body::before, body::after { display: none; }
   font-family: 'Jost', sans-serif; font-weight: 700;
 }
 .emoji-calendar { display: flex; flex-wrap: nowrap; gap: 5px; width: 100%; }
+
+/* ── WEIGHT CHART NAV ── */
+.weight-chart-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; gap: 8px; }
+.weight-nav-btn {
+  background: var(--blush); border: 1.5px solid var(--rose);
+  color: var(--rose-deep); font-size: 1rem; font-weight: 900;
+  width: 28px; height: 28px; border-radius: 50%;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; padding: 0; flex-shrink: 0;
+}
+.weight-nav-btn:hover { background: var(--rose); color: white; }
+.weight-nav-btn:disabled { opacity: 0.25; cursor: default; }
+.weight-chart-range { font-size: var(--fs-xs); color: var(--text-mid); font-family: 'Jost', sans-serif; font-weight: 700; }
 .emoji-day {
   flex: 1; min-width: 0; height: 50px; border-radius: 12px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -657,6 +670,15 @@ body::before, body::after { display: none; }
 .poop-row:last-child { border-bottom: none; }
 .poop-time { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: var(--fs-body); color: var(--text-light); min-width: 40px; }
 .poop-note { flex: 1; font-size: var(--fs-sm); color: var(--text-mid); }
+
+/* ── POOP HISTORY: grouped by day ── */
+.poop-day-group { padding: 7px 0; border-bottom: 1.5px dashed rgba(150,82,47,0.12); }
+.poop-day-group:last-child { border-bottom: none; }
+.poop-day-label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: var(--fs-body); color: var(--text-light); margin-bottom: 4px; }
+.poop-day-entries { display: flex; flex-direction: column; gap: 5px; }
+.poop-entry-row { display: flex; align-items: center; gap: 10px; padding-left: 6px; }
+.poop-entry-time { font-size: var(--fs-xs); color: var(--text-mid); min-width: 34px; }
+.poop-entry-note { flex: 1; font-size: var(--fs-sm); color: var(--text-mid); }
 
 /* ── DELETE DAY BUTTON ── */
 .delete-day-btn {
@@ -1191,6 +1213,11 @@ h3 .hicon svg { width: 22px; height: 22px; }
   <div class="card" id="card-weight">
     <div class="card-title collapsible" onclick="toggleCard('card-weight')"><span class="title-left"><span class="hicon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="20" width="32" height="22" rx="4"/><circle cx="24" cy="31" r="7"/><line x1="24" y1="31" x2="27" y2="27"/><circle cx="24" cy="31" r="1" fill="currentColor" stroke="none"/><path d="M14 20 Q14 12 24 12 Q34 12 34 20"/></svg></span> 體重變化</span><span class="collapse-chevron"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18 L24 30 L34 18"/></svg></span></div>
     <div class="card-body">
+    <div class="weight-chart-nav hidden" id="weightChartNav">
+      <button class="weight-nav-btn" id="weightPrevBtn" onclick="navigateWeightChart(1)">‹</button>
+      <span class="weight-chart-range" id="weightChartRange"></span>
+      <button class="weight-nav-btn" id="weightNextBtn" onclick="navigateWeightChart(-1)">›</button>
+    </div>
     <div id="weightDotChart"></div>
     <div id="noWeightData" class="empty-timeline hidden"><span class="big-emoji" id="noWeightIcon"></span>還沒有體重記錄</div>
     </div>
@@ -1929,7 +1956,7 @@ function renderPoopHistory() {
       </div>`;
   }
 
-  // List each of the 3 days explicitly, newest first
+  // List each of the 3 days explicitly, newest first — same day's entries grouped together
   html += recentDays.map(dateKey => {
     const dayEntries = log.filter(p => p.dateKey === dateKey).sort((a,b)=>a.time.localeCompare(b.time));
     const dateLabel = dateKey.slice(5).replace('-','/');
@@ -1939,12 +1966,16 @@ function renderPoopHistory() {
         <span class="poop-note" style="color:var(--text-light)">無</span>
       </div>`;
     }
-    return dayEntries.map(p => `
-      <div class="poop-row">
-        <span class="poop-time">${dateLabel} ${p.time}</span>
-        <span class="poop-note">${p.note || '正常'}</span>
+    const entriesHtml = dayEntries.map(p => `
+      <div class="poop-entry-row">
+        <span class="poop-entry-time">${p.time}</span>
+        <span class="poop-entry-note">${p.note || '正常'}</span>
         <button class="tl-delete" onclick="deletePoopFromHistory(${p.id})">${getDeleteIconHtml()}</button>
       </div>`).join('');
+    return `<div class="poop-day-group">
+      <div class="poop-day-label">${dateLabel}</div>
+      <div class="poop-day-entries">${entriesHtml}</div>
+    </div>`;
   }).join('');
 
   el.innerHTML = html;
@@ -2784,19 +2815,21 @@ function loadHistoryDay() {
   const dateStr = document.getElementById('historyDatePicker').value;
   if (!dateStr) return;
   const data  = getDayData(dateStr);
+  const poopEntries = getPoopLog().filter(p => p.dateKey === dateStr).sort((a,b)=>a.time.localeCompare(b.time));
   const card  = document.getElementById('historyDayCard');
   const empty = document.getElementById('historyDayEmpty');
-  if (!data||!data.entries) { card.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+  if ((!data||!data.entries) && !poopEntries.length) { card.classList.add('hidden'); empty.classList.remove('hidden'); return; }
   card.classList.remove('hidden'); empty.classList.add('hidden');
   historyEditDate = dateStr;
   renderMilkFastStats();  // update milk stats for this day
 
-  const w=data.weight||70.5, h=data.height||162;
+  const entries = (data && data.entries) || [];
+  const w=(data&&data.weight)||70.5, h=(data&&data.height)||162;
   const bmr=getMifflinBMR(w,h), tdee=Math.round(bmr*1.2);
-  const calIn  =data.entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
-  const milkTot=data.entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
-  const waterIn=data.entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
-  const exBurn =data.entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
+  const calIn  =entries.filter(e=>e.type==='eat').reduce((s,e)=>s+e.value,0);
+  const milkTot=entries.filter(e=>e.type==='milk').reduce((s,e)=>s+e.value,0);
+  const waterIn=entries.filter(e=>e.type==='water').reduce((s,e)=>s+e.value,0);
+  const exBurn =entries.filter(e=>e.type==='exercise').reduce((s,e)=>s+e.value,0);
   const milkBurn=Math.round(milkTot*0.8);
   const totalBurn=tdee+milkBurn+exBurn;
   const waterGoal=Math.round(w*35+milkTot);
@@ -2827,7 +2860,7 @@ function loadHistoryDay() {
   // Poop reminder: past day with no poop entry
   const [py,pm,pd] = dateStr.split('-').map(Number);
   const isPast = new Date(py,pm-1,pd) < new Date(new Date().setHours(0,0,0,0));
-  const hasPoop = getPoopLog().some(p => p.dateKey === dateStr);
+  const hasPoop = poopEntries.length > 0;
   const poopEl = document.getElementById('poopReminder');
   if (poopEl) poopEl.classList.toggle('hidden', !(isPast && !hasPoop));
 
@@ -2835,8 +2868,8 @@ function loadHistoryDay() {
   renderPoopHistory();
 
   const tl = document.getElementById('historyDayTimeline');
-  if (!data.entries.length) { tl.innerHTML='<div style="font-size:0.8rem;color:var(--text-light);text-align:center;padding:8px">無記錄</div>'; return; }
-  tl.innerHTML = data.entries.map(e => {
+  if (!entries.length) { tl.innerHTML='<div style="font-size:0.8rem;color:var(--text-light);text-align:center;padding:8px">無記錄</div>'; return; }
+  tl.innerHTML = entries.map(e => {
     const val = `${e.value} ${e.unit}${e.note?' · '+e.note:''}`;
     return `<div class="hist-tl-item">
       <div class="hist-tl-time">${e.time}</div>
@@ -2936,19 +2969,49 @@ function _doDeleteDay(dateStr) {
 }
 
 // ── WEIGHT DOT CHART ──
+let _weightAllData = [];
+let weightChartPage = 0; // 0 = most recent 7-day window, higher = further back in history
+
 function renderWeightDotChart() {
   const dates   = getAllDates();
-  const weights = dates
+  _weightAllData = dates
     .map(d => { const data = getDayData(d); return data && data.weight && data.entries && data.entries.length ? { d, w: data.weight } : null; })
     .filter(Boolean);
+  weightChartPage = 0;
+  drawWeightChart();
+}
+
+function navigateWeightChart(delta) {
+  const totalPages = Math.max(1, Math.ceil(_weightAllData.length / 7));
+  const newPage = weightChartPage + delta;
+  if (newPage < 0 || newPage > totalPages - 1) return;
+  weightChartPage = newPage;
+  drawWeightChart();
+}
+
+// Swipe support: swipe left = older data (like flipping to next page), swipe right = newer data
+let _weightSwipeStartX = null;
+function handleWeightSwipeStart(ev) {
+  _weightSwipeStartX = (ev.touches ? ev.touches[0] : ev).clientX;
+}
+function handleWeightSwipeEnd(ev) {
+  if (_weightSwipeStartX === null) return;
+  const endX = (ev.changedTouches ? ev.changedTouches[0] : ev).clientX;
+  const dx = endX - _weightSwipeStartX;
+  _weightSwipeStartX = null;
+  if (Math.abs(dx) < 40) return;
+  navigateWeightChart(dx < 0 ? 1 : -1);
+}
+
+function drawWeightChart() {
+  const weights = _weightAllData;
   const noData = document.getElementById('noWeightData');
   const el     = document.getElementById('weightDotChart');
+  const nav    = document.getElementById('weightChartNav');
 
-  if (!weights.length) { noData.classList.remove('hidden'); el.innerHTML = ''; return; }
+  if (!weights.length) { noData.classList.remove('hidden'); el.innerHTML = ''; if (nav) nav.classList.add('hidden'); return; }
   noData.classList.add('hidden');
 
-  const allW  = weights.map(x => x.w);
-  const minW  = Math.min(...allW), maxW = Math.max(...allW);
   const goal  = getGoalWeight();
   const first = weights[0].w;
   const latest= weights[weights.length-1].w;
@@ -2961,8 +3024,21 @@ function renderWeightDotChart() {
     <div class="ws-item"><div class="ws-val" style="color:#7C9068">${goal} kg</div><div class="ws-lbl">目標</div></div>
   </div>`;
 
-  const recent = weights.slice(-7);
-  const n      = recent.length;
+  const totalPages = Math.max(1, Math.ceil(weights.length / 7));
+  const endIdx   = weights.length - weightChartPage * 7;
+  const startIdx = Math.max(0, endIdx - 7);
+  const recent   = weights.slice(startIdx, endIdx);
+  const n        = recent.length;
+
+  if (nav) {
+    nav.classList.toggle('hidden', totalPages <= 1);
+    const rangeEl = document.getElementById('weightChartRange');
+    if (rangeEl) rangeEl.textContent = n ? `${recent[0].d.slice(5)} ～ ${recent[n-1].d.slice(5)}` : '';
+    const prevBtn = document.getElementById('weightPrevBtn');
+    const nextBtn = document.getElementById('weightNextBtn');
+    if (prevBtn) prevBtn.disabled = (weightChartPage >= totalPages - 1);
+    if (nextBtn) nextBtn.disabled = (weightChartPage <= 0);
+  }
   const W=300, H=110, PL=18, PR=14, PT=14, PB=22;
   const chartW = W-PL-PR, chartH = H-PT-PB;
   // Use recent's own min/max for Y scale
@@ -3009,6 +3085,11 @@ function renderWeightDotChart() {
 
   svg += `</svg>`;
   el.innerHTML = summaryHtml + svg;
+
+  el.removeEventListener('touchstart', handleWeightSwipeStart);
+  el.removeEventListener('touchend', handleWeightSwipeEnd);
+  el.addEventListener('touchstart', handleWeightSwipeStart, { passive: true });
+  el.addEventListener('touchend', handleWeightSwipeEnd, { passive: true });
 }
 
 // ── FASTING CYCLES ──
