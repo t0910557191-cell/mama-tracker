@@ -674,9 +674,9 @@ body::before, body::after { display: none; }
 /* ── POOP HISTORY: grouped by day ── */
 .poop-day-group { padding: 7px 0; border-bottom: 1.5px dashed rgba(150,82,47,0.12); }
 .poop-day-group:last-child { border-bottom: none; }
-.poop-day-label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: var(--fs-body); color: var(--text-light); margin-bottom: 4px; }
 .poop-day-entries { display: flex; flex-direction: column; gap: 5px; }
-.poop-entry-row { display: flex; align-items: center; gap: 10px; padding-left: 6px; }
+.poop-entry-row { display: flex; align-items: center; gap: 10px; }
+.poop-day-label-inline { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: var(--fs-body); color: var(--text-light); min-width: 40px; flex-shrink: 0; }
 .poop-entry-time { font-size: var(--fs-xs); color: var(--text-mid); min-width: 34px; }
 .poop-entry-note { flex: 1; font-size: var(--fs-sm); color: var(--text-mid); }
 
@@ -1939,7 +1939,7 @@ function renderPoopHistory() {
 
   const today = new Date(); today.setHours(0,0,0,0);
   const recentDays = [];
-  for (let i=1; i<=3; i++) {
+  for (let i=0; i<=2; i++) {
     const d = new Date(today); d.setDate(today.getDate()-i);
     recentDays.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
   }
@@ -1959,21 +1959,21 @@ function renderPoopHistory() {
   // List each of the 3 days explicitly, newest first — same day's entries grouped together
   html += recentDays.map(dateKey => {
     const dayEntries = log.filter(p => p.dateKey === dateKey).sort((a,b)=>a.time.localeCompare(b.time));
-    const dateLabel = dateKey.slice(5).replace('-','/');
+    const dateLabel = dateKey === todayKey() ? '今天' : dateKey.slice(5).replace('-','/');
     if (!dayEntries.length) {
       return `<div class="poop-row">
         <span class="poop-time">${dateLabel}</span>
         <span class="poop-note" style="color:var(--text-light)">無</span>
       </div>`;
     }
-    const entriesHtml = dayEntries.map(p => `
+    const entriesHtml = dayEntries.map((p,idx) => `
       <div class="poop-entry-row">
+        <span class="poop-day-label-inline">${idx===0 ? dateLabel : ''}</span>
         <span class="poop-entry-time">${p.time}</span>
         <span class="poop-entry-note">${p.note || '正常'}</span>
         <button class="tl-delete" onclick="deletePoopFromHistory(${p.id})">${getDeleteIconHtml()}</button>
       </div>`).join('');
     return `<div class="poop-day-group">
-      <div class="poop-day-label">${dateLabel}</div>
       <div class="poop-day-entries">${entriesHtml}</div>
     </div>`;
   }).join('');
